@@ -33,8 +33,8 @@ export function Details() {
 
       {data && (
         <div className="space-y-4">
-          <div className="flex gap-2 w-full">
-            <Card className="@container/card w-[300px]">
+          <div className="flex gap-2 w-full flex-col sm:flex-row">
+            <Card className="@container/card w-full sm:w-[300px]">
               <CardHeader className="relative flex-1">
                 <CardDescription>Ano</CardDescription>
                 <CardTitle className="@[250px]/card:text-6xl text-6xl font-semibold w-full">
