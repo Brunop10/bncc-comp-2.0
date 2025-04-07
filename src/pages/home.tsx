@@ -1,15 +1,61 @@
 import { Heading } from "@/components/heading";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowRight, Funnel, Search } from "lucide-react";
+import { Link } from "react-router";
 
 export function Home() {
   return (
-    <div className="px-6 space-y-4">
-      <Heading title="BNCC COMPUTAÇÃO" />
-
-      <div className="space-y-2">
-        <p>A Base Nacional Comum Curricular (BNCC) é um documento que define as aprendizagens essenciais que todos os alunos devem desenvolver ao longo das etapas e modalidades da Educação Básica no Brasil. O complemento da computação na BNCC busca integrar o pensamento computacional e a tecnologia como ferramentas fundamentais para o desenvolvimento de competências do século XXI.</p>
+    <div className="px-6 space-y-6 max-w-[1280px] mx-auto">
+      <div className="flex flex-col gap-2 items-center">
+        <Heading title="Base Nacional Comum Curricular - Computação" className="text-center" />
+        <p className="text-xl text-muted-foreground">
+          Sistema de busca guiada para objetivos e habilidades na área de Computação
+        </p>
         <p>Esta plataforma tem como objetivo promover um fácil acesso aos dados da BNCC relacionados à computação, auxiliando professores na elaboração de planos de aula alinhados à Base Nacional. Com isso, espera-se facilitar a integração dos conteúdos de computação no currículo escolar, contribuindo para uma educação mais completa e conectada às demandas contemporâneas.</p>
-        <p>Além disso, a plataforma oferece uma interface intuitiva e organizada, permitindo que os usuários naveguem facilmente pelos componentes curriculares, habilidades e competências relacionadas à computação. Professores podem explorar conteúdos específicos, buscar por palavras-chave e acessar sugestões práticas para aplicação em sala de aula. A ferramenta também visa fomentar a troca de experiências e boas práticas entre educadores, fortalecendo a comunidade escolar e promovendo a inovação no ensino.</p>
       </div>
+
+      <div className="flex flex-col gap-4 sm:flex-row">
+        <Card>
+          <CardHeader className="flex gap-2 items-center">
+            <Search className="size-4" />
+            <CardTitle>Visualizar habilidades</CardTitle>
+          </CardHeader>
+
+          <CardContent>
+            <CardDescription>Encontre rapidamente objetivos e habilidades específicos usando nossa funcionalidade de busca por texto.</CardDescription>
+          </CardContent>
+
+          <CardFooter>
+            <Link to='/habilidades' className="flex gap-1 items-center hover:underline">Realizar busca <ArrowRight className="size-4" /></Link>
+          </CardFooter>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex gap-2 items-center">
+            <Funnel className="size-4" />
+            <CardTitle>Sistema Guiado</CardTitle>
+          </CardHeader>
+
+          <CardContent>
+            <CardDescription>Explore conteúdos educacionais de forma interativa, filtrando por etapas, objetivos e habilidades de maneira prática e eficiente.</CardDescription>
+          </CardContent>
+
+          <CardFooter>
+            <Link to='/habilidades-guiado' className="flex gap-1 items-center hover:underline">Realizar busca <ArrowRight className="size-4" /></Link>
+          </CardFooter>
+        </Card>
+      </div>
+
+      <Card className="space-y-2">
+        <CardHeader>
+          <CardTitle>Sobre a BNCC na área de Computação</CardTitle>
+        </CardHeader>
+
+        <CardContent className="space-y-2">
+          <p>A Base Nacional Comum Curricular (BNCC) é um documento normativo que define o conjunto de aprendizagens essenciais que todos os alunos devem desenvolver ao longo da Educação Básica.</p>
+          <p>Na área de Computação, a BNCC abrange habilidades e competências relacionadas ao pensamento computacional, raciocínio lógico, resolução de problemas e fluência digital, preparando os estudantes para os desafios do século XXI.</p>
+        </CardContent>
+      </Card>
 
       <div>
 

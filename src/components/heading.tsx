@@ -1,9 +1,20 @@
-interface HeadingProps {
+import { ComponentProps } from "react";
+import { twMerge } from "tailwind-merge";
+
+interface HeadingProps extends ComponentProps<'h2'> {
   title: string
 }
 
-export function Heading({ title }: HeadingProps) {
+export function Heading({ title, className, ...props }: HeadingProps) {
   return (
-    <h2 className="text-3xl font-bold tracking-tight text-foreground">{title}</h2>
+    <h2
+      className={twMerge(
+        "text-3xl font-bold tracking-tight text-foreground",
+        className
+      )}
+      {...props}
+    >
+      {title}
+    </h2>
   );
 }
