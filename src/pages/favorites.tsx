@@ -5,6 +5,7 @@ import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/comp
 import { ItemDTO } from "@/dtos/item-dto";
 import { useData } from "@/hooks/use-data";
 import { useStorage } from "@/hooks/use-storage";
+import { COLLEGE_YEARS } from "@/utils/college-years";
 import { ArrowRight, HeartOff } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
@@ -30,19 +31,19 @@ export function Favorites() {
   }, [])
 
   return (
-    <div className="px-8 space-y-8">
+    <div className="px-8 space-y-8 max-w-[1280px]">
       <div className="space-y-1">
         <Heading title="Favoritos" />
         <Description value="Aqui você pode visualizar e acessar rapidamente os itens que marcou como favoritos." />
       </div>
 
-      <div className="grid grid-cols-3">
+      <div className="grid gap-2 grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {favorites.map(favorite => (
           <Card key={favorite.codigo}>
             <CardHeader className="flex justify-between gap-2">
               <div>
-                <CardTitle>{favorite.codigo}</CardTitle>
-                <CardDescription>{favorite.etapa}</CardDescription>
+                <CardTitle className="text-sm md:text-base">{favorite.codigo}</CardTitle>
+                <CardDescription className="text-xs md:text-sm">{COLLEGE_YEARS[favorite.ano]}</CardDescription>
               </div>
 
               <Button size='icon' variant='secondary' className="cursor-pointer" onClick={() => handleRemoveFavorite(favorite.codigo)}>
@@ -51,7 +52,7 @@ export function Favorites() {
             </CardHeader>
 
             <CardFooter>
-              <Link to={`/detalhes/${favorite.codigo}`} className="flex gap-1 items-center hover:underline">Visualizar detalhes <ArrowRight className="size-4"/></Link>
+              <Link to={`/detalhes/${favorite.codigo}`} className="flex text-sm md:text-base gap-1 items-center hover:underline">Visualizar detalhes <ArrowRight className="size-4"/></Link>
             </CardFooter>
           </Card>
         ))}
