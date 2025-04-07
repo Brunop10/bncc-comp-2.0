@@ -1,7 +1,7 @@
 import { Pagination } from "@/components/pagination";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-import { EllipsisVerticalIcon, EraserIcon, SearchIcon } from "lucide-react";
+import { ChevronRight, EraserIcon, Heart, HeartOff, SearchIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/heading";
 import { Description } from "@/components/description";
@@ -11,10 +11,13 @@ import { Combobox } from "@/components/combo-box";
 
 import { useData } from "@/hooks/use-data";
 import { useNavigate } from "react-router";
+import { useStorage } from "@/hooks/use-storage";
+import { ItemDTO } from "@/dtos/item-dto";
 
 export function Abilities() {
   const navigate = useNavigate()
   const { data, getListOfSteps, filterData, resetData } = useData()
+  const { getFavorites, addFavorite, removeFavorite } = useStorage()
 
   const [codSelected, setCodSelected] = useState("")
   const [stepSelected, setStepSelected] = useState("")
@@ -36,6 +39,17 @@ export function Abilities() {
 
   async function handleGoToDetails(code: string) {
     await navigate(`/detalhes/${code}`)
+  }
+
+  function handleToggleFavorite(item: ItemDTO) {
+    const favorites = getFavorites()
+    const isFavorite = favorites.some(favorite => favorite === item.codigo)
+
+    if (isFavorite) {
+      removeFavorite(item.codigo);
+    } else {
+      addFavorite(item.codigo);
+    }
   }
 
   return (
@@ -82,29 +96,44 @@ export function Abilities() {
             <TableRow>
               <TableHead className="w-[100px]">Código</TableHead>
               <TableHead className="w-[280px]">Etapa</TableHead>
-              <TableHead className="w-[200px]" >Objetivo/Habilidade</TableHead>
-              <TableHead className="text-right">Detalhes</TableHead>
+              <TableHead className="w-full" >Objetivo/Habilidade</TableHead>
+              <TableHead className="w-10">Detalhes</TableHead>
             </TableRow>
           </TableHeader>
 
           <TableBody>
-            {data.map((item) => (
-              <TableRow key={item.codigo}>
-                <TableCell className="font-medium">{item.codigo}</TableCell>
-                <TableCell>{item.etapa}</TableCell>
-                <TableCell>{item.objetivo_ou_habilidade}</TableCell>
-                <TableCell className="text-right">
-                  <Button
-                    size='icon'
-                    variant='outline'
-                    className="cursor-pointer"
-                    onClick={() => { void handleGoToDetails(item.codigo); }}
-                  >
-                    <EllipsisVerticalIcon />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+            {data.map((item) => {
+              const favorites = getFavorites()
+              const isFavorite = !!favorites.find(fav => fav === item.codigo)
+
+              return (
+                <TableRow key={item.codigo}>
+                  <TableCell className="font-medium">{item.codigo}</TableCell>
+                  <TableCell>{item.etapa}</TableCell>
+                  <TableCell>{item.objetivo_ou_habilidade}</TableCell>
+                  <TableCell className="flex gap-2 items-center">
+                    <Button
+                      size='icon'
+                      variant='outline'
+                      className="cursor-pointer"
+                      data-isFav={isFavorite}
+                      onClick={() => handleToggleFavorite(item)}
+                    >
+                      {!isFavorite ? <Heart /> : <HeartOff />}
+                    </Button>
+  
+                    <Button
+                      variant='outline'
+                      className="cursor-pointer"
+                      onClick={() => { void handleGoToDetails(item.codigo); }}
+                    >
+                      <span>Ver detalhes</span>
+                      <ChevronRight />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              )
+            })}
           </TableBody>
         </Table>
 

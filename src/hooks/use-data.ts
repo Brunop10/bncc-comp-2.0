@@ -15,6 +15,7 @@ export function useData() {
     const filteredData = bnccData
       .filter((item) => codigo ? item.codigo.toLowerCase().includes(codigo.toLowerCase()) : true)
       .filter((item) => etapa ? item.etapa.toLowerCase().includes(etapa.toLowerCase()) : true)
+      
 
     setData(filteredData)
   }
@@ -28,9 +29,7 @@ export function useData() {
   }
 
   function getItemByCode(code: string) {
-    console.log('aaa =>', code)
     const item = bnccData.find(item => item.codigo.toLowerCase() === code.toLowerCase()) ?? null
-    console.log('bbb =>', item)
     return item
   }
 
