@@ -6,6 +6,7 @@ import { Home } from './pages/home'
 import { Abilities } from './pages/abilities'
 import { Details } from './pages/details'
 import { AbilitiesGuided } from './pages/abilities-guided'
+import { Favorites } from './pages/favorites'
 
 export const router = createBrowserRouter([
   {
@@ -23,6 +24,10 @@ export const router = createBrowserRouter([
       {
         path: '/habilidades-guiado',
         element: <AbilitiesGuided />
+      },
+      {
+        path: '/favoritos',
+        element: <Favorites />
       },
       {
         path: '/detalhes',

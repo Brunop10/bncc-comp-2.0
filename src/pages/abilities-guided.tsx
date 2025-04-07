@@ -1,17 +1,14 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-import { ChevronRight, Heart, HeartOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/heading";
 import { Description } from "@/components/description";
 import { useState } from "react";
 
 import { useData } from "@/hooks/use-data";
-import { useNavigate } from "react-router";
-import { useStorage } from "@/hooks/use-storage";
-import { ItemDTO } from "@/dtos/item-dto";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ItemTableRow } from "@/components/item-table-row";
 
 interface FilterState {
   etapa: string;
@@ -22,9 +19,7 @@ interface FilterState {
 }
 
 export function AbilitiesGuided() {
-  const navigate = useNavigate()
   const { data, getListOfSteps, getListOfAxes, getListOfTypes, filterData, resetData } = useData()
-  const { getFavorites, addFavorite, removeFavorite } = useStorage()
   
   const [currentStep, setCurrentStep] = useState(1)
   const [filters, setFilters] = useState<FilterState>({
@@ -77,27 +72,14 @@ export function AbilitiesGuided() {
   const axes = getListOfAxes()
   const types = getListOfTypes()
 
+  const hasFilterApplied = !(filters.etapa === 'Todas' && filters.eixo === 'Todos' && filters.tipo === 'Todos')
+
   function handleFilter() {
     filterData({
       etapa: filters.etapa !== 'Todas' ? filters.etapa : undefined,
       eixo: filters.eixo !== 'Todos' ? filters.eixo : undefined,
       tipo: filters.tipo !== 'Todos' ? filters.tipo : undefined
     })
-  }
-
-  async function handleGoToDetails(code: string) {
-    await navigate(`/detalhes/${code}`)
-  }
-
-  function handleToggleFavorite(item: ItemDTO) {
-    const favorites = getFavorites()
-    const isFavorite = favorites.some(favorite => favorite === item.codigo)
-
-    if (isFavorite) {
-      removeFavorite(item.codigo);
-    } else {
-      addFavorite(item.codigo);
-    }
   }
 
   function handleNextStep() {
@@ -221,9 +203,12 @@ export function AbilitiesGuided() {
               {filters.tipo !== 'Todos' && (
                 <Badge variant='secondary'>Tipo: {filters.tipo.toLowerCase()}</Badge>
               )}
+              {!hasFilterApplied && (
+                <Badge variant='secondary'>Nenhum filtro aplicado</Badge>
+              )}
             </CardContent>
             <CardFooter className="justify-end">
-              <Button onClick={handleResetFilters}>Limpar filtros</Button>
+              <Button onClick={handleResetFilters}>{!hasFilterApplied ? 'Adicionar filtro' : 'Limpar filtros'}</Button>
             </CardFooter>
           </Card>
 
@@ -238,38 +223,7 @@ export function AbilitiesGuided() {
             </TableHeader>
 
             <TableBody>
-              {data.map((item) => {
-                const favorites = getFavorites()
-                const isFavorite = !!favorites.find(fav => fav === item.codigo)
-
-                return (
-                  <TableRow key={item.codigo}>
-                    <TableCell className="font-medium">{item.codigo}</TableCell>
-                    <TableCell>{item.etapa}</TableCell>
-                    <TableCell>{item.objetivo_ou_habilidade}</TableCell>
-                    <TableCell className="flex gap-2 items-center">
-                      <Button
-                        size='icon'
-                        variant='outline'
-                        className="cursor-pointer"
-                        data-fav={isFavorite}
-                        onClick={() => handleToggleFavorite(item)}
-                      >
-                        {!isFavorite ? <Heart /> : <HeartOff />}
-                      </Button>
-    
-                      <Button
-                        variant='outline'
-                        className="cursor-pointer"
-                        onClick={() => { void handleGoToDetails(item.codigo); }}
-                      >
-                        <span>Ver detalhes</span>
-                        <ChevronRight />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                )
-              })}
+              {data.map((item) => <ItemTableRow item={item} />)}
 
               {!data.length && (
                 <TableRow>
@@ -278,13 +232,6 @@ export function AbilitiesGuided() {
               )}
             </TableBody>
           </Table>
-
-          {/* <Pagination
-            onPageChange={() => {}}
-            pageIndex={0}
-            perPage={20}
-            totalCount={1000}
-          /> */}
         </div>
       )}
     </div>

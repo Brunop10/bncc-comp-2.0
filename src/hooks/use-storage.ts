@@ -18,9 +18,15 @@ export function useStorage() {
     localStorage.setItem(STORAGE_KEYS.FAVORITES, JSON.stringify(updatedFavorites));
   }
 
+  function findByCode(code: string) {
+    const favorites = getFavorites();
+    return !!favorites.find((favorite) => favorite === code)
+  }
+
   return {
     getFavorites,
     addFavorite,
     removeFavorite,
+    findByCode
   }
 }
