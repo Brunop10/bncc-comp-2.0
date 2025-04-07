@@ -1,5 +1,5 @@
 
-import { BookA, Brain, Home } from "lucide-react"
+import { BookA, BookOpen, Home } from "lucide-react"
 
 export const items = [
   {
@@ -11,7 +11,13 @@ export const items = [
   {
     title: "Habilidades",
     url: "/habilidades",
-    icon: Brain,
+    icon: BookOpen,
+    shown: true,
+  },
+  {
+    title: "Habilidades (Guiado)",
+    url: "/habilidades-guiado",
+    icon: BookOpen,
     shown: true,
   },
   {

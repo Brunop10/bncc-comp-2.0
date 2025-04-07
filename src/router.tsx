@@ -5,6 +5,7 @@ import AppLayout from './pages/_layout/app-layout'
 import { Home } from './pages/home'
 import { Abilities } from './pages/abilities'
 import { Details } from './pages/details'
+import { AbilitiesGuided } from './pages/abilities-guided'
 
 export const router = createBrowserRouter([
   {
@@ -18,6 +19,10 @@ export const router = createBrowserRouter([
       {
         path: '/habilidades',
         element: <Abilities />
+      },
+      {
+        path: '/habilidades-guiado',
+        element: <AbilitiesGuided />
       },
       {
         path: '/detalhes',

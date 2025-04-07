@@ -6,16 +6,19 @@ import bnccData from '@/assets/data.json'
 interface FilterData {
   codigo?: string
   etapa?: string
+  eixo?: string
+  tipo?: string
 }
 
 export function useData() {
   const [data, setData] = useState<ItemDTO[]>(bnccData as ItemDTO[])
 
-  function filterData({ codigo, etapa }: FilterData) {
+  function filterData({ codigo, etapa, eixo, tipo }: FilterData) {
     const filteredData = bnccData
       .filter((item) => codigo ? item.codigo.toLowerCase().includes(codigo.toLowerCase()) : true)
       .filter((item) => etapa ? item.etapa.toLowerCase().includes(etapa.toLowerCase()) : true)
-      
+      .filter((item) => eixo ? item.eixo.toLowerCase().includes(eixo.toLowerCase()) : true)
+      .filter((item) => tipo ? item.objetivo_ou_habilidade.toLowerCase().includes(tipo.toLowerCase()) : true)
 
     setData(filteredData)
   }
@@ -25,7 +28,15 @@ export function useData() {
   }
 
   function getListOfSteps() {
-    return Array.from(new Set(bnccData.map(item => item.etapa)))
+    return Array.from(new Set(['Todas', ...bnccData.map(item => item.etapa)]))
+  }
+
+  function getListOfAxes() {
+    return Array.from(new Set(['Todos', ...bnccData.map(item => item.eixo)]))
+  }
+
+  function getListOfTypes() {
+    return Array.from(new Set(['Todos', ...bnccData.map(item => item.objetivo_ou_habilidade)]))
   }
 
   function getItemByCode(code: string) {
@@ -38,6 +49,8 @@ export function useData() {
     filterData,
     resetData,
     getListOfSteps,
+    getListOfAxes,
+    getListOfTypes,
     getItemByCode,
   }
 }
