@@ -1,24 +1,43 @@
 import { Heading } from "@/components/heading";
+import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableCell, TableRow } from "@/components/ui/table";
 import { ItemDTO } from "@/dtos/item-dto";
 import { useData } from "@/hooks/use-data";
+import { useStorage } from "@/hooks/use-storage";
 import { COLLEGE_YEARS } from "@/utils/college-years";
-import { ChevronLeftCircle } from "lucide-react";
+import { ChevronLeftCircle, Heart, HeartOff } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 
 export function Details() {
   const { code } = useParams<{ code: string }>()
   const { getItemByCode } = useData()
+  const { findByCode, addFavorite, removeFavorite } = useStorage()
 
   const [data, setData] = useState<ItemDTO | null>(null)
+  const [isFavorited, setIsFavorited] = useState(false)
+  
+  function handleToggleFavorite() {
+    if(!code) return
+
+    if (!isFavorited) {
+      addFavorite(code)
+      setIsFavorited(true)
+    } else {
+      removeFavorite(code)
+      setIsFavorited(false)
+    }
+  }
 
   useEffect(() => {
     if(!code) return
     const item = getItemByCode(code)
     setData(item)
-  }, [code, getItemByCode])
+
+    const isFav = findByCode(code)
+    setIsFavorited(isFav)
+  }, [code])
  
   return (
     <div className="px-8 space-y-8">
@@ -29,7 +48,22 @@ export function Details() {
         </Link>
       </div>
 
-      <Heading title="Detalhes" />
+      <div className="flex justify-between gap-2">
+        <Heading title="Detalhes" />
+        <Button variant='secondary' onClick={handleToggleFavorite}>
+          {!isFavorited ? (
+            <>
+              <Heart />
+              Adicionar aos favoritos
+            </>
+          ) : (
+            <>
+              <HeartOff />
+              Remover dos favoritos
+            </>
+          )}
+        </Button>
+      </div>
 
       {data && (
         <div className="space-y-4">
