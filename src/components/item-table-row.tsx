@@ -28,7 +28,7 @@ export function ItemTableRow({ item }: ItemTableRowProps) {
   }
 
   function handleGoToDetails() {
-    navigate(item.codigo) as void
+    navigate(`/detalhes/${item.codigo}`) as void
   }
 
   useEffect(() => {
