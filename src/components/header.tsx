@@ -18,12 +18,13 @@ export function Header() {
 
       {!isHome && (
         <Button
-          size='icon'
+          size='sm'
           type="button"
           onClick={handleNavigateToHome}
-          className="p-2 rounded-md hover:bg-secondary-foreground/10"
+          className="p-2 rounded-md hover:bg-secondary-foreground/10 border border-muted"
         >
           <HomeIcon className="size-5" />
+          Início
         </Button>
       )}
     </div>
