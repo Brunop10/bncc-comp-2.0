@@ -7,6 +7,7 @@ import { Abilities } from './pages/abilities'
 import { Details } from './pages/details'
 import { AbilitiesGuided } from './pages/abilities-guided'
 import { Favorites } from './pages/favorites'
+import { About } from './pages/about'
 
 export const router = createBrowserRouter([
   {
@@ -36,6 +37,10 @@ export const router = createBrowserRouter([
       {
         path: '/detalhes/:code',
         element: <Details />
+      },
+      {
+        path: '/sobre',
+        element: <About />
       }
     ]
   }
