@@ -53,7 +53,7 @@ export function Details() {
           onClick={handleGoBack}
         >
           <ChevronLeftCircle className="size-4" />
-          Voltar para habilidades
+          Voltar para lista
         </Button>
       </div>
 

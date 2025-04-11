@@ -6,7 +6,7 @@ import { Home } from './pages/home'
 import { Abilities } from './pages/abilities'
 import { Details } from './pages/details'
 import { AbilitiesByYear } from './pages/abilities-by-year'
-import { Favorites } from './pages/favorites'
+import { MyPage } from './pages/my-page'
 import { About } from './pages/about'
 import { AbilitiesByAxes } from './pages/abilities-by-axes'
 
@@ -32,8 +32,8 @@ export const router = createBrowserRouter([
         element: <AbilitiesByAxes />
       },
       {
-        path: '/favoritos',
-        element: <Favorites />
+        path: '/minha-pagina',
+        element: <MyPage />
       },
       {
         path: '/detalhes',

@@ -13,7 +13,6 @@ interface AbilityCardProps {
 export function AbilityCard({ item }: AbilityCardProps) {
   const navigate = useNavigate()
 
-
   function handleNavigateToDetails() {
     navigate(`/detalhes/${item.codigo}`) as void
   }
@@ -28,7 +27,7 @@ export function AbilityCard({ item }: AbilityCardProps) {
           </div>
 
           <div className="gap-0.5 flex flex-col w-full items-start">
-            <CardTitle className="text-left">{item.etapa}</CardTitle>
+            <CardTitle className="text-left">{item.etapa.split('-')[0].trim()}</CardTitle>
             <CardDescription>{COLLEGE_YEARS[item.ano]}</CardDescription>
           </div>
         </CardHeader>
@@ -38,15 +37,26 @@ export function AbilityCard({ item }: AbilityCardProps) {
           <p className="text-xs text-left line-clamp-2">{item.descr_objetivo_ou_habilidade}</p>
         </CardContent>
 
-        <CardFooter>
+        <CardFooter className="gap-2">
           <Button
             size='sm'
-            className="w-full cursor-pointer"
+            type="button"
+            className="cursor-pointer flex-1"
             onClick={handleNavigateToDetails}
           >
             Ver detalhes
             <ChevronRight />
           </Button>
+
+          {/* <Button
+            size='icon'
+            variant='secondary'
+            className="cursor-pointer size-8"
+            type="button"
+            onClick={handleToggleFavorite}
+          >
+            <Bookmark />
+          </Button> */}
         </CardFooter>
       </Card>
     </button>

@@ -45,13 +45,15 @@ export function Home() {
 
       <CardButtonHorizontal
         icon={<BookmarkIcon className="size-6 text-primary" />}
-        title="Meus itens salvos"
-        description="Acesse o conteúdo rapidamente"
+        title="Minha página"
+        description="Acesse rapidamente seus itens salvos"
+        url="/minha-pagina"
       />
 
       <CardButtonHorizontal
         icon={<InfoIcon className="size-6 text-primary" />}
         title="Sobre"
+        url="/sobre"
       />
     </div>
   )
