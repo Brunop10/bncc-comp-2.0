@@ -1,5 +1,3 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-
 import { EraserIcon, SearchIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/heading";
@@ -9,7 +7,7 @@ import { useState } from "react";
 import { Combobox } from "@/components/combo-box";
 
 import { useData } from "@/hooks/use-data";
-import { ItemTableRow } from "@/components/item-table-row";
+import { AbilityCard } from "@/components/ability-card";
 
 export function Abilities() {
   const { data, getListOfSteps, filterData, resetData } = useData()
@@ -46,6 +44,7 @@ export function Abilities() {
             onChange={e => setCodSelected(e.target.value)}
             placeholder="Filtrar por código"
             className="w-full sm:w-[200px]"
+            disabled
           />
 
           <Combobox
@@ -54,43 +53,25 @@ export function Abilities() {
             onChange={setStepSelected}
             placeholder="Filtra por etapa"
             className="w-full sm:w-[140px] md:w-[200px]"
+            disabled
           />
         </div>
 
         <div className="grid grid-cols-2 sm:flex gap-2">
-          <Button variant='outline' onClick={handleFilter} className="w-full sm:w-fit">
+          <Button variant='outline' onClick={handleFilter} className="w-full sm:w-fit" disabled>
             <SearchIcon />
-            <span className="md:sr-only lg:not-sr-only">Filtrar</span>
+            {/* <span className="md:sr-only lg:not-sr-only">Filtrar</span> */}
           </Button>
 
-          <Button variant='outline' onClick={handleResetFilters} className="w-full sm:w-fit">
+          <Button variant='outline' onClick={handleResetFilters} className="w-full sm:w-fit" disabled>
             <EraserIcon />
-            <span className="md:sr-only lg:not-sr-only">Limpar filtros</span>
+            {/* <span className="md:sr-only lg:not-sr-only">Limpar filtros</span> */}
           </Button>
         </div>
       </div>
 
       <div className="flex flex-col gap-4">
-        <Table className="px-4">
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[100px]">Código</TableHead>
-              <TableHead className="w-[280px]">Etapa</TableHead>
-              <TableHead className="w-full" >Objetivo/Habilidade</TableHead>
-              <TableHead className="w-10">Detalhes</TableHead>
-            </TableRow>
-          </TableHeader>
-
-          <TableBody>
-            {data.map((item) => <ItemTableRow key={item.codigo} item={item} />)}
-          </TableBody>
-        </Table>
-
-        {!data.length && (
-          <TableRow>
-            <TableCell colSpan={4}>Nenhum item encontrado.</TableCell>
-          </TableRow>
-        )}
+        {data.map(item => <AbilityCard key={item.codigo} item={item} />)}
       </div>
     </div>
   )

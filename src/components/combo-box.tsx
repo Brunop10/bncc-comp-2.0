@@ -30,6 +30,7 @@ interface ComboboxProps {
   onChange: (value: string) => void
   items: Item[]
   className?: string
+  disabled?: boolean
 }
 
 export function Combobox({
@@ -38,7 +39,8 @@ export function Combobox({
   onChange,
   placeholder,
   searchLabel,
-  className
+  className,
+  disabled = false
 }: ComboboxProps) {
   const [open, setOpen] = useState(false)
 
@@ -53,6 +55,7 @@ export function Combobox({
             "w-[180px] justify-between",
             className
           )}
+          disabled={disabled}
         >
           <span className="truncate">
             {value

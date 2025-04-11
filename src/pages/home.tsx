@@ -39,7 +39,7 @@ export function Home() {
         <CardButton
           icon={<LayersIcon className="size-6 text-primary" />}
           title="Explore por eixo"
-          url="/guia/eixow"
+          url="/guia/eixo"
         />
       </div>
 

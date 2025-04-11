@@ -9,7 +9,7 @@ export function Heading({ title, className, ...props }: HeadingProps) {
   return (
     <h2
       className={twMerge(
-        "text-3xl font-bold tracking-tight text-foreground",
+        "text-lg font-bold tracking-tight text-foreground",
         className
       )}
       {...props}

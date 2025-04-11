@@ -1,4 +1,3 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/heading";
@@ -7,8 +6,8 @@ import { useEffect, useState } from "react";
 
 import { useData } from "@/hooks/use-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ItemTableRow } from "@/components/item-table-row";
 import { COLLEGE_YEARS } from "@/utils/college-years";
+import { AbilityCard } from "@/components/ability-card";
 
 export function AbilitiesByYear() {
   const { data, filterData } = useData()
@@ -92,26 +91,13 @@ export function AbilitiesByYear() {
             <Button onClick={handleReset} variant='outline'>Alterar filtro</Button>
           </div>
 
-          <Table className="px-4">
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[100px]">Código</TableHead>
-                <TableHead className="w-[280px]">Etapa</TableHead>
-                <TableHead className="w-full" >Objetivo/Habilidade</TableHead>
-                <TableHead className="w-10">Detalhes</TableHead>
-              </TableRow>
-            </TableHeader>
+          {data.map(item => <AbilityCard key={item.codigo} item={item} />)}
 
-            <TableBody>
-              {data.map((item) => <ItemTableRow item={item} />)}
-
-              {!data.length && (
-                <TableRow>
-                  <TableCell colSpan={4}>Nenhum item encontrado.</TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+          {!data.length && (
+            <span className="text-muted-foreground">
+              Nenhum item encontrado.
+            </span>
+          )}
         </div>
       )}
     </div>
