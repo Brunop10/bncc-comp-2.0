@@ -1,17 +1,32 @@
-import { Separator } from "@/components/ui/separator"
-import { SidebarTrigger } from "@/components/ui/sidebar"
+import { HomeIcon } from "lucide-react";
+import { useLocation, useNavigate } from "react-router";
+import { Button } from "./ui/button";
 
 export function Header() {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const isHome = location.pathname === '/'
+
+  function handleNavigateToHome() {
+    navigate('/') as void
+  }
+
   return (
-    <header className="group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 flex h-12 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear">
-      <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
-        <SidebarTrigger className="-ml-1" />
-        <Separator
-          orientation="vertical"
-          className="mx-2 data-[orientation=vertical]:h-4"
-        />
-        <h1 className="text-base font-medium">BNCC COMPUTAÇÃO</h1>
-      </div>
-    </header>
+    <header className="sticky top-0 z-10 bg-primary text-white p-4 shadow-md h-20">
+    <div className="flex justify-between items-center">
+      <h1 className="text-xl font-bold">BNCC Computação</h1>
+
+      {!isHome && (
+        <Button
+          size='icon'
+          type="button"
+          onClick={handleNavigateToHome}
+          className="p-2 rounded-md hover:bg-secondary-foreground/10"
+        >
+          <HomeIcon className="size-5" />
+        </Button>
+      )}
+    </div>
+  </header>
   )
 }

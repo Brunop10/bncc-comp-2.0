@@ -1,6 +1,6 @@
 import { createBrowserRouter, Navigate } from 'react-router'
 
-import AppLayout from './pages/_layout/app-layout'
+import AppLayout from './layouts/app-layout'
 
 import { Home } from './pages/home'
 import { Abilities } from './pages/abilities'
