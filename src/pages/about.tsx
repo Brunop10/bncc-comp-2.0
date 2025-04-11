@@ -33,7 +33,7 @@ export function About() {
           <Card>
             <CardContent className="flex flex-row gap-4 w-fit">
               <div className="flex items-center justify-center bg-primary-foreground size-10 rounded-full">
-                <CodeIcon className="size-6 text-primary" />
+                <CodeIcon className="size-5 text-primary" />
               </div>
 
               <div className="flex-1">
@@ -46,7 +46,7 @@ export function About() {
           <Card>
             <CardContent className="flex flex-row gap-4 w-fit">
               <div className="flex items-center justify-center bg-primary-foreground size-10 rounded-full">
-                <MonitorIcon className="size-6 text-primary" />
+                <MonitorIcon className="size-5 text-primary" />
               </div>
 
               <div className="flex-1">
@@ -59,7 +59,7 @@ export function About() {
           <Card>
             <CardContent className="flex flex-row gap-4 w-fit">
               <div className="flex items-center justify-center bg-primary-foreground size-10 rounded-full">
-                <BookOpenIcon className="size-6 text-primary" />
+                <BookOpenIcon className="size-5 text-primary" />
               </div>
 
               <div className="flex-1">
@@ -71,7 +71,7 @@ export function About() {
         </div>
       </div>
 
-      <div className="bg-muted p-4 flex items-center justify-center text-muted-foreground rounded-xl">
+      <div className="bg-muted px-4 py-3 flex items-center text-sm justify-center text-muted-foreground rounded-xl">
         Versão 0.0.1 - 2025 &copy; BNCC Computação
       </div>
     </div>

@@ -18,7 +18,7 @@ export function AbilityCard({ item }: AbilityCardProps) {
   }
 
   return (
-    <button>
+    <button className="w-full">
       <Card className="flex flex-col gap-4">
         <CardHeader className="gap-4">
           <div className="flex justify-between gap-2">
