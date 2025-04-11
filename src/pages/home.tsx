@@ -2,7 +2,7 @@ import { CardButton } from "@/components/card-button";
 import { CardButtonHorizontal } from "@/components/card-button-horizontal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { BookmarkIcon, FileSpreadsheetIcon, InfoIcon, SearchIcon, Share2Icon } from "lucide-react";
+import { BookmarkIcon, FileSpreadsheetIcon, InfoIcon, LayersIcon, SearchIcon } from "lucide-react";
 
 export function Home() {
   return (
@@ -26,12 +26,12 @@ export function Home() {
         <CardButton
           icon={<FileSpreadsheetIcon className="size-6 text-primary" />}
           title="Explore por ano"
-          url="/habilidades"
+          url="/guia/ano"
         />
         <CardButton
-          icon={<Share2Icon className="size-6 text-primary" />}
+          icon={<LayersIcon className="size-6 text-primary" />}
           title="Explore por eixo"
-          url="/habilidades"
+          url="/guia/eixow"
         />
       </div>
 

@@ -5,9 +5,10 @@ import AppLayout from './layouts/app-layout'
 import { Home } from './pages/home'
 import { Abilities } from './pages/abilities'
 import { Details } from './pages/details'
-import { AbilitiesGuided } from './pages/abilities-guided'
+import { AbilitiesByYear } from './pages/abilities-by-year'
 import { Favorites } from './pages/favorites'
 import { About } from './pages/about'
+import { AbilitiesByAxes } from './pages/abilities-by-axes'
 
 export const router = createBrowserRouter([
   {
@@ -23,8 +24,12 @@ export const router = createBrowserRouter([
         element: <Abilities />
       },
       {
-        path: '/habilidades-guiado',
-        element: <AbilitiesGuided />
+        path: '/guia/ano',
+        element: <AbilitiesByYear />
+      },
+      {
+        path: '/guia/eixo',
+        element: <AbilitiesByAxes />
       },
       {
         path: '/favoritos',
