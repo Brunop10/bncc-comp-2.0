@@ -33,7 +33,7 @@ export function Abilities() {
   }
 
   return (
-    <div className="px-8 space-y-8">
+    <div className="space-y-8">
       <div className="space-y-1">
         <Heading title="Objetivos e Habilidades" />
         <Description value="Utilize a tabela abaixo para buscar informações relacionadas à BNCC na área de Computação. Filtre os dados por código ou etapa para encontrar os objetivos e habilidades desejados." />

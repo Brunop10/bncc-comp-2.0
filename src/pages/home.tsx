@@ -3,8 +3,15 @@ import { CardButtonHorizontal } from "@/components/card-button-horizontal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BookmarkIcon, FileSpreadsheetIcon, InfoIcon, LayersIcon, SearchIcon } from "lucide-react";
+import { useNavigate } from "react-router";
 
 export function Home() {
+  const navigate = useNavigate()
+
+  function handleNavigate() {
+    navigate('/habilidades') as void
+  }
+
   return (
     <div className="space-y-6 w-full">
       <div className="flex relative">
@@ -17,6 +24,7 @@ export function Home() {
           size='sm'
           variant='default'
           className="absolute right-1 top-1/2 -translate-y-1/2 cursor-pointer"
+          onClick={handleNavigate}
         >
           Buscar
         </Button>
