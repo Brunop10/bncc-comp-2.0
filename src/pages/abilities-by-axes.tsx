@@ -7,9 +7,10 @@ import { useState } from "react";
 import { useData } from "@/hooks/use-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AbilityCard } from "@/components/ability-card";
+import { AbilityCardSkeleton } from "@/components/ability-card-skeleton";
 
 export function AbilitiesByAxes() {
-  const { data, getListOfAxes, filterData, } = useData()
+  const { bnccItems, isLoading, getListOfAxes, filterData, } = useData()
 
   const [currentStep, setCurrentStep] = useState<number>(1)
   const [axesFilter, setAxesFilter] = useState<string>('')
@@ -36,8 +37,8 @@ export function AbilitiesByAxes() {
                 className="flex-1 uppercase cursor-pointer"
                 onClick={() => {
                   setAxesFilter(option)
+                  handleFilter(option)
                   setCurrentStep(prev => prev + 1)
-                  handleFilter()
                 }}
               >
                 {option}
@@ -51,9 +52,9 @@ export function AbilitiesByAxes() {
 
   const axes = getListOfAxes()
 
-  function handleFilter() {
+  function handleFilter(filter?: string) {
     filterData({
-      eixo: axesFilter,
+      eixo: filter ?? axesFilter,
     })
   }
 
@@ -88,12 +89,14 @@ export function AbilitiesByAxes() {
             <Button onClick={handleReset} variant='outline'>Alterar filtro</Button>
           </div>
 
-          {data.map(item => <AbilityCard key={item.codigo} item={item} />)}
-
-          {!data.length && (
-            <span className="text-muted-foreground">
-              Nenhum item encontrado.
-            </span>
+          {bnccItems.map(item => <AbilityCard key={item.codigo} item={item} />)}
+          {isLoading && Array.from({ length: 3 }).map((_, idx) => (
+            <AbilityCardSkeleton key={idx} />
+          ))}
+          {!isLoading && !bnccItems.length && (
+            <div className="flex justify-center px-4 py-2 bg-muted border rounded-md">
+              <span className="text-muted-foreground text-sm">Nenhuma habilidade disponível</span>
+            </div> 
           )}
         </div>
       )}

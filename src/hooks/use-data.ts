@@ -1,7 +1,6 @@
 import { ItemDTO } from '@/dtos/item-dto'
-import { useState } from 'react'
-
-import bnccData from '@/assets/data.json'
+import { useEffect, useState } from 'react'
+import { useData as UseDataContext } from '@/contexts/data-context'
 
 interface FilterData {
   codigo?: string
@@ -12,48 +11,53 @@ interface FilterData {
 }
 
 export function useData() {
-  const [data, setData] = useState<ItemDTO[]>(bnccData as ItemDTO[])
+  const { items, isLoading } = UseDataContext()
+
+  const [bnccItems, setBnccItems] = useState<ItemDTO[]>([])
 
   function filterData({ codigo, etapa, eixo, tipo, ano }: FilterData) {
-    console.log('Filtered Data:', ano)
-    const filteredData = bnccData
+    const filteredData = items
       .filter((item) => codigo ? item.codigo.toLowerCase().includes(codigo.toLowerCase()) : true)
       .filter((item) => etapa ? item.etapa.toLowerCase().includes(etapa.toLowerCase()) : true)
-      .filter((item) => eixo ? item.eixo.toLowerCase().includes(eixo.toLowerCase()) : true)
+      .filter((item) => eixo ? item.eixo.includes(eixo) : true)
       .filter((item) => tipo ? item.objetivo_ou_habilidade.toLowerCase().includes(tipo.toLowerCase()) : true)
       .filter((item) => ano ? item.ano === ano : true)
 
-    setData(filteredData)
+      setBnccItems(filteredData)
   }
 
   function resetData() {
-    setData(bnccData)
+    setBnccItems(items)
   }
 
   function getListOfSteps() {
-    return Array.from(new Set(bnccData.map(item => item.etapa)))
+    return Array.from(new Set(items.map(item => item.etapa)))
   }
 
   function getListOfAxes() {
-    return Array.from(new Set(bnccData.map(item => item.eixo)))
+    return Array.from(new Set(items.map(item => item.eixo)))
   }
 
   function getListOfTypes() {
-    return Array.from(new Set(bnccData.map(item => item.objetivo_ou_habilidade)))
+    return Array.from(new Set(items.map(item => item.objetivo_ou_habilidade)))
   }
 
   function getItemByCode(code: string) {
-    const item = bnccData.find(item => item.codigo.toLowerCase() === code.toLowerCase()) ?? null
-    return item
+    return items.find(item => item.codigo.toLowerCase() === code.toLowerCase()) ?? null
   }
 
+  useEffect(() => {
+    setBnccItems(items)
+  }, [items])
+
   return {
-    data,
+    bnccItems,
     filterData,
     resetData,
     getListOfSteps,
     getListOfAxes,
     getListOfTypes,
     getItemByCode,
+    isLoading,
   }
 }

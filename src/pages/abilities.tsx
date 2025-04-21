@@ -8,9 +8,10 @@ import { Combobox } from "@/components/combo-box";
 
 import { useData } from "@/hooks/use-data";
 import { AbilityCard } from "@/components/ability-card";
+import { AbilityCardSkeleton } from "@/components/ability-card-skeleton";
 
 export function Abilities() {
-  const { data, getListOfSteps, filterData, resetData } = useData()
+  const { bnccItems, isLoading, getListOfSteps, filterData, resetData } = useData()
 
   const [codSelected, setCodSelected] = useState("")
   const [stepSelected, setStepSelected] = useState("")
@@ -71,7 +72,15 @@ export function Abilities() {
       </div>
 
       <div className="flex flex-col gap-4">
-        {data.map(item => <AbilityCard key={item.codigo} item={item} />)}
+        {bnccItems.map(item => <AbilityCard key={item.codigo} item={item} />)}
+        {isLoading && Array.from({ length: 3 }).map((_, idx) => (
+          <AbilityCardSkeleton key={idx} />
+        ))}
+        {!isLoading && !bnccItems.length && (
+          <div className="flex justify-center px-4 py-2 bg-muted border rounded-md">
+            <span className="text-muted-foreground text-sm">Nenhuma habilidade disponível</span>
+          </div> 
+        )}
       </div>
     </div>
   )

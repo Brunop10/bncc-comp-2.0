@@ -8,9 +8,10 @@ import { useData } from "@/hooks/use-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { COLLEGE_YEARS } from "@/utils/college-years";
 import { AbilityCard } from "@/components/ability-card";
+import { AbilityCardSkeleton } from "@/components/ability-card-skeleton";
 
 export function AbilitiesByYear() {
-  const { data, filterData } = useData()
+  const { bnccItems, isLoading, filterData } = useData()
 
   const [currentStep, setCurrentStep] = useState<number>(1)
   const [yearFilter, setYearFilter] = useState<string>('')
@@ -91,12 +92,14 @@ export function AbilitiesByYear() {
             <Button onClick={handleReset} variant='outline'>Alterar filtro</Button>
           </div>
 
-          {data.map(item => <AbilityCard key={item.codigo} item={item} />)}
-
-          {!data.length && (
-            <span className="text-muted-foreground">
-              Nenhum item encontrado.
-            </span>
+          {bnccItems.map(item => <AbilityCard key={item.codigo} item={item} />)}
+          {isLoading && Array.from({ length: 3 }).map((_, idx) => (
+            <AbilityCardSkeleton key={idx} />
+          ))}
+          {!isLoading && !bnccItems.length && (
+            <div className="flex justify-center px-4 py-2 bg-muted border rounded-md">
+              <span className="text-muted-foreground text-sm">Nenhuma habilidade disponível</span>
+            </div> 
           )}
         </div>
       )}
