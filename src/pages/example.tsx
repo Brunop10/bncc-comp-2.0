@@ -74,23 +74,31 @@ export function Example() {
                 {!!example.tags.length && example.tags.split(',').map(tag => (
                   <Badge key={tag} variant='outline'>{tag.trim()}</Badge>
                 ))}
+
+                {!example.tags.length && (
+                  <span className="text-xs text-muted-foreground">
+                    Nenhuma tag vinculada
+                  </span>
+                )}
               </div>
             </div>
 
             <Separator orientation="horizontal" />
 
-            <div className="flex flex-col gap-2">
-              <h2 className="font-semibold">Link de Referência</h2>
-              <Link
-                to={example.link ?? '#'}
-                referrerPolicy="no-referrer"
-                target="_blank"
-                className="flex gap-2 items-center text-blue-600 hover:underline hover:underline-offset-2"
-              >
-                <ExternalLink className="size-4" />
-                Acessar recurso externo
-              </Link>
-            </div>
+            {example.link && (
+              <div className="flex flex-col gap-2">
+                <h2 className="font-semibold">Link de Referência</h2>
+                <Link
+                  to={example.link ?? '#'}
+                  referrerPolicy="no-referrer"
+                  target="_blank"
+                  className="flex gap-2 items-center text-blue-600 hover:underline hover:underline-offset-2"
+                >
+                  <ExternalLink className="size-4" />
+                  Acessar recurso externo
+                </Link>
+              </div>
+            )}
 
             <div className="flex flex-col gap-2">
               <h2 className="font-semibold">Fonte</h2>
