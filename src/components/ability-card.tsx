@@ -14,7 +14,7 @@ export function AbilityCard({ ability }: AbilityCardProps) {
   const navigate = useNavigate()
 
   function handleNavigateToDetails() {
-    navigate(`/detalhes/${ability.codigo}`) as void
+    void navigate(`/detalhes/${ability.codigo}`)
   }
 
   return (
@@ -27,14 +27,23 @@ export function AbilityCard({ ability }: AbilityCardProps) {
           </div>
 
           <div className="gap-0.5 flex flex-col w-full items-start">
-            <CardTitle className="text-left">{ability.etapa.split('-')[0].trim()}</CardTitle>
-            <CardDescription>{COLLEGE_YEARS[ability.ano]}</CardDescription>
+            <CardDescription className="text-xs">
+              {ability.etapa.split('-')[0].trim()}
+            </CardDescription>
+
+            <CardTitle className="text-left uppercase text-base leading-none">
+              {COLLEGE_YEARS[ability.ano]}
+            </CardTitle>
           </div>
         </CardHeader>
 
         <CardContent className="gap-1 flex flex-col w-full items-start">
-          <strong className="font-semibold text-xs text-primary">{ability.eixo}</strong>
-          <p className="text-xs text-left line-clamp-2">{ability.descr_objetivo_ou_habilidade}</p>
+          <strong className="font-semibold text-md text-primary">
+            {ability.eixo}
+          </strong>
+          <p className="text-xs text-left line-clamp-2">
+            {ability.descr_objetivo_ou_habilidade}
+          </p>
         </CardContent>
 
         <CardFooter className="gap-2">
@@ -47,16 +56,6 @@ export function AbilityCard({ ability }: AbilityCardProps) {
             Ver detalhes
             <ChevronRight />
           </Button>
-
-          {/* <Button
-            size='icon'
-            variant='secondary'
-            className="cursor-pointer size-8"
-            type="button"
-            onClick={handleToggleFavorite}
-          >
-            <Bookmark />
-          </Button> */}
         </CardFooter>
       </Card>
     </button>
