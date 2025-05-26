@@ -72,7 +72,7 @@ export function Details() {
             <Card className="@container/card w-full gap-2">
               <CardHeader className="flex flex-wrap gap-1 justify-between">
                 <Badge>{String(ability.ano).split('').map(item => `${item}º`).join(' ao ')} ano</Badge>
-                <Button size='sm' variant='outline' onClick={handleToggleFavorite} className="w-26">
+                <Button size='sm' variant='outline' onClick={handleToggleFavorite} className="w-28">
                   {!isFavorited ? (
                     <>
                       <BookmarkIcon />
@@ -114,46 +114,45 @@ export function Details() {
                       {ability.eixo}
                     </TableCell>
                   </TableRow>
-
-                  <TableRow>
-                    <TableCell>
-                      Tipo
-                    </TableCell>
-                    <TableCell className="uppercase">
-                      {ability.objetivo_ou_habilidade}
-                    </TableCell>
-                  </TableRow>
                 </Table>
               </CardFooter>
             </Card>
           </div>
 
-          <DetailsCollapsibleItem label="Descrição">
+          <DetailsCollapsibleItem label={ability.objetivo_ou_habilidade}>
             {ability.descr_objetivo_ou_habilidade}
           </DetailsCollapsibleItem>
 
-          <DetailsCollapsibleItem label="Definição">
-            {ability.explicacao}
-          </DetailsCollapsibleItem>
-          
-          <DetailsCollapsibleItem label="Habilidade superior">
-            {ability.habilidade_superior}
-          </DetailsCollapsibleItem>
+          {ability.explicacao && (
+            <DetailsCollapsibleItem label="Definição">
+              {ability.explicacao}
+            </DetailsCollapsibleItem>
+          )}
 
-          <DetailsCollapsibleItem label="Exemplos">
-            <div className="flex flex-col gap-2">
-              {ability.exemplos.map(exemplo => (
-                <Link
-                  to={`/detalhes/${code}/exemplos/${exemplo.codigo_exemplo}`}
-                >
-                  <Button variant='outline' className="w-full justify-start">
-                    <ExternalLinkIcon />
-                    {exemplo.titulo || exemplo.descricao.substring(0, 50)}
-                  </Button>
-                </Link>
-              ))}
-            </div>
-          </DetailsCollapsibleItem>
+          {ability.habilidade_superior && (
+            <DetailsCollapsibleItem label="Habilidade superior">
+              {ability.habilidade_superior}
+            </DetailsCollapsibleItem>
+          )}
+          
+          {ability.exemplos.length > 0 && (
+            <DetailsCollapsibleItem label="Exemplos">
+              <div className="flex flex-col gap-2">
+                {ability.exemplos.map(exemplo => (
+                  <Link
+                    to={`/detalhes/${code}/exemplos/${exemplo.codigo_exemplo}`}
+                  >
+                    <Button variant='outline' className="w-full justify-start">
+                      <ExternalLinkIcon />
+                      <span className="truncate">
+                        {exemplo.titulo || exemplo.descricao}
+                      </span>
+                    </Button>
+                  </Link>
+                ))}
+              </div>
+            </DetailsCollapsibleItem>
+          )}
         </div>
       )}
     </div>
