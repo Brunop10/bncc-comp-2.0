@@ -1,8 +1,7 @@
 import { z } from 'zod'
 
 const envSchema = z.object({
-  VITE_GOOGLE_API_KEY: z.string(),
-  VITE_GOOGLE_SHEET_ID: z.string(),
+  VITE_API_APP_SHEET_URL: z.string().url(),
 })
 
 const _env = envSchema.safeParse(import.meta.env)
