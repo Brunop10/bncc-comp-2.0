@@ -66,12 +66,22 @@ export function Abilities() {
         </div>
 
         <div className="grid grid-cols-2 sm:flex gap-2">
-          <Button variant='outline' onClick={handleFilter} className="w-full sm:w-fit" disabled>
+          <Button
+            variant='outline'
+            onClick={handleFilter}
+            className="w-full sm:w-fit"
+            disabled
+          >
             <SearchIcon />
             {/* <span className="md:sr-only lg:not-sr-only">Filtrar</span> */}
           </Button>
 
-          <Button variant='outline' onClick={handleResetFilters} className="w-full sm:w-fit" disabled>
+          <Button
+            variant='outline'
+            onClick={handleResetFilters}
+            className="w-full sm:w-fit"
+            disabled
+          >
             <EraserIcon />
             {/* <span className="md:sr-only lg:not-sr-only">Limpar filtros</span> */}
           </Button>
@@ -79,13 +89,19 @@ export function Abilities() {
       </div>
 
       <div className="flex flex-col gap-4">
-        {abilities.map(ability => <AbilityCard key={ability.codigo} ability={ability} />)}
+        {abilities.map(ability => (
+          <AbilityCard key={ability.codigo} ability={ability} />
+        ))}
+
         {isLoading && Array.from({ length: 3 }).map((_, idx) => (
           <AbilityCardSkeleton key={idx} />
         ))}
+
         {!isLoading && !abilities.length && (
           <div className="flex justify-center px-4 py-2 bg-muted border rounded-md">
-            <span className="text-muted-foreground text-sm">Nenhuma habilidade disponível</span>
+            <span className="text-muted-foreground text-sm">
+              Nenhuma habilidade disponível
+            </span>
           </div> 
         )}
       </div>
