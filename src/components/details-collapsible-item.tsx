@@ -1,15 +1,15 @@
 import { ChevronRight } from "lucide-react";
 import { Heading } from "./heading";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
+import type { PropsWithChildren } from "react";
 
-interface DetailsCollapsibleItemProps {
+interface DetailsCollapsibleItemProps extends PropsWithChildren {
   label: string
-  description: string
 }
 
 export function DetailsCollapsibleItem({
   label,
-  description
+  children
 }: DetailsCollapsibleItemProps) {
   return (
     <Collapsible className="group flex flex-col gap-2 w-full">
@@ -18,13 +18,13 @@ export function DetailsCollapsibleItem({
         <ChevronRight className="transition-transform group-data-[state=open]:rotate-90 size-4" />
       </CollapsibleTrigger>
 
-      {description.trim().length > 0 && (
-        <CollapsibleContent className="text-foreground px-4">
-          {description}
+      {children && (
+         <CollapsibleContent className="text-foreground px-4">
+          {children}
         </CollapsibleContent>
       )}
 
-      {description.trim().length === 0 && (
+      {!children && (
         <CollapsibleContent className="text-muted-foreground px-4">
           Nenhum conteúdo disponível.
         </CollapsibleContent>

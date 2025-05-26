@@ -1,23 +1,28 @@
+import { getAbilities } from "@/api/get-abilities";
 import { DetailsCollapsibleItem } from "@/components/details-collapsible-item";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardFooter, CardHeader } from "@/components/ui/card";
 import { Table, TableCell, TableRow } from "@/components/ui/table";
-import { ItemDTO } from "@/dtos/item-dto";
-import { useData } from "@/hooks/use-data";
 import { useStorage } from "@/hooks/use-storage";
-import { BookmarkIcon, ChevronLeftCircle } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { BookmarkIcon, ChevronLeftCircle, ExternalLinkIcon, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 
 export function Details() {
   const navigate = useNavigate()
   const { code } = useParams<{ code: string }>()
-  const { getItemByCode } = useData()
   const { findByCode, addFavorite, removeFavorite } = useStorage()
 
-  const [data, setData] = useState<ItemDTO | null>(null)
   const [isFavorited, setIsFavorited] = useState(false)
+
+  const { data, isLoading } = useQuery({
+    queryKey: ['abilities', code],
+    queryFn: () => getAbilities({ code })
+  })
+
+  const ability = data?.abilities[0] ?? null
   
   function handleToggleFavorite() {
     if(!code) return
@@ -36,13 +41,11 @@ export function Details() {
   }
 
   useEffect(() => {
-    if(!code) return
-    const item = getItemByCode(code)
-    setData(item)
-
-    const isFav = findByCode(code)
-    setIsFavorited(isFav)
-  }, [code])
+    if (code) {
+      const isFav = findByCode(code)
+      setIsFavorited(isFav)
+    }
+  }, [code, findByCode])
  
   return (
     <div className="space-y-4">
@@ -57,12 +60,18 @@ export function Details() {
         </Button>
       </div>
 
-      {data && (
+      {isLoading && (
+        <div className="flex justify-center w-full">
+          <Loader2 className="size-4 animate-spin" />
+        </div>
+      )}
+
+      {ability && (
         <div className="space-y-4">
           <div className="flex gap-2 w-full flex-col sm:flex-row">
             <Card className="@container/card w-full gap-2">
               <CardHeader className="flex flex-wrap gap-1 justify-between">
-                <Badge>{data.ano.split('').map(item => `${item}º`).join(' ao ')} ano</Badge>
+                <Badge>{String(ability.ano).split('').map(item => `${item}º`).join(' ao ')} ano</Badge>
                 <Button size='sm' variant='outline' onClick={handleToggleFavorite} className="w-26">
                   {!isFavorited ? (
                     <>
@@ -84,7 +93,7 @@ export function Details() {
                       Código
                     </TableCell>
                     <TableCell>
-                      {data.codigo}
+                      {ability.codigo}
                     </TableCell>
                   </TableRow>
 
@@ -93,7 +102,7 @@ export function Details() {
                       Etapa
                     </TableCell>
                     <TableCell>
-                      {data.etapa}
+                      {ability.etapa}
                     </TableCell>
                   </TableRow>
 
@@ -102,7 +111,7 @@ export function Details() {
                       Eixo
                     </TableCell>
                     <TableCell>
-                      {data.eixo}
+                      {ability.eixo}
                     </TableCell>
                   </TableRow>
 
@@ -111,7 +120,7 @@ export function Details() {
                       Tipo
                     </TableCell>
                     <TableCell className="uppercase">
-                      {data.objetivo_ou_habilidade}
+                      {ability.objetivo_ou_habilidade}
                     </TableCell>
                   </TableRow>
                 </Table>
@@ -119,25 +128,32 @@ export function Details() {
             </Card>
           </div>
 
-          <DetailsCollapsibleItem
-            label="Descrição"
-            description={data.descr_objetivo_ou_habilidade}
-          />
+          <DetailsCollapsibleItem label="Descrição">
+            {ability.descr_objetivo_ou_habilidade}
+          </DetailsCollapsibleItem>
 
-          <DetailsCollapsibleItem
-            label="Definição"
-            description={data.explicacao}
-          />
+          <DetailsCollapsibleItem label="Definição">
+            {ability.explicacao}
+          </DetailsCollapsibleItem>
           
-          <DetailsCollapsibleItem
-            label="Habilidade superior"
-            description={data.habilidade_superior}
-          />
+          <DetailsCollapsibleItem label="Habilidade superior">
+            {ability.habilidade_superior}
+          </DetailsCollapsibleItem>
 
-          <DetailsCollapsibleItem
-            label="Exemplos"
-            description={data.exemplos}
-          />
+          <DetailsCollapsibleItem label="Exemplos">
+            <div className="flex flex-col gap-2">
+              {ability.exemplos.map(exemplo => (
+                <Link
+                  to={`/detalhes/${code}/exemplos/${exemplo.codigo_exemplo}`}
+                >
+                  <Button variant='outline' className="w-full justify-start">
+                    <ExternalLinkIcon />
+                    {exemplo.titulo || exemplo.descricao.substring(0, 50)}
+                  </Button>
+                </Link>
+              ))}
+            </div>
+          </DetailsCollapsibleItem>
         </div>
       )}
     </div>

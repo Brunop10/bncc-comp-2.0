@@ -1,16 +1,16 @@
 import { ChevronRight, Heart, HeartOff } from "lucide-react";
 import { Button } from "./ui/button";
 import { TableCell, TableRow } from "./ui/table";
-import { ItemDTO } from "@/dtos/item-dto";
+import { AbilityDTO } from "@/dtos/ability-dto";
 import { useNavigate } from "react-router";
 import { useStorage } from "@/hooks/use-storage";
 import { useEffect, useState } from "react";
 
 interface ItemTableRowProps {
-  item: ItemDTO
+  ability: AbilityDTO
 }
 
-export function ItemTableRow({ item }: ItemTableRowProps) {
+export function ItemTableRow({ ability }: ItemTableRowProps) {
   const navigate = useNavigate()
 
   const { findByCode, addFavorite, removeFavorite } = useStorage()
@@ -19,28 +19,28 @@ export function ItemTableRow({ item }: ItemTableRowProps) {
 
   function handleToggleFavorite() {
     if (!isFavorited) {
-      addFavorite(item.codigo)
+      addFavorite(ability.codigo)
       setIsFavorited(true)
     } else {
-      removeFavorite(item.codigo)
+      removeFavorite(ability.codigo)
       setIsFavorited(false)
     }
   }
 
   function handleGoToDetails() {
-    navigate(`/detalhes/${item.codigo}`) as void
+    navigate(`/detalhes/${ability.codigo}`) as void
   }
 
   useEffect(() => {
-    const isFav = findByCode(item.codigo)
+    const isFav = findByCode(ability.codigo)
     setIsFavorited(isFav)
   }, [])
 
   return (
-    <TableRow key={item.codigo}>
-      <TableCell className="font-medium">{item.codigo}</TableCell>
-      <TableCell>{item.etapa}</TableCell>
-      <TableCell>{item.objetivo_ou_habilidade}</TableCell>
+    <TableRow key={ability.codigo}>
+      <TableCell className="font-medium">{ability.codigo}</TableCell>
+      <TableCell>{ability.etapa}</TableCell>
+      <TableCell>{ability.objetivo_ou_habilidade}</TableCell>
       <TableCell className="flex gap-2 items-center">
         <Button
           size='icon'

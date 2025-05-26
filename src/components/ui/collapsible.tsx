@@ -18,13 +18,22 @@ function CollapsibleTrigger({
 }
 
 function CollapsibleContent({
+  dangerouslySetInnerHTML,
+  children,
   ...props
 }: React.ComponentProps<typeof CollapsiblePrimitive.CollapsibleContent>) {
+  console.log(dangerouslySetInnerHTML)
+
   return (
     <CollapsiblePrimitive.CollapsibleContent
       data-slot="collapsible-content"
       {...props}
-    />
+    >
+      {dangerouslySetInnerHTML && (
+        <div dangerouslySetInnerHTML={dangerouslySetInnerHTML} />
+      )}
+      {!dangerouslySetInnerHTML && <div>{children}</div>}
+    </CollapsiblePrimitive.CollapsibleContent>
   )
 }
 

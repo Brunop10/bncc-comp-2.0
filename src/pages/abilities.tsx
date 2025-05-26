@@ -6,27 +6,33 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Combobox } from "@/components/combo-box";
 
-import { useData } from "@/hooks/use-data";
 import { AbilityCard } from "@/components/ability-card";
 import { AbilityCardSkeleton } from "@/components/ability-card-skeleton";
+import { useQuery } from "@tanstack/react-query";
+import { getAbilities } from "@/api/get-abilities";
 
 export function Abilities() {
-  const { bnccItems, isLoading, getListOfSteps, filterData, resetData } = useData()
-
   const [codSelected, setCodSelected] = useState("")
   const [stepSelected, setStepSelected] = useState("")
 
-  const steps = getListOfSteps().map(item => ({ label: item, value: item }))
+  const { data, isLoading } = useQuery({
+    queryKey: ['abilities'],
+    queryFn: () => getAbilities({})
+  })
+
+  const abilities = data?.abilities ?? []
+
+  // const steps = getListOfSteps().map(item => ({ label: item, value: item }))
 
   function handleFilter() {
-    filterData({
-      codigo: codSelected,
-      etapa: stepSelected
-    })
+    // filterData({
+    //   codigo: codSelected,
+    //   etapa: stepSelected
+    // })
   }
 
   function handleResetFilters() {
-    resetData()
+    // resetData()
     setCodSelected("")
     setStepSelected("")
   }
@@ -49,7 +55,8 @@ export function Abilities() {
           />
 
           <Combobox
-            items={steps}
+            // items={steps}
+            items={[]}
             value={stepSelected}
             onChange={setStepSelected}
             placeholder="Filtra por etapa"
@@ -72,11 +79,11 @@ export function Abilities() {
       </div>
 
       <div className="flex flex-col gap-4">
-        {bnccItems.map(item => <AbilityCard key={item.codigo} item={item} />)}
+        {abilities.map(ability => <AbilityCard key={ability.codigo} ability={ability} />)}
         {isLoading && Array.from({ length: 3 }).map((_, idx) => (
           <AbilityCardSkeleton key={idx} />
         ))}
-        {!isLoading && !bnccItems.length && (
+        {!isLoading && !abilities.length && (
           <div className="flex justify-center px-4 py-2 bg-muted border rounded-md">
             <span className="text-muted-foreground text-sm">Nenhuma habilidade disponível</span>
           </div> 
