@@ -37,7 +37,11 @@ export function Details() {
   }
 
   function handleGoBack() {
-    navigate(-1) as void
+    if (window.history.length > 2) {
+      void navigate(-1)
+    } else {
+      void navigate('/habilidades')
+    }
   }
 
   useEffect(() => {

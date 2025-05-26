@@ -20,7 +20,11 @@ export function Example() {
   })
 
   function handleGoBack() {
-    void navigate(-1)
+    if (window.history.length > 2) {
+      void navigate(-1)
+    } else {
+      void navigate(`/detalhes/${data?.example.bncc_codigo_principal}`)
+    }
   }
 
   useEffect(() => {
