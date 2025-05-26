@@ -2,19 +2,28 @@
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/heading";
 import { Description } from "@/components/description";
-import { useEffect, useState } from "react";
 
-import { useData } from "@/hooks/use-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { COLLEGE_YEARS } from "@/utils/college-years";
 import { AbilityCard } from "@/components/ability-card";
 import { AbilityCardSkeleton } from "@/components/ability-card-skeleton";
+import { useQuery } from "@tanstack/react-query";
+import { getAbilities } from "@/api/get-abilities";
+import { useSearchParams } from "react-router";
 
 export function AbilitiesByYear() {
-  const { bnccItems, isLoading, filterData } = useData()
 
-  const [currentStep, setCurrentStep] = useState<number>(1)
-  const [yearFilter, setYearFilter] = useState<string>('')
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const yearFilter = searchParams.get('ano') ?? ''
+
+  const { data, isLoading } = useQuery({
+    queryKey: ['abilities', yearFilter],
+    queryFn: () => getAbilities({ year: yearFilter }),
+    enabled: !!yearFilter.length
+  })
+
+  const abilities = data?.abilities ?? []
 
   const collegeYears = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '69'];
 
@@ -38,8 +47,10 @@ export function AbilitiesByYear() {
                 variant={selectedValue === option ? "default" : "outline"}
                 className="flex-1 uppercase cursor-pointer"
                 onClick={() => {
-                  setYearFilter(option)
-                  setCurrentStep(prev => prev + 1)
+                  setSearchParams(state => {
+                    state.set('ano', option)
+                    return state
+                  })
                 }}
               >
                 {COLLEGE_YEARS[option]}
@@ -52,19 +63,11 @@ export function AbilitiesByYear() {
   }
 
   function handleReset() {
-    setCurrentStep(1)
-    setYearFilter('')
+    setSearchParams(state => {
+      state.delete('ano')
+      return state
+    })
   }
-
-  useEffect(() => {
-    function handleFilter() {
-      filterData({
-        ano: yearFilter 
-      })
-    }
-
-    handleFilter()
-  }, [yearFilter])
 
   return (
     <div className="space-y-8">
@@ -73,7 +76,7 @@ export function AbilitiesByYear() {
         <Description value="Explore os objetivos e habilidades relacionados à um ano específico." />
       </div>
 
-      {currentStep === 1 && (
+      {!yearFilter && (
         <Card>
           <CardHeader>
             <CardTitle>Selecione a etapa educacional</CardTitle>
@@ -85,20 +88,33 @@ export function AbilitiesByYear() {
         </Card>
       )}
 
-      {currentStep === 2 && (
+      {yearFilter && (
         <div className="space-y-4">
           <div className="flex gap-2 items-center justify-between">
-            <h3 className="font-medium">Filtro por: {COLLEGE_YEARS[yearFilter]}</h3>
-            <Button onClick={handleReset} variant='outline'>Alterar filtro</Button>
+            <h3 className="font-medium">
+              Filtro por: {COLLEGE_YEARS[yearFilter]}
+            </h3>
+            <Button
+              onClick={handleReset}
+              variant='outline'
+            >
+              Alterar filtro
+            </Button>
           </div>
 
-          {bnccItems.map(item => <AbilityCard key={item.codigo} item={item} />)}
+          {abilities.map(ability => (
+            <AbilityCard key={ability.codigo} ability={ability} />
+          ))}
+
           {isLoading && Array.from({ length: 3 }).map((_, idx) => (
             <AbilityCardSkeleton key={idx} />
           ))}
-          {!isLoading && !bnccItems.length && (
+
+          {!isLoading && !abilities.length && (
             <div className="flex justify-center px-4 py-2 bg-muted border rounded-md">
-              <span className="text-muted-foreground text-sm">Nenhuma habilidade disponível</span>
+              <span className="text-muted-foreground text-sm">
+                Nenhuma habilidade disponível
+              </span>
             </div> 
           )}
         </div>

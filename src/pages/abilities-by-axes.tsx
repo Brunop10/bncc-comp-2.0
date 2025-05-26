@@ -2,19 +2,29 @@
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/heading";
 import { Description } from "@/components/description";
-import { useState } from "react";
 
-import { useData } from "@/hooks/use-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AbilityCard } from "@/components/ability-card";
 import { AbilityCardSkeleton } from "@/components/ability-card-skeleton";
+import { useQuery } from "@tanstack/react-query";
+import { getAbilities } from "@/api/get-abilities";
+import { useSearchParams } from "react-router";
 
 export function AbilitiesByAxes() {
-  const { bnccItems, isLoading, getListOfAxes, filterData, } = useData()
 
-  const [currentStep, setCurrentStep] = useState<number>(1)
-  const [axesFilter, setAxesFilter] = useState<string>('')
+  const [searchParams, setSearchParams] = useSearchParams()
 
+  const axesFilter = searchParams.get('eixo') ?? ''
+
+  const { data, isLoading } = useQuery({
+    queryKey: ['abilities', axesFilter],
+    queryFn: () => getAbilities({ axe: axesFilter }),
+    enabled: !!axesFilter.length
+  })
+
+  const abilities = data?.abilities ?? []
+
+  const axes = ['Pensamento Computacional', 'Mundo Digital', 'Cultura Digital']
 
   function renderOptionButtons(
     options: string[],
@@ -36,9 +46,10 @@ export function AbilitiesByAxes() {
                 variant={selectedValue === option ? "default" : "outline"}
                 className="flex-1 uppercase cursor-pointer"
                 onClick={() => {
-                  setAxesFilter(option)
-                  handleFilter(option)
-                  setCurrentStep(prev => prev + 1)
+                  setSearchParams(state => {
+                    state.set('eixo', option)
+                    return state
+                  })
                 }}
               >
                 {option}
@@ -50,17 +61,11 @@ export function AbilitiesByAxes() {
     );
   };
 
-  const axes = getListOfAxes()
-
-  function handleFilter(filter?: string) {
-    filterData({
-      eixo: filter ?? axesFilter,
-    })
-  }
-
   function handleReset() {
-    setCurrentStep(1)
-    setAxesFilter('')
+    setSearchParams(state => {
+      state.delete('eixo')
+      return state
+    })
   }
 
   return (
@@ -70,7 +75,7 @@ export function AbilitiesByAxes() {
         <Description value="Liste os objetivos e habilidades do por eixo." />
       </div>
 
-      {currentStep === 1 && (
+      {!axesFilter && (
         <Card>
           <CardHeader>
             <CardTitle>Selecione o eixo</CardTitle>
@@ -82,20 +87,28 @@ export function AbilitiesByAxes() {
         </Card>
       )}
 
-      {currentStep === 2 && (
+      {axesFilter && (
         <div className="space-y-4">
           <div className="flex gap-2 items-center justify-between">
             <h3 className="font-medium">Filtro por: {axesFilter}</h3>
-            <Button onClick={handleReset} variant='outline'>Alterar filtro</Button>
+            <Button onClick={handleReset} variant='outline'>
+              Alterar filtro
+            </Button>
           </div>
 
-          {bnccItems.map(item => <AbilityCard key={item.codigo} item={item} />)}
+          {abilities.map(ability => (
+            <AbilityCard key={ability.codigo} ability={ability} />
+          ))}
+
           {isLoading && Array.from({ length: 3 }).map((_, idx) => (
             <AbilityCardSkeleton key={idx} />
           ))}
-          {!isLoading && !bnccItems.length && (
+
+          {!isLoading && !abilities.length && (
             <div className="flex justify-center px-4 py-2 bg-muted border rounded-md">
-              <span className="text-muted-foreground text-sm">Nenhuma habilidade disponível</span>
+              <span className="text-muted-foreground text-sm">
+                Nenhuma habilidade disponível
+              </span>
             </div> 
           )}
         </div>

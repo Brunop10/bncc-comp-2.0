@@ -3,17 +3,25 @@ import { api } from "@/lib/axios";
 
 interface GetAbilitiesParams {
   code?: string
+  axe?: string
+  year?: string
 }
 
 interface GetAbilitiesResponse {
   abilities: AbilityDTO[]
 }
 
-export async function getAbilities({ code }: GetAbilitiesParams) {
+export async function getAbilities({
+  code,
+  axe,
+  year
+}: GetAbilitiesParams) {
   const response = await api.get<GetAbilitiesResponse>("", {
     params: {
       resource: "fetchAbilities",
-      codigo: code
+      codigo: code,
+      eixo: axe?.toUpperCase(),
+      ano: year
     }
   })
 
