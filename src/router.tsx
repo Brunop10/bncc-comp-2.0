@@ -9,6 +9,7 @@ import { AbilitiesByYear } from './pages/abilities-by-year'
 import { MyPage } from './pages/my-page'
 import { About } from './pages/about'
 import { AbilitiesByAxes } from './pages/abilities-by-axes'
+import { Example } from './pages/example'
 
 export const router = createBrowserRouter([
   {
@@ -42,6 +43,14 @@ export const router = createBrowserRouter([
       {
         path: '/detalhes/:code',
         element: <Details />
+      },
+      {
+        path: '/detalhes/:code/exemplos',
+        element: <Navigate to='/' />
+      },
+      {
+        path: '/detalhes/:code/exemplos/:id',
+        element: <Example />
       },
       {
         path: '/sobre',
