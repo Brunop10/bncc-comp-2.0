@@ -1,21 +1,17 @@
 import { AbilityCard } from "@/components/ability-card";
-import { AbilityCardSkeleton } from "@/components/ability-card-skeleton";
 import { Description } from "@/components/description";
 import { Heading } from "@/components/heading";
-import { ItemDTO } from "@/dtos/item-dto";
-import { useData } from "@/hooks/use-data";
-import { useStorage } from "@/hooks/use-storage";
+import { AbilityDTO } from "@/dtos/ability-dto";
 import { useEffect, useState } from "react";
 
 export function MyPage() {
-  const { bnccItems, isLoading } = useData()
-  const { getFavorites } = useStorage()
+  // const { getFavorites } = useStorage()
 
-  const [favorites, setFavorites] = useState<ItemDTO[]>([])
+  const [favorites] = useState<AbilityDTO[]>([])
 
   function filterByFavorites() {
-    const favoritesIds = getFavorites()
-    setFavorites(bnccItems.filter(item => favoritesIds.some(fav => fav === item.codigo)))
+    // const favoritesIds = getFavorites()
+    // setFavorites(bnccItems.filter(item => favoritesIds.some(fav => fav === item)))
   }
 
   useEffect(() => {
@@ -36,14 +32,14 @@ export function MyPage() {
             item={favorite}
           />
         ))}
-        {isLoading && Array.from({ length: 3 }).map((_, idx) => (
+        {/* {isLoading && Array.from({ length: 3 }).map((_, idx) => (
           <AbilityCardSkeleton key={idx} />
         ))}
         {!isLoading && !favorites.length && (
           <div className="flex justify-center px-4 py-2 bg-muted border rounded-md">
             <span className="text-muted-foreground text-sm">Nenhuma habilidade salva</span>
           </div> 
-        )}
+        )} */}
       </div>
     </div>
   );
