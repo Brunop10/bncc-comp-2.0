@@ -39,7 +39,10 @@ const formSchema = z.object({
   })),
   source: z.string().min(1, REQUIRED_MESSAGE),
   collaboratorName: z.string().min(1, REQUIRED_MESSAGE),
-  collaboratorEmail: z.string().min(1, REQUIRED_MESSAGE),
+  collaboratorEmail: z
+    .string()
+    .email('Deve ser um e-mail válido')
+    .min(1, REQUIRED_MESSAGE),
   collaboratorPhone: z.string().min(1, REQUIRED_MESSAGE),
 })
 
@@ -111,7 +114,7 @@ export function Contribute() {
   async function handleAddExample(data: FormData) {
     await onAddExample({
       ...data,
-      tags: data.tags.join(', '),
+      tags: data.tags.map(item => item.value).join(', '),
       collaboratorPhone: data.collaboratorPhone.replace(/[^\d]/g, '')
     })
   }
