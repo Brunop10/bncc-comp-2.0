@@ -32,7 +32,7 @@ const formSchema = z.object({
   bnccCode: z.string().min(1, REQUIRED_MESSAGE),
   classification: z.string().min(1, REQUIRED_MESSAGE),
   link: z.string(),
-  tag: z.string(),
+  tag: z.string().max(15, 'Máximo 15 caracteres'),
   tags: z.array(z.object({
     id: z.string(),
     value: z.string()
@@ -87,10 +87,6 @@ export function Contribute() {
       });
       form.setValue('tag', '')
     }
-  }
-
-  function handleRmTag(tagIndex: number) {
-    removeTag(tagIndex)
   }
 
   const { mutateAsync: onAddExample } = useMutation({
@@ -289,7 +285,7 @@ export function Contribute() {
                 name="collaboratorName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Nome</FormLabel>
+                    <FormLabel>Nome Completo</FormLabel>
                     <FormControl>
                       <Input placeholder="Seu nome completo" {...field} />
                     </FormControl>
