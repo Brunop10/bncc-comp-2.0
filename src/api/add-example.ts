@@ -39,5 +39,9 @@ export async function addExample({
       email_colaborador: collaboratorEmail,
       telefone_colaborador: collaboratorPhone
     }
+  }, {
+    headers: {
+      "Content-Type": "text/plain;charset=utf-8",
+    },
   })
 }
