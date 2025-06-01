@@ -10,6 +10,7 @@ import { MyPage } from './pages/my-page'
 import { About } from './pages/about'
 import { AbilitiesByAxes } from './pages/abilities-by-axes'
 import { Example } from './pages/example'
+import { Contribute } from './pages/contribute'
 
 export const router = createBrowserRouter([
   {
@@ -55,6 +56,10 @@ export const router = createBrowserRouter([
       {
         path: '/sobre',
         element: <About />
+      },
+      {
+        path: '/contribuir',
+        element: <Contribute />
       }
     ]
   }
