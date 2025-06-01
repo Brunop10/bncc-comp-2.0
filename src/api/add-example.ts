@@ -1,6 +1,6 @@
 import { api } from "@/lib/axios";
 
-interface GetExampleParams {
+interface AddExampleParams {
   title: string
   bnccCode: string
   description: string
@@ -13,7 +13,7 @@ interface GetExampleParams {
   collaboratorPhone: string
 }
 
-export async function getExample({
+export async function addExample({
   title,
   bnccCode,
   description,
@@ -24,7 +24,7 @@ export async function getExample({
   collaboratorName,
   collaboratorEmail,
   collaboratorPhone
-}: GetExampleParams) {
+}: AddExampleParams) {
   await api.post("", {
     resource: "addExample",
     payload: {

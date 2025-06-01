@@ -76,3 +76,11 @@
   --sidebar-border: #ffffff1a;
   --sidebar-ring: #6e3fdc;
 }
+
+.tiptap p.is-empty::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}

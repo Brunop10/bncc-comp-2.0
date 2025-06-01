@@ -1,12 +1,19 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input, InputMask } from "@/components/ui/input";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, X } from "lucide-react";
+import { Editor } from "@/components/editor";
+import { useMutation } from "@tanstack/react-query";
+import { addExample } from "@/api/add-example";
+import { toast } from "sonner";
+import { AxiosError } from "axios";
+import { Badge } from "@/components/ui/badge";
+import type { KeyboardEvent } from "react";
 
 function Subheading({ label }: { label: string }) {
   return <h3 className="text-lg font-semibold border-b pb-2">{label}</h3>
@@ -25,7 +32,11 @@ const formSchema = z.object({
   bnccCode: z.string().min(1, REQUIRED_MESSAGE),
   classification: z.string().min(1, REQUIRED_MESSAGE),
   link: z.string(),
-  tags: z.array(z.string()),
+  tag: z.string(),
+  tags: z.array(z.object({
+    id: z.string(),
+    value: z.string()
+  })),
   source: z.string().min(1, REQUIRED_MESSAGE),
   collaboratorName: z.string().min(1, REQUIRED_MESSAGE),
   collaboratorEmail: z.string().min(1, REQUIRED_MESSAGE),
@@ -36,12 +47,85 @@ type FormData = z.infer<typeof formSchema>
 
 export function Contribute() {
   const form = useForm<FormData>({
-    resolver: zodResolver(formSchema)
+    resolver: zodResolver(formSchema),
+    values: {
+      title: '',
+      description: '',
+      bnccCode: '',
+      classification: '',
+      link: '',
+      source: '',
+      tag: '',
+      tags: [],
+      collaboratorName: '',
+      collaboratorEmail: '',
+      collaboratorPhone: '',
+    }
   })
+
+  const {
+    fields: tags,
+    append: appendTag,
+    remove: removeTag
+  } = useFieldArray<FormData>({
+    control: form.control,
+    name: "tags",
+  })
+
+  function handleAddTag(e: KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      const tag = form.watch('tag').trim()
+
+      if (!tag) return toast.info('Insira um valor para a tag.')
+
+      if (tags.map(item => item.value).includes(tag)) return
+
+      appendTag({
+        id: Math.random().toString(36).substring(6),
+        value: tag,
+      });
+      form.setValue('tag', '')
+    }
+  }
+
+  function handleRmTag(tagIndex: number) {
+    removeTag(tagIndex)
+  }
+
+  const { mutateAsync: onAddExample } = useMutation({
+    mutationFn: addExample,
+    onSuccess: () => {
+      toast.success('Seu exemplo foi submetido.', {
+        description: 'Seu conteúdo foi enviado para análise e após aprovado passará a compor os exemplos da habilidade informada.'
+      })
+    },
+    onError(error) {
+      const isAxiosError = error instanceof AxiosError
+      const description = isAxiosError 
+        ? error.response?.data.message
+        : 'Ocorreu um erro. Tente novamente mais tarde.'
+
+      toast.error('Falha ao submeter exemplo', {
+        description,
+      })
+    },
+  })
+
+  async function handleAddExample(data: FormData) {
+    await onAddExample({
+      ...data,
+      tags: data.tags.join(', '),
+      collaboratorPhone: data.collaboratorPhone.replace(/[^\d]/g, '')
+    })
+  }
 
   return (
     <Form {...form}>
-      <form className="space-y-8">
+      <form
+        onSubmit={form.handleSubmit(handleAddExample)}
+        className="space-y-8"
+      >
         <Card>
           <CardHeader>
             <CardTitle className="text-2xl">Contribuir com Exemplo</CardTitle>
@@ -75,7 +159,11 @@ export function Contribute() {
                   <FormItem>
                     <FormLabel>Descrição</FormLabel>
                     <FormControl>
-                      <Input placeholder="Digite a descrição do exemplo..." {...field} />
+                      <Editor
+                        placeholder="Insira a descrição"
+                        content={field.value}
+                        onChangeContent={field.onChange}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -139,7 +227,44 @@ export function Contribute() {
                 )}
               />
 
-              {/* TODO: Adicionar tags */}
+              <div className="flex flex-col gap-3">
+                <FormField
+                  control={form.control}
+                  name="tag"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tags</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder='Insira uma tag e pressione enter'
+                          onKeyDown={handleAddTag}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="flex gap-2 flex-wrap">
+                  {tags.map((tag, idx) => (
+                    <Badge
+                      key={tag.id}
+                      variant="secondary"
+                      className="flex items-center gap-1"
+                    >
+                      {tag.value}
+                      <button
+                        type="button"
+                        onClick={() => removeTag(idx)}
+                        className="ml-1 hover:bg-gray-300 rounded-full p-0.5"
+                      >
+                        <X className="size-3" />
+                      </button>
+                    </Badge>
+                  ))}
+                </div>
+              </div>
 
               <FormField
                 control={form.control}
