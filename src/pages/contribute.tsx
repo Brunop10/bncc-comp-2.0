@@ -190,7 +190,7 @@ export function Contribute() {
                 )}
               />
 
-              <div className="flex gap-4">
+              <div className="flex flex-col md:flex-row gap-4">
                 <FormField
                   control={form.control}
                   name="bnccCode"
