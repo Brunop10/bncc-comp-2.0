@@ -6,14 +6,18 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Loader2, X } from "lucide-react";
+import { Check, ChevronDown, Loader2, X } from "lucide-react";
 import { Editor } from "@/components/editor";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { addExample } from "@/api/add-example";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
 import { Badge } from "@/components/ui/badge";
 import type { KeyboardEvent } from "react";
+import { getAbilitiesCodes } from "@/api/get-abilities-codes";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 
 function Subheading({ label }: { label: string }) {
   return <h3 className="text-lg font-semibold border-b pb-2">{label}</h3>
@@ -75,6 +79,42 @@ export function Contribute() {
     name: "tags",
   })
 
+  const {
+    data: abilitiesCodeResult,
+    isFetching: isFetchingAbilitiesCodes
+  } = useQuery({
+    queryKey: ['abilitiesCodes'],
+    queryFn: getAbilitiesCodes
+  })
+
+  const {
+    mutateAsync: onAddExample,
+    isPending: addExampleIsPending
+  } = useMutation({
+    mutationFn: addExample,
+    onSuccess: () => {
+      form.reset()
+      toast.success('Seu exemplo foi submetido.', {
+        description: 'Seu conteúdo foi enviado para análise e após aprovado passará a compor os exemplos da habilidade informada.'
+      })
+    },
+    onError(error) {
+      const isAxiosError = error instanceof AxiosError
+      const description = isAxiosError 
+        ? error.response?.data.message
+        : 'Ocorreu um erro. Tente novamente mais tarde.'
+
+      toast.error('Falha ao submeter exemplo', {
+        description,
+      })
+    },
+  })
+
+  const abilitiesCodes = abilitiesCodeResult?.codes.map(item => ({
+    value: item,
+    label: item,
+  })) ?? []
+
   function handleAddTag(e: KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter') {
       e.preventDefault()
@@ -91,25 +131,6 @@ export function Contribute() {
       form.setValue('tag', '')
     }
   }
-
-  const { mutateAsync: onAddExample } = useMutation({
-    mutationFn: addExample,
-    onSuccess: () => {
-      toast.success('Seu exemplo foi submetido.', {
-        description: 'Seu conteúdo foi enviado para análise e após aprovado passará a compor os exemplos da habilidade informada.'
-      })
-    },
-    onError(error) {
-      const isAxiosError = error instanceof AxiosError
-      const description = isAxiosError 
-        ? error.response?.data.message
-        : 'Ocorreu um erro. Tente novamente mais tarde.'
-
-      toast.error('Falha ao submeter exemplo', {
-        description,
-      })
-    },
-  })
 
   async function handleAddExample(data: FormData) {
     await onAddExample({
@@ -169,48 +190,113 @@ export function Contribute() {
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="bnccCode"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Código da Habilidade</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Digite a descrição do exemplo..." {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="flex gap-4">
+                <FormField
+                  control={form.control}
+                  name="bnccCode"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel className="items-center gap-1.5">
+                        Código da Habilidade
 
-              <FormField
-                control={form.control}
-                name="classification"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Classificação</FormLabel>
-                    <FormControl>
-                      <Select value={field.value} onValueChange={field.onChange}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione uma classificação" />
-                        </SelectTrigger>
-
-                        <SelectContent>
-                          {CLASSIFICATIONS.map(classification => (
-                            <SelectItem
-                              key={classification.value}
-                              value={classification.value}
+                        {isFetchingAbilitiesCodes && (
+                          <Loader2 className="size-3 animate-spin" />
+                        )}
+                      </FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              disabled={isFetchingAbilitiesCodes}
+                              className={cn(
+                                "w-full justify-between",
+                                !field.value && "text-muted-foreground"
+                              )}
                             >
-                              {classification.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                              {field.value
+                                ? abilitiesCodes.find(
+                                    (abilityCode) => abilityCode.value === field.value
+                                  )?.label
+                                : "Selecione a Habilidade"}
+                              <ChevronDown className="opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+
+                        <PopoverContent className="w-full p-0">
+                          <Command>
+                            <CommandInput
+                              placeholder="Buscar habilidade"
+                              className="h-9"
+                            />
+                            <CommandList>
+                              <CommandEmpty>Nenhuma código encontrado.</CommandEmpty>
+
+                              <CommandGroup>
+                                {abilitiesCodes.map((abilityCode) => (
+                                  <CommandItem
+                                    value={abilityCode.label}
+                                    key={abilityCode.value}
+                                    onSelect={() => {
+                                      form.setValue("bnccCode", abilityCode.value)
+                                    }}
+                                  >
+                                    {abilityCode.label}
+                                    <Check
+                                      className={cn(
+                                        "ml-auto",
+                                        abilityCode.value === field.value
+                                          ? "opacity-100"
+                                          : "opacity-0"
+                                      )}
+                                    />
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="classification"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel>Classificação</FormLabel>
+                      <FormControl>
+                        <Select
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Selecione a classificação"  />
+                          </SelectTrigger>
+
+                          <SelectContent>
+                            {CLASSIFICATIONS.map(classification => (
+                              <SelectItem
+                                key={classification.value}
+                                value={classification.value}
+                              >
+                                {classification.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <FormField
                 control={form.control}
@@ -339,9 +425,9 @@ export function Contribute() {
 
             <Button
               className="w-full"
-              disabled={form.formState.isLoading}
+              disabled={addExampleIsPending}
             >
-              {form.formState.isLoading ? (
+              {addExampleIsPending ? (
                 <Loader2 className="size-4 animate-spin" />
               ) : 'Enviar Contribuição'}
             </Button>
