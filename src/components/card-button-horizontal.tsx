@@ -9,7 +9,13 @@ interface CardButtonHorizontalProps extends ComponentProps<'button'> {
   url?: string
 }
 
-export function CardButtonHorizontal({ icon, title, description, url, ...props }: CardButtonHorizontalProps) {
+export function CardButtonHorizontal({
+  icon,
+  title,
+  description,
+  url,
+  ...props
+}: CardButtonHorizontalProps) {
   const navigate = useNavigate()
 
   function handleNavigate() {
@@ -29,7 +35,9 @@ export function CardButtonHorizontal({ icon, title, description, url, ...props }
 
       <div className="flex flex-col w-full items-start">
         <span className="text-lg text-secondary-foreground">{title}</span>
-        <span className="text-sm text-muted-foreground">{description}</span>
+        <span className="text-sm text-muted-foreground text-wrap text-left">
+          {description}
+          </span>
       </div>
     </Button>
   )

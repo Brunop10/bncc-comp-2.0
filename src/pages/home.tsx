@@ -2,7 +2,7 @@ import { CardButton } from "@/components/card-button";
 import { CardButtonHorizontal } from "@/components/card-button-horizontal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { BookmarkIcon, FileSpreadsheetIcon, InfoIcon, LayersIcon, SearchIcon } from "lucide-react";
+import { BookAIcon, BookmarkIcon, FileSpreadsheetIcon, HelpingHandIcon, InfoIcon, LayersIcon, SearchIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { z } from "zod";
@@ -64,6 +64,18 @@ export function Home() {
         title="Minha página"
         description="Acesse rapidamente seus itens salvos"
         url="/minha-pagina"
+      />
+
+      <CardButtonHorizontal
+        icon={
+          <div className="relative size-6">
+            <BookAIcon className=" absolute size-4 text-primary -top-0.5 left-[60%] -translate-x-[50%] rotate-12" />
+            <HelpingHandIcon className="absolute -bottom-2 size-6 text-primary left-[50%] -translate-x-[50%]" />
+          </div>
+        }
+        title="Contribuir com a comunidade"
+        description="Compartilhe seus materiais em formato de exemplos às habilidades e ajude outros professores."
+        url="/contribuir"
       />
 
       <CardButtonHorizontal
