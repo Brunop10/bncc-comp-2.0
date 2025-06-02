@@ -6,6 +6,7 @@ interface GetAbilitiesParams {
   axe?: string
   year?: string
   codes?: string[]
+  keywords?: string
 }
 
 interface GetAbilitiesResponse {
@@ -16,7 +17,8 @@ export async function getAbilities({
   code,
   axe,
   year,
-  codes
+  codes,
+  keywords
 }: GetAbilitiesParams) {
   const response = await api.get<GetAbilitiesResponse>("", {
     params: {
@@ -24,7 +26,8 @@ export async function getAbilities({
       codigo: code,
       eixo: axe?.toUpperCase(),
       ano: year,
-      codes: codes?.join(",")
+      codes: codes?.join(","),
+      description: keywords
     }
   })
 

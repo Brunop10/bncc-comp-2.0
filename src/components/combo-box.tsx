@@ -59,24 +59,47 @@ export function Combobox({
         >
           <span className="truncate">
             {value
-              ? items.find((item) => item.value === value)?.label
+              ? value === 'all'
+                ? 'Todos'
+                : items.find((item) => item.value === value)?.label ?? placeholder ?? 'Selecione'
               : placeholder ?? 'Selecione'}
           </span>
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
+
       <PopoverContent className="p-0">
         <Command>
-          <CommandInput placeholder={searchLabel ?? 'Buscar item...'} className="h-9" />
+          <CommandInput
+            placeholder={searchLabel ?? 'Buscar item...'}
+            className="h-9"
+          />
+
           <CommandList>
-            <CommandEmpty>No item found.</CommandEmpty>
+            <CommandEmpty>Nenhum item encontrado</CommandEmpty>
+
             <CommandGroup>
+              <CommandItem
+                value='all'
+                onSelect={() => {
+                  onChange('all')
+                  setOpen(false)
+                }}
+              >
+                Todos
+                <Check
+                  className={cn(
+                    "ml-auto",
+                    value === 'all' ? "opacity-100" : "opacity-0"
+                  )}
+                />
+              </CommandItem>
               {items.map((item) => (
                 <CommandItem
                   key={item.value}
-                  value={item.value}
-                  onSelect={(currentValue) => {
-                    onChange(currentValue === value ? "" : currentValue)
+                  value={item.label}
+                  onSelect={() => {
+                    onChange(item.value)
                     setOpen(false)
                   }}
                 >

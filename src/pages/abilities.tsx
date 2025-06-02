@@ -3,38 +3,102 @@ import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/heading";
 import { Description } from "@/components/description";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
 import { Combobox } from "@/components/combo-box";
 
 import { AbilityCard } from "@/components/ability-card";
 import { AbilityCardSkeleton } from "@/components/ability-card-skeleton";
 import { useQuery } from "@tanstack/react-query";
 import { getAbilities } from "@/api/get-abilities";
+import { useSearchParams } from "react-router";
+import { COLLEGE_YEARS } from "@/utils/college-years";
+import { Controller, useForm } from "react-hook-form";
+import { z } from "zod";
+
+const formSchema = z.object({
+  search: z.string(),
+  year: z.string(),
+  axe: z.string()
+})
+
+type FormData = z.infer<typeof formSchema>
 
 export function Abilities() {
-  const [codSelected, setCodSelected] = useState("")
-  const [stepSelected, setStepSelected] = useState("")
+
+  const { control, register, handleSubmit, reset } = useForm<FormData>({
+    values: {
+      search: '',
+      axe: 'all',
+      year: 'all'
+    }
+  })
+
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const searchFilter = searchParams.get('pesquisa') ?? undefined
+  const axesFilter = searchParams.get('eixo') ?? undefined
+  const yearFilter = searchParams.get('ano') ?? undefined
+
+  const collegeYearsOptions = Object.entries(COLLEGE_YEARS)
+    .map(([value, label]) => ({
+      value,
+      label,
+    }
+  ))
+
+  const axesOptions = [
+    'Pensamento Computacional',
+    'Mundo Digital',
+    'Cultura Digital'
+  ].map(item => ({
+    value: item,
+    label: item,
+  }))
 
   const { data, isLoading } = useQuery({
-    queryKey: ['abilities'],
-    queryFn: () => getAbilities({})
+    queryKey: ['abilities', searchFilter, axesFilter, yearFilter],
+    queryFn: () => getAbilities({ 
+      keywords: searchFilter,
+      axe: axesFilter,
+      year: yearFilter
+    })
   })
 
   const abilities = data?.abilities ?? []
 
   // const steps = getListOfSteps().map(item => ({ label: item, value: item }))
 
-  function handleFilter() {
-    // filterData({
-    //   codigo: codSelected,
-    //   etapa: stepSelected
-    // })
+  function handleFilter(data: FormData) {
+    setSearchParams(state => {
+      if (data.search) {
+        state.set('pesquisa', data.search)
+      } else {
+        state.delete('pesquisa')
+      }
+
+      if (data.axe !== 'all') {
+        state.set('eixo', data.axe)
+      } else {
+        state.delete('eixo')
+      }
+
+      if (data.year !== 'all') {
+        state.set('ano', data.year)
+      } else {
+        state.delete('ano')
+      }
+
+      return state
+    })
   }
 
   function handleResetFilters() {
-    // resetData()
-    setCodSelected("")
-    setStepSelected("")
+    reset()
+    setSearchParams(state => {
+      state.delete('pesquisa')
+      state.delete('ano')
+      state.delete('eixo')
+      return state
+    })
   }
 
   return (
@@ -44,49 +108,65 @@ export function Abilities() {
         <Description value="Utilize a tabela abaixo para buscar informações relacionadas à BNCC na área de Computação. Filtre os dados por código ou etapa para encontrar os objetivos e habilidades desejados." />
       </div>
 
-      <div className="flex gap-2 flex-col sm:flex-row">
-        <div className="flex flex-col gap-2 sm:flex-row">
-          <Input
-            value={codSelected}
-            onChange={e => setCodSelected(e.target.value)}
-            placeholder="Filtrar por código"
-            className="w-full sm:w-[200px]"
-            disabled
-          />
+      <form 
+        onSubmit={handleSubmit(handleFilter)}
+        className="flex gap-2 flex-col"
+      >
+        <Input
+          placeholder="Filtrar por palavra-chave"
+          className="w-full bg-white"
+          {...register('search')}
+        />
 
-          <Combobox
-            // items={steps}
-            items={[]}
-            value={stepSelected}
-            onChange={setStepSelected}
-            placeholder="Filtra por etapa"
-            className="w-full sm:w-[140px] md:w-[200px]"
-            disabled
-          />
+        <div className="flex flex-col sm:flex-row gap-2">
+          <div className="flex flex-col sm:flex-row gap-2 w-full">
+            <Controller
+              control={control}
+              name="year"
+              render={({ field }) => (
+                <Combobox
+                  items={collegeYearsOptions}
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="Filtra por ano"
+                  className="w-full sm:flex-1"
+                />
+              )}
+            />
+
+            <Controller
+              control={control}
+              name="axe"
+              render={({ field }) => (
+                <Combobox
+                  items={axesOptions}
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="Filtra por etapa"
+                  className="w-full sm:flex-1"
+                />
+              )}
+            />
+          </div>
+
+          <div className="flex gap-2">
+            <Button
+              variant='outline'
+              className="flex-1 sm:w-fit"
+            >
+              <SearchIcon />
+            </Button>
+
+            <Button
+              variant='outline'
+              onClick={handleResetFilters}
+              className="flex-1 sm:w-fit"
+            >
+              <EraserIcon />
+            </Button>
+          </div>
         </div>
-
-        <div className="grid grid-cols-2 sm:flex gap-2">
-          <Button
-            variant='outline'
-            onClick={handleFilter}
-            className="w-full sm:w-fit"
-            disabled
-          >
-            <SearchIcon />
-            {/* <span className="md:sr-only lg:not-sr-only">Filtrar</span> */}
-          </Button>
-
-          <Button
-            variant='outline'
-            onClick={handleResetFilters}
-            className="w-full sm:w-fit"
-            disabled
-          >
-            <EraserIcon />
-            {/* <span className="md:sr-only lg:not-sr-only">Limpar filtros</span> */}
-          </Button>
-        </div>
-      </div>
+      </form>
 
       <div className="flex flex-col gap-4">
         {abilities.map(ability => (
