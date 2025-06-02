@@ -35,7 +35,7 @@ import subheaderImage from '@/assets/subheader.webp'
 import subSubheaderImage from '@/assets/subsubheader.webp'
 
 import { ToggleGroup, ToggleGroupItem } from './ui/toggle-group'
-import { useState } from 'react'
+import { useEffect } from 'react'
 
 interface EditorProps {
   content: string | null
@@ -56,8 +56,13 @@ export function Editor({
     extensions: [
       StarterKit,
       Placeholder.configure({
-        placeholder: () => {
-          return `${placeholder ? `${placeholder}.\n` : ''}Digite '/' para ver comandos básicos`
+        placeholder: ({ editor }) => {
+          const tipMessage = "Digite '/' para ver comandos básicos"
+          const placeholderMessage = placeholder && `${placeholder}.\n` || ''
+
+          if (editor.isEmpty) return `${placeholderMessage}${tipMessage}`
+
+          return tipMessage
         },
       }),
       Underline,
@@ -79,6 +84,12 @@ export function Editor({
     },
     onTransaction() {},
   })
+
+  useEffect(() => {
+    if (editor && content !== editor.getHTML()) {
+      editor.commands.setContent(content || '')
+    }
+  }, [editor, content])
 
   if (!editor) return null
 
