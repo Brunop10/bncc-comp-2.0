@@ -93,8 +93,10 @@ export function Example() {
               <div className="flex flex-col gap-2">
                 <h2 className="font-semibold">Link de Referência</h2>
                 <Link
-                  to={example.link ?? '#'}
-                  referrerPolicy="no-referrer"
+                  to={example.link.startsWith('https') 
+                    ? example.link 
+                    : `https://${example.link}`}
+                  rel="noopener noreferrer"
                   target="_blank"
                   className="flex gap-2 items-center text-blue-600 hover:underline hover:underline-offset-2"
                 >
