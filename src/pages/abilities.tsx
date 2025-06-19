@@ -13,6 +13,7 @@ import { useSearchParams } from "react-router";
 import { COLLEGE_YEARS } from "@/utils/college-years";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
+import { useEffect } from "react";
 
 const formSchema = z.object({
   search: z.string(),
@@ -24,7 +25,7 @@ type FormData = z.infer<typeof formSchema>
 
 export function Abilities() {
 
-  const { control, register, handleSubmit, reset } = useForm<FormData>({
+  const { control, register, handleSubmit, setValue, reset } = useForm<FormData>({
     values: {
       search: '',
       axe: 'all',
@@ -100,6 +101,12 @@ export function Abilities() {
       return state
     })
   }
+
+  useEffect(() => {
+    if (searchFilter) {
+      setValue('search', searchFilter)
+    }
+  }, [searchFilter])
 
   return (
     <div className="space-y-8">
