@@ -142,14 +142,14 @@ export function Details() {
           {ability.exemplos.length > 0 && (
             <DetailsCollapsibleItem label="Exemplos">
               <div className="flex flex-col gap-2">
-                {ability.exemplos.map(exemplo => (
+                {ability.exemplos.map((exemplo, idx) => (
                   <Link
                     to={`/detalhes/${code}/exemplos/${exemplo.codigo_exemplo}`}
                   >
                     <Button variant='outline' className="w-full justify-start">
                       <ExternalLinkIcon />
                       <span className="truncate">
-                        {exemplo.titulo || exemplo.descricao}
+                        {exemplo.titulo || `Exemplo ${idx + 1}`}
                       </span>
                     </Button>
                   </Link>
