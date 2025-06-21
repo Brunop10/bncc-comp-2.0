@@ -1,6 +1,10 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { BookOpenIcon, CodeIcon, MonitorIcon } from "lucide-react";
 
+import logoUfsm from '@/assets/logo-ufsm.webp'
+import logoCt from '@/assets/logo-ct.png'
+import logoNtem from '@/assets/logo-ntem.png'
+
 export function About() {
   return (
     <div className="space-y-6 w-full">
@@ -71,8 +75,26 @@ export function About() {
         </div>
       </div>
 
+      <div className="space-y-2">
+        <h2 className="text-2xl font-semibold">Sobre este trabalho</h2>
+
+        <Card>
+          <CardContent className="space-y-6">
+            <p className="text-muted-foreground">
+              Este projeto integra o Trabalho de Conclusão de Curso (TCC) de Wederson Machado Fagundes, orientado pela professora Andrea Schwertner Charão, no curso de Sistemas de Informação do Centro de Tecnologia (CT) da Universidade Federal de Santa Maria (UFSM), realizado em colaboração com o Núcleo de Tecnologia Educacional Municipal (NTEM) da Prefeitura Municipal de Santa Maria - RS.
+            </p>
+
+            <div className="flex flex-col md:flex-row gap-2 md:gap-4 items-center justify-center">
+              <img src={logoUfsm} className="h-32 md:h-16 md:-mt-2" />
+              <img src={logoCt} className="h-52 -mt-10 md:h-40 md:mt-0 md:-ml-4" />
+              <img src={logoNtem} className="h-32 -mt-16 md:h-20 md:mt-0 md:-ml-8" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       <div className="bg-muted px-4 py-3 flex items-center text-sm justify-center text-muted-foreground rounded-xl">
-        Versão 0.0.1 - 2025 &copy; BNCC Computação
+        Versão 1.0.0 - 2025 &copy; BNCC Computação
       </div>
     </div>
   )
