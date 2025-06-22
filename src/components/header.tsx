@@ -14,25 +14,25 @@ export function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-10 bg-primary text-white p-4 shadow-md h-20">
-    <div className="flex justify-between items-center">
-      <Link to="/" className="flex gap-2 items-center">
-        <img src={logo} alt="" className="h-14" />
-        <h1 className="text-xl font-bold w-10 leading-tight">BNCC Computação</h1>
-      </Link>
+    <header className="sticky top-0 z-10 bg-primary text-white p-4 shadow-md items-center">
+      <div className="flex justify-between items-center mx-4 md:max-w-lg md:mx-auto">
+        <Link to="/" className="flex gap-2 items-center">
+          <img src={logo} alt="" className="h-14" />
+          <h1 className="text-xl font-bold w-10 leading-tight">BNCC Computação</h1>
+        </Link>
 
-      {!isHome && (
-        <Button
-          size='sm'
-          type="button"
-          onClick={handleNavigateToHome}
-          className="p-2 rounded-md hover:bg-secondary-foreground/10 border border-muted"
-        >
-          <HomeIcon className="size-5" />
-          Início
-        </Button>
-      )}
-    </div>
-  </header>
+        {!isHome && (
+          <Button
+            size='sm'
+            type="button"
+            onClick={handleNavigateToHome}
+            className="p-2 rounded-md hover:bg-secondary-foreground/10 border border-muted"
+          >
+            <HomeIcon className="size-5" />
+            Início
+          </Button>
+        )}
+      </div>
+    </header>
   )
 }
