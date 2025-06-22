@@ -1,6 +1,8 @@
 import { HomeIcon } from "lucide-react";
-import { useLocation, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { Button } from "./ui/button";
+
+import logo from '@/assets/logo-white.png'
 
 export function Header() {
   const navigate = useNavigate()
@@ -14,7 +16,10 @@ export function Header() {
   return (
     <header className="sticky top-0 z-10 bg-primary text-white p-4 shadow-md h-20">
     <div className="flex justify-between items-center">
-      <h1 className="text-xl font-bold">BNCC Computação</h1>
+      <Link to="/" className="flex gap-2 items-center">
+        <img src={logo} alt="" className="h-14" />
+        <h1 className="text-xl font-bold w-10 leading-tight">BNCC Computação</h1>
+      </Link>
 
       {!isHome && (
         <Button
