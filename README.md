@@ -1,54 +1,82 @@
-# React + TypeScript + Vite
+# BNCC Computação – Plataforma de Apoio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Projeto desenvolvido para o Trabalho de Conclusão de Curso, do Curso de Graduação em Sistemas de Informação pela Universidade Federal de Santa Maria - UFSM.
 
-Currently, two official plugins are available:
+Plataforma web desenvolvida com React + Vite para auxiliar professores na implementação da BNCC Computação no contexto da educação básica. A ferramenta permite consultar habilidades, acessar exemplos de aplicação e colaborar com a comunidade educacional.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+![demo1](./github/docs/telas-demo-1.png)
+![demo2](./github/docs/telas-demo-2.png)
+![demo3](./github/docs/telas-demo-3.png)
+![demo4](./github/docs/telas-demo-4.png)
+![demo5](./github/docs/telas-demo-5.png)
 
-## Expanding the ESLint configuration
+## 📦 Tecnologias Utilizadas
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- [React 19](https://react.dev)
+- [Vite](https://vitejs.dev/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [React Router v7](https://reactrouter.com/)
+- [React Hook Form](https://react-hook-form.com/)
+- [TanStack React Query](https://tanstack.com/query/latest)
+- [Tiptap Editor](https://tiptap.dev/)
+- [Zod](https://github.com/colinhacks/zod)
+- [Radix UI](https://www.radix-ui.com/)
+- [Lucide Icons](https://lucide.dev/)
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## 📁 Estrutura de Pastas
+
+```
+src/
+├── api/           # Serviços de integração com backend
+├── assets/        # Imagens e recursos estáticos
+├── components/    # Componentes reutilizáveis
+├── dtos/          # Tipagens de dados (Data Transfer Objects)
+├── hooks/         # Hooks personalizados
+├── layouts/       # Layouts base para páginas
+├── lib/           # Funções auxiliares de bibliotecas
+├── pages/         # Páginas principais da aplicação
+├── router.tsx     # Configuração de rotas
+├── providers.tsx  # Context providers (ex: tema, auth, query client)
+├── env.ts         # Variáveis de ambiente e config
+├── utils/         # Utilitários diversos
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🚀 Como Executar
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### 1. Pré-requisitos
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+- Node.js 18+
+- [pnpm](https://pnpm.io/) instalado globalmente
+
+### 2. Instalar dependências
+
+```bash
+pnpm install
 ```
+
+### 3. Rodar ambiente de desenvolvimento
+
+```bash
+pnpm dev
+```
+
+### 4. Build de produção
+
+```bash
+pnpm build
+```
+
+### 5. Preview do build
+
+```bash
+pnpm preview
+```
+
+## 🌐 Hospedagem
+
+O projeto está preparado para ser hospedado na [Vercel](https://vercel.com/), com configuração presente em `vercel.json`.
+
+## 🤝 Contribuição
+
+Contribuições são bem-vindas! Sinta-se à vontade para abrir _issues_ ou enviar _pull requests_ com melhorias e sugestões.
