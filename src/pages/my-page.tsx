@@ -1,10 +1,10 @@
 import { getAbilities } from "@/api/get-abilities";
 import { AbilityCard } from "@/components/ability-card";
-import { AbilityCardSkeleton } from "@/components/ability-card-skeleton";
 import { Description } from "@/components/description";
 import { Heading } from "@/components/heading";
 import { useStorage } from "@/hooks/use-storage";
 import { useQuery } from "@tanstack/react-query";
+import { LoadingBook } from "@/components/ui/loading";
 
 export function MyPage() {
   const { getFavorites } = useStorage()
@@ -27,15 +27,25 @@ export function MyPage() {
       </div>
 
       <div className="flex flex-col gap-2">
-        {abilities.map(ability => (
+        {isLoading && (
+          <div className="flex flex-col items-center justify-center py-20 gap-6">
+            <LoadingBook size="xl" />
+            <div className="text-center space-y-2">
+              <p className="text-xl font-semibold text-primary">
+                Carregando favoritos...
+              </p>
+              <p className="text-base text-muted-foreground">
+                Aguarde enquanto buscamos seus objetivos e habilidades salvas 
+              </p>
+            </div>
+          </div>
+        )}
+
+        {!isLoading && abilities.map(ability => (
           <AbilityCard
             key={ability.codigo}
             ability={ability}
           />
-        ))}
-        
-        {isLoading && Array.from({ length: 3 }).map((_, idx) => (
-          <AbilityCardSkeleton key={idx} />
         ))}
 
         {!isLoading && !abilities.length && (

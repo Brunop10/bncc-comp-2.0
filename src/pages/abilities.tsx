@@ -4,9 +4,9 @@ import { Heading } from "@/components/heading";
 import { Description } from "@/components/description";
 import { Input } from "@/components/ui/input";
 import { Combobox } from "@/components/combo-box";
+import { LoadingBook } from "@/components/ui/loading";
 
 import { AbilityCard } from "@/components/ability-card";
-import { AbilityCardSkeleton } from "@/components/ability-card-skeleton";
 import { useQuery } from "@tanstack/react-query";
 import { getAbilities } from "@/api/get-abilities";
 import { useSearchParams } from "react-router";
@@ -176,12 +176,22 @@ export function Abilities() {
       </form>
 
       <div className="flex flex-col gap-4">
-        {abilities.map(ability => (
-          <AbilityCard key={ability.codigo} ability={ability} />
-        ))}
+        {isLoading && (
+          <div className="flex flex-col items-center justify-center py-20 gap-6">
+            <LoadingBook size="xl" />
+            <div className="text-center space-y-2">
+              <p className="text-xl font-semibold text-primary">
+                Carregando objetivos e habilidades...
+              </p>
+              <p className="text-base text-muted-foreground">
+                Aguarde enquanto buscamos as informações
+              </p>
+            </div>
+          </div>
+        )}
 
-        {isLoading && Array.from({ length: 3 }).map((_, idx) => (
-          <AbilityCardSkeleton key={idx} />
+        {!isLoading && abilities.map(ability => (
+          <AbilityCard key={ability.codigo} ability={ability} />
         ))}
 
         {!isLoading && !abilities.length && (
