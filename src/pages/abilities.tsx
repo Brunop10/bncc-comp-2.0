@@ -1,4 +1,4 @@
-import { EraserIcon, SearchIcon } from "lucide-react";
+import { EraserIcon, SearchIcon, MicIcon, MicOffIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/heading";
 import { Description } from "@/components/description";
@@ -14,6 +14,7 @@ import { COLLEGE_YEARS } from "@/utils/college-years";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useEffect } from "react";
+import { useSpeechToText } from "@/hooks/use-speech-to-text";
 
 const formSchema = z.object({
   search: z.string(),
@@ -34,6 +35,7 @@ export function Abilities() {
   })
 
   const [searchParams, setSearchParams] = useSearchParams()
+  const { transcript, isListening, isSupported, startListening, stopListening, resetTranscript } = useSpeechToText()
 
   const searchFilter = searchParams.get('pesquisa') ?? undefined
   const axesFilter = searchParams.get('eixo') ?? undefined
@@ -102,11 +104,26 @@ export function Abilities() {
     })
   }
 
+  function handleVoiceSearch() {
+    if (isListening) {
+      stopListening()
+    } else {
+      resetTranscript()
+      startListening()
+    }
+  }
+
   useEffect(() => {
     if (searchFilter) {
       setValue('search', searchFilter)
     }
   }, [searchFilter])
+
+  useEffect(() => {
+    if (transcript) {
+      setValue('search', transcript)
+    }
+  }, [transcript, setValue])
 
   return (
     <div className="space-y-8">
@@ -119,11 +136,26 @@ export function Abilities() {
         onSubmit={handleSubmit(handleFilter)}
         className="flex gap-2 flex-col"
       >
-        <Input
-          placeholder="Filtrar por palavra-chave"
-          className="w-full bg-white"
-          {...register('search')}
-        />
+        <div className="relative">
+          <SearchIcon className="absolute text-muted-foreground left-3 top-1/2 -translate-y-1/2 size-4" />
+          <Input
+            placeholder={isListening ? "Fale agora..." : "Filtrar por palavra-chave"}
+            className={`pl-10 pr-12 bg-white ${isListening ? 'border-red-300 bg-red-50' : ''}`}
+            {...register('search')}
+          />
+          {isSupported && (
+            <Button
+              type="button"
+              size="sm"
+              variant={isListening ? "destructive" : "outline"}
+              className="absolute right-1 top-1/2 -translate-y-1/2 cursor-pointer px-2"
+              onClick={handleVoiceSearch}
+              title={isListening ? "Parar gravação" : "Buscar por voz"}
+            >
+              {isListening ? <MicOffIcon className="size-4" /> : <MicIcon className="size-4" />}
+            </Button>
+          )}
+        </div>
 
         <div className="flex flex-col sm:flex-row gap-2">
           <div className="flex flex-col sm:flex-row gap-2 w-full">
