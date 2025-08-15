@@ -1,6 +1,8 @@
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Volume2, VolumeX, Pause, Play } from "lucide-react";
 import { Heading } from "./heading";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
+import { Button } from "./ui/button";
+import { useTextToSpeech } from "@/hooks/use-text-to-speech";
 import type { PropsWithChildren } from "react";
 
 interface DetailsCollapsibleItemProps extends PropsWithChildren {
@@ -11,11 +13,69 @@ export function DetailsCollapsibleItem({
   label,
   children
 }: DetailsCollapsibleItemProps) {
+  const { speak, stop, pause, resume, isSpeaking, isPaused, isSupported } = useTextToSpeech()
+
+  function handleTTSToggle() {
+    if (!children || typeof children !== 'string') return
+
+    if (isSpeaking && !isPaused) {
+      pause()
+    } else if (isSpeaking && isPaused) {
+      resume()
+    } else {
+      speak(children)
+    }
+  }
+
+  function handleTTSStop() {
+    stop()
+  }
+
   return (
     <Collapsible className="group flex flex-col gap-2 w-full">
       <CollapsibleTrigger className="flex justify-between gap-2 items-center bg-primary-foreground border w-full rounded-lg px-4 py-2">
         <Heading title={label} className="font-semibold text-lg" />
-        <ChevronRight className="transition-transform group-data-[state=open]:rotate-90 size-4" />
+        <div className="flex items-center gap-2">
+          {isSupported && children && typeof children === 'string' && (
+            <div className="flex gap-1">
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                className="p-1 h-8 w-8"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleTTSToggle()
+                }}
+                title={isSpeaking && !isPaused ? "Pausar leitura" : isPaused ? "Continuar leitura" : "Ler texto"}
+              >
+                {isSpeaking && !isPaused ? (
+                  <Pause className="size-4" />
+                ) : isPaused ? (
+                  <Play className="size-4" />
+                ) : (
+                  <Volume2 className="size-4" />
+                )}
+              </Button>
+              {isSpeaking && (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  className="p-1 h-8 w-8"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleTTSStop()
+                  }}
+                  title="Parar leitura"
+                >
+                  <VolumeX className="size-4" />
+                </Button>
+              )}
+            </div>
+          )}
+          <ChevronRight className="transition-transform group-data-[state=open]:rotate-90 size-4" />
+        </div>
       </CollapsibleTrigger>
 
       {children && (
