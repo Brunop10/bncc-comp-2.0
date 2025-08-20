@@ -18,7 +18,7 @@ export function useTextToSpeech() {
 
     const utterance = new SpeechSynthesisUtterance(text)
     
-    utterance.rate = options?.rate ?? 2
+    utterance.rate = options?.rate ?? 1
     utterance.pitch = options?.pitch ?? 1
     utterance.volume = options?.volume ?? 1
     utterance.lang = 'pt-BR'

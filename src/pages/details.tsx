@@ -123,12 +123,30 @@ export function Details() {
             </Card>
           </div>
 
-          <DetailsCollapsibleItem label={ability.objetivo_ou_habilidade}>
-            {ability.descr_objetivo_ou_habilidade}
+          <DetailsCollapsibleItem 
+            label={ability.objetivo_ou_habilidade}
+            textContent={ability.descr_objetivo_ou_habilidade}
+          >
+            <div>
+              {ability.descr_objetivo_ou_habilidade}
+              {ability.img_url && (
+                <div className="w-full flex justify-center mt-4">
+                  <img 
+                    src={ability.img_url} 
+                    alt={`Ilustração para ${ability.objetivo_ou_habilidade}`}
+                    className="max-w-full h-auto rounded-lg shadow-md max-h-96 object-contain"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                    }}
+                  />
+                </div>
+              )}
+            </div>
           </DetailsCollapsibleItem>
 
           {ability.explicacao && (
-            <DetailsCollapsibleItem label="Definição">
+            <DetailsCollapsibleItem label="Definição"> 
               {ability.explicacao}
             </DetailsCollapsibleItem>
           )}

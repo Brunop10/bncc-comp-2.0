@@ -7,23 +7,32 @@ import type { PropsWithChildren } from "react";
 
 interface DetailsCollapsibleItemProps extends PropsWithChildren {
   label: string
+  textContent?: string
 }
 
 export function DetailsCollapsibleItem({
   label,
-  children
+  children,
+  textContent
 }: DetailsCollapsibleItemProps) {
   const { speak, stop, pause, resume, isSpeaking, isPaused, isSupported } = useTextToSpeech()
 
+  const getTextForTTS = (): string | null => {
+    if (textContent) return textContent
+    if (typeof children === 'string') return children
+    return null
+  }
+
   function handleTTSToggle() {
-    if (!children || typeof children !== 'string') return
+    const text = getTextForTTS()
+    if (!text) return
 
     if (isSpeaking && !isPaused) {
       pause()
     } else if (isSpeaking && isPaused) {
       resume()
     } else {
-      speak(children)
+      speak(text)
     }
   }
 
@@ -36,7 +45,7 @@ export function DetailsCollapsibleItem({
       <CollapsibleTrigger className="flex justify-between gap-2 items-center bg-primary-foreground border w-full rounded-lg px-4 py-2">
         <Heading title={label} className="font-semibold text-lg" />
         <div className="flex items-center gap-2">
-          {isSupported && children && typeof children === 'string' && (
+          {isSupported && getTextForTTS() && (
             <div className="flex gap-1">
               <Button
                 type="button"
