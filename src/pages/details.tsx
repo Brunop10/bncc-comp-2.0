@@ -1,5 +1,6 @@
 import { getAbilities } from "@/api/get-abilities";
 import { DetailsCollapsibleItem } from "@/components/details-collapsible-item";
+import { ImageWithLoading } from "@/components/image-with-loading";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardFooter, CardHeader } from "@/components/ui/card";
@@ -129,18 +130,12 @@ export function Details() {
           >
             <div>
               {ability.descr_objetivo_ou_habilidade}
-              {ability.img_url && (
-                <div className="w-full flex justify-center mt-4">
-                  <img 
-                    src={ability.img_url} 
-                    alt={`Ilustração para ${ability.objetivo_ou_habilidade}`}
-                    className="max-w-full h-auto rounded-lg shadow-md max-h-96 object-contain"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                    }}
-                  />
-                </div>
+              {ability.img_url_1 && (
+                <ImageWithLoading
+                  src={ability.img_url_1}
+                  alt={`Ilustração para ${ability.objetivo_ou_habilidade}`}
+                  className="max-w-full h-auto rounded-lg shadow-md max-h-96 object-contain"
+                />
               )}
             </div>
           </DetailsCollapsibleItem>
@@ -152,8 +147,20 @@ export function Details() {
           )}
 
           {ability.habilidade_superior && (
-            <DetailsCollapsibleItem label="Habilidade superior">
-              {ability.habilidade_superior}
+            <DetailsCollapsibleItem 
+            label="Habilidade superior"
+            textContent={ability.habilidade_superior}
+            >
+              <div>
+                {ability.habilidade_superior}
+                {ability.img_url_2 && (
+                  <ImageWithLoading
+                    src={ability.img_url_2}
+                    alt={`Ilustração para ${ability.habilidade_superior}`}
+                    className="max-w-full h-auto rounded-lg shadow-md max-h-96 object-contain"
+                  />
+                )}
+              </div>
             </DetailsCollapsibleItem>
           )}
           
