@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { ImageLoading } from "./ui/image-loading";
 
 interface ImageWithLoadingProps {
   src: string;
@@ -27,8 +27,8 @@ export function ImageWithLoading({ src, alt, className }: ImageWithLoadingProps)
   return (
     <div className="w-full flex justify-center mt-4">
       {isLoading && (
-        <div className="flex flex-col items-center justify-center w-full max-w-md h-48 space-y-2">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <div className="flex flex-col items-center justify-center w-full max-w-md space-y-3">
+          <ImageLoading size="lg" />
           <p className="text-sm text-muted-foreground">Carregando imagem...</p>
         </div>
       )}

@@ -146,3 +146,63 @@
     transform: scale(1);
   }
 }
+
+/* Image loading animations */
+@keyframes fillImage {
+  0% {
+    clip-path: inset(100% 0 0 0);
+    opacity: 0;
+  }
+  25% {
+    clip-path: inset(75% 0 0 0);
+    opacity: 0.4;
+  }
+  50% {
+    clip-path: inset(50% 0 0 0);
+    opacity: 0.6;
+  }
+  75% {
+    clip-path: inset(25% 0 0 0);
+    opacity: 0.8;
+  }
+  100% {
+    clip-path: inset(0% 0 0 0);
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes loadingShadow {
+  0% {
+    transform: scaleX(0.3);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scaleX(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scaleX(0.3);
+    opacity: 0.3;
+  }
+}
+
+@keyframes finalShine {
+  0%, 90% {
+    opacity: 0;
+  }
+  95% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
