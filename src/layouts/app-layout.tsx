@@ -1,8 +1,17 @@
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
-import { Outlet } from "react-router"
+import { Outlet, useLocation } from "react-router"
 import { Header } from "@/components/header"
+import { useEffect } from "react"
 
 export default function Layout() {
+  const location = useLocation()
+
+  useEffect(() => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel()
+    }
+  }, [location.pathname])
+
   return (
     <SidebarProvider>
       {/* <AppSidebar variant="inset" /> */}
