@@ -32,7 +32,7 @@ export function MessageInput({ onSendMessage, isLoading }: MessageInputProps) {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Digite sua mensagem... (Enter para enviar, Shift+Enter para nova linha)"
+          placeholder="Digite sua pergunta... "
           className="min-h-[60px] max-h-[120px] resize-none"
           disabled={isLoading}
         />

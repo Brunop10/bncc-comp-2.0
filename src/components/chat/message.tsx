@@ -7,7 +7,13 @@ interface MessageProps {
 }
 
 function parseMarkdown(text: string) {
-  let parsed = text.replace(/^### (.*$)/gim, '<h3 class="text-lg font-semibold mb-2 mt-1">$1</h3>')
+  let parsed = text.replace(/^###### (.*$)/gim, '<h6 class="text-xs font-medium mb-1 mt-1">$1</h6>')
+  
+  parsed = parsed.replace(/^##### (.*$)/gim, '<h5 class="text-sm font-medium mb-1 mt-1">$1</h5>')
+  
+  parsed = parsed.replace(/^#### (.*$)/gim, '<h4 class="text-base font-semibold mb-2 mt-1">$1</h4>')
+  
+  parsed = parsed.replace(/^### (.*$)/gim, '<h3 class="text-lg font-semibold mb-2 mt-1">$1</h3>')
   
   parsed = parsed.replace(/^## (.*$)/gim, '<h2 class="text-xl font-semibold mb-2 mt-2">$1</h2>')
   
