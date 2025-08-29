@@ -21,9 +21,17 @@ export function Home() {
   const { transcript, isListening, isSupported, startListening, stopListening, resetTranscript } = useSpeechToText()
 
   function handleNavigate({ search }: FormData) {
-    const path = search 
-      ? `/habilidades?pesquisa=${search}`
-      : '/habilidades'
+    if (!search) {
+      navigate('/habilidades')
+      return
+    }
+
+    const codePattern = /^[A-Za-z]+\d+/
+    const isCode = codePattern.test(search.trim())
+
+    const path = isCode 
+      ? `/habilidades?codigo=${encodeURIComponent(search.trim())}`
+      : `/habilidades?pesquisa=${encodeURIComponent(search)}`
 
     navigate(path) as void
   }
@@ -57,7 +65,7 @@ export function Home() {
         >
           <SearchIcon className="absolute text-muted-foreground left-3 top-1/2 -translate-y-1/2 size-4" />
           <Input
-            placeholder={isListening ? "Fale agora..." : "Buscar por palavra-chave"}
+            placeholder={isListening ? "Fale agora..." : "Buscar por palavra-chave ou código"}
             className={`pl-10 pr-16 bg-gray-100 border-gray-200 h-10 ${isListening ? 'border-red-300 bg-red-50' : ''}`}
             {...form.register('search')}
           />

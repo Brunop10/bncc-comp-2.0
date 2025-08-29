@@ -9,6 +9,7 @@ import { LoadingBook } from "@/components/ui/loading";
 import { AbilityCard } from "@/components/ability-card";
 import { useQuery } from "@tanstack/react-query";
 import { getAbilities } from "@/api/get-abilities";
+import { getAbilitiesCodes } from "@/api/get-abilities-codes";
 import { useSearchParams } from "react-router";
 import { COLLEGE_YEARS } from "@/utils/college-years";
 import { Controller, useForm } from "react-hook-form";
@@ -18,6 +19,7 @@ import { useSpeechToText } from "@/hooks/use-speech-to-text";
 
 const formSchema = z.object({
   search: z.string(),
+  code: z.string(),
   year: z.string(),
   axe: z.string()
 })
@@ -29,6 +31,7 @@ export function Abilities() {
   const { control, register, handleSubmit, setValue, reset } = useForm<FormData>({
     values: {
       search: '',
+      code: 'all',
       axe: 'all',
       year: 'all'
     }
@@ -38,6 +41,7 @@ export function Abilities() {
   const { transcript, isListening, isSupported, startListening, stopListening, resetTranscript } = useSpeechToText()
 
   const searchFilter = searchParams.get('pesquisa') ?? undefined
+  const codeFilter = searchParams.get('codigo') ?? undefined
   const axesFilter = searchParams.get('eixo') ?? undefined
   const yearFilter = searchParams.get('ano') ?? undefined
 
@@ -57,10 +61,21 @@ export function Abilities() {
     label: item,
   }))
 
+  const { data: codesData } = useQuery({
+    queryKey: ['abilities-codes'],
+    queryFn: getAbilitiesCodes
+  })
+
+  const codesOptions = codesData?.codes?.map(code => ({
+    value: code,
+    label: code
+  })) ?? []
+
   const { data, isLoading } = useQuery({
-    queryKey: ['abilities', searchFilter, axesFilter, yearFilter],
+    queryKey: ['abilities', searchFilter, codeFilter, axesFilter, yearFilter],
     queryFn: () => getAbilities({ 
       keywords: searchFilter,
+      code: codeFilter,
       axe: axesFilter,
       year: yearFilter
     })
@@ -76,6 +91,12 @@ export function Abilities() {
         state.set('pesquisa', data.search)
       } else {
         state.delete('pesquisa')
+      }
+
+      if (data.code !== 'all') {
+        state.set('codigo', data.code)
+      } else {
+        state.delete('codigo')
       }
 
       if (data.axe !== 'all') {
@@ -98,6 +119,7 @@ export function Abilities() {
     reset()
     setSearchParams(state => {
       state.delete('pesquisa')
+      state.delete('codigo')
       state.delete('ano')
       state.delete('eixo')
       return state
@@ -117,7 +139,10 @@ export function Abilities() {
     if (searchFilter) {
       setValue('search', searchFilter)
     }
-  }, [searchFilter])
+    if (codeFilter) {
+      setValue('code', codeFilter)
+    }
+  }, [searchFilter, codeFilter])
 
   useEffect(() => {
     if (transcript) {
@@ -129,7 +154,7 @@ export function Abilities() {
     <div className="space-y-8">
       <div className="space-y-1">
         <Heading title="Objetivos e Habilidades" />
-        <Description value="Utilize a tabela abaixo para buscar informações relacionadas à BNCC na área de Computação. Filtre os dados por código ou etapa para encontrar os objetivos e habilidades desejados." />
+        <Description value="Utilize a tabela abaixo para buscar informações relacionadas à BNCC na área de Computação. Filtre os dados por palavra-chave, código ou etapa para encontrar os objetivos e habilidades desejados." />
       </div>
 
       <form 
@@ -139,7 +164,7 @@ export function Abilities() {
         <div className="relative">
           <SearchIcon className="absolute text-muted-foreground left-3 top-1/2 -translate-y-1/2 size-4" />
           <Input
-            placeholder={isListening ? "Fale agora..." : "Filtrar por palavra-chave"}
+            placeholder={isListening ? "Fale agora..." : "Filtrar por palavra-chave ou código"}
             className={`pl-10 pr-12 bg-white ${isListening ? 'border-red-300 bg-red-50' : ''}`}
             {...register('search')}
           />
@@ -159,6 +184,20 @@ export function Abilities() {
 
         <div className="flex flex-col sm:flex-row gap-2">
           <div className="flex flex-col sm:flex-row gap-2 w-full">
+            <Controller
+              control={control}
+              name="code"
+              render={({ field }) => (
+                <Combobox
+                  items={codesOptions}
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="Selecionar código específico"
+                  className="w-full sm:flex-1"
+                />
+              )}
+            />
+            
             <Controller
               control={control}
               name="year"
