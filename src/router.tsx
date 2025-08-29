@@ -11,6 +11,9 @@ import { About } from './pages/about'
 import { AbilitiesByAxes } from './pages/abilities-by-axes'
 import { Example } from './pages/example'
 import { Contribute } from './pages/contribute'
+import { Chat } from '@/pages/chat'
+
+// Adicionar rota no array de rotas
 
 export const router = createBrowserRouter([
   {
@@ -36,6 +39,10 @@ export const router = createBrowserRouter([
       {
         path: '/minha-pagina',
         element: <MyPage />
+      },
+      {
+        path: '/chat',
+        element: <Chat />
       },
       {
         path: '/detalhes',

@@ -2,7 +2,7 @@ import { CardButton } from "@/components/card-button";
 import { CardButtonHorizontal } from "@/components/card-button-horizontal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { BookAIcon, BookmarkIcon, FileSpreadsheetIcon, HelpingHandIcon, InfoIcon, LayersIcon, SearchIcon, MicIcon, MicOffIcon, XIcon } from "lucide-react";
+import { BookAIcon, BookmarkIcon, FileSpreadsheetIcon, HelpingHandIcon, InfoIcon, LayersIcon, SearchIcon, MicIcon, MicOffIcon, XIcon, MessageCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { z } from "zod";
@@ -118,6 +118,13 @@ export function Home() {
         title="Minha página"
         description="Acesse rapidamente seus itens salvos"
         url="/minha-pagina"
+      />
+
+      <CardButtonHorizontal
+        icon={<MessageCircle className="size-6 text-primary" />}
+        title="Chat IA"
+        description="Converse com nossa IA especializada em BNCC e computação"
+        url="/chat"
       />
 
       <CardButtonHorizontal
