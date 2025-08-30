@@ -20,10 +20,10 @@ export function Chat() {
           <CollapsibleTrigger asChild>
             <Button 
               variant="ghost" 
-              className="w-full justify-between p-3 h-auto text-left border border-orange-200 bg-orange-50 hover:bg-orange-100 text-orange-800"
+              className="w-full justify-between p-3 h-auto text-left border border-purple-200 bg-purple-50 hover:bg-purple-100 text-purple-800"
             >
               <span className="text-sm font-medium">
-                🚨 Está enfrentando problemas com o nosso chat? Clique aqui
+                Opção alternativa de chat
               </span>
               <ChevronDown 
                 className={`h-4 w-4 transition-transform duration-200 ${
@@ -42,7 +42,7 @@ export function Chat() {
                     Chat Alternativo
                   </h3>
                   <p className="text-sm text-blue-700 mb-3">
-                    Caso enfrente problemas com o chat integrado, você pode usar uma versão alternativa no ChatGPT:
+                    Caso enfrente problemas com o chat integrado, você pode usar uma versão alternativa no ChatGPT feita por Christian Brackmann:
                   </p>
                   <Button 
                     variant="outline" 

@@ -87,30 +87,33 @@ export function Abilities() {
 
   function handleFilter(data: FormData) {
     setSearchParams(state => {
-      if (data.search) {
-        state.set('pesquisa', data.search)
+      const codePattern = /^[A-Za-z]+\d+/
+      const isSearchTextACode = data.search && codePattern.test(data.search.trim())
+      
+      if (isSearchTextACode) {
+        state.set('codigo', data.search.trim())
+        state.delete('pesquisa')
+      } else if (data.search && data.search.trim()) {
+        state.set('pesquisa', data.search.trim())
+        state.delete('codigo')
       } else {
         state.delete('pesquisa')
-      }
-
-      if (data.code !== 'all') {
-        state.set('codigo', data.code)
-      } else {
         state.delete('codigo')
       }
-
+      if (data.code !== 'all') {
+        state.set('codigo', data.code)
+        state.delete('pesquisa')
+      }
       if (data.axe !== 'all') {
         state.set('eixo', data.axe)
       } else {
         state.delete('eixo')
       }
-
       if (data.year !== 'all') {
         state.set('ano', data.year)
       } else {
         state.delete('ano')
       }
-
       return state
     })
   }
@@ -164,7 +167,7 @@ export function Abilities() {
         <div className="relative">
           <SearchIcon className="absolute text-muted-foreground left-3 top-1/2 -translate-y-1/2 size-4" />
           <Input
-            placeholder={isListening ? "Fale agora..." : "Filtrar por palavra-chave ou código"}
+            placeholder={isListening ? "Fale agora..." : "Filtrar por palavra ou código"}
             className={`pl-10 pr-12 bg-white ${isListening ? 'border-red-300 bg-red-50' : ''}`}
             {...register('search')}
           />

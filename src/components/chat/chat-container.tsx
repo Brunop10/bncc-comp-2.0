@@ -1,11 +1,9 @@
 import { MessageList } from './message-list'
 import { MessageInput } from './message-input'
-import { Button } from '@/components/ui/button'
-import { Trash2 } from 'lucide-react'
 import { useChat } from '@/hooks/use-chat'
 
 export function ChatContainer() {
-  const { messages, isLoading, sendMessage, clearChat } = useChat()
+  const { messages, isLoading, sendMessage} = useChat()
 
   return (
     <div className="flex flex-col h-[600px] border rounded-lg bg-background shadow-sm">
@@ -16,17 +14,6 @@ export function ChatContainer() {
             Tire suas dúvidas sobre BNCC e assuntos relacionados à computação
           </p>
         </div>
-        {messages.length > 0 && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={clearChat}
-            disabled={isLoading}
-          >
-            <Trash2 className="h-4 w-4 mr-2" />
-            Limpar
-          </Button>
-        )}
       </div>
 
       <MessageList messages={messages} />

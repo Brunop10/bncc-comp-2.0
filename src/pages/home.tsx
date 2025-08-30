@@ -65,8 +65,8 @@ export function Home() {
         >
           <SearchIcon className="absolute text-muted-foreground left-3 top-1/2 -translate-y-1/2 size-4" />
           <Input
-            placeholder={isListening ? "Fale agora..." : "Buscar por palavra-chave ou código"}
-            className={`pl-10 pr-16 bg-gray-100 border-gray-200 h-10 ${isListening ? 'border-red-300 bg-red-50' : ''}`}
+            placeholder={isListening ? "Fale agora..." : "Buscar por palavra ou código"}
+            className={`pl-10 pr-16 bg-gray-100 border-gray-200 h-10 placeholder:text-sm sm:placeholder:text-base placeholder:truncate ${isListening ? 'border-red-300 bg-red-50' : ''}`}
             {...form.register('search')}
           />
           <Button
