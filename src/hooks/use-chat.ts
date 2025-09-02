@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
 import { useGeminiAPI } from './use-gemini-api'
 import type { Message, ChatState } from '@/types/chat'
+import { useBNCCContext } from './use-bncc-context'
 
 export function useChat() {
   const [state, setState] = useState<ChatState>({
@@ -8,8 +9,14 @@ export function useChat() {
     isLoading: false,
     error: null
   })
+  const [currentUserMessage, setCurrentUserMessage] = useState('')
 
   const { sendMessage: sendToGemini } = useGeminiAPI()
+  
+  const { relevantAbilities, isLoading: contextLoading } = useBNCCContext({
+    userMessage: currentUserMessage,
+    enabled: currentUserMessage.length > 0
+  })
 
   const addMessage = useCallback((message: Omit<Message, 'id' | 'timestamp'>) => {
     const newMessage: Message = {
@@ -38,7 +45,8 @@ export function useChat() {
   const sendMessage = useCallback(async (content: string) => {
     if (!content.trim()) return
 
-    addMessage({ content: content.trim(), role: 'user' })
+    const userMessage = content.trim()
+    addMessage({ content: userMessage, role: 'user' })
 
     const assistantMessageId = addMessage({ 
       content: '', 
@@ -47,9 +55,26 @@ export function useChat() {
     })
 
     setState(prev => ({ ...prev, isLoading: true, error: null }))
+    setCurrentUserMessage(userMessage)
 
     try {
-      const response = await sendToGemini(content)
+      await new Promise<void>((resolve) => {
+        const checkContext = () => {
+          if (!contextLoading) {
+            resolve()
+          } else {
+            setTimeout(checkContext, 100)
+          }
+        }
+        checkContext()
+      })
+
+      console.log('🔍 DEBUG: Contexto final:', relevantAbilities.map(a => a.codigo))
+
+      const response = await sendToGemini({ 
+        message: userMessage,
+        context: relevantAbilities
+      })
       
       updateMessage(assistantMessageId, {
         content: response,
@@ -66,8 +91,9 @@ export function useChat() {
       setState(prev => ({ ...prev, error: errorMessage }))
     } finally {
       setState(prev => ({ ...prev, isLoading: false }))
+      setCurrentUserMessage('') 
     }
-  }, [addMessage, updateMessage, sendToGemini])
+  }, [addMessage, updateMessage, sendToGemini, relevantAbilities, contextLoading])
 
   const clearChat = useCallback(() => {
     setState({
@@ -75,6 +101,7 @@ export function useChat() {
       isLoading: false,
       error: null
     })
+    setCurrentUserMessage('')
   }, [])
 
   return {
