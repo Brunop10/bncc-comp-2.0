@@ -1,10 +1,14 @@
 import { MessageList } from './message-list'
 import { MessageInput } from './message-input'
-import { useChat } from '@/hooks/use-chat'
+import type { Message } from '@/types/chat'
 
-export function ChatContainer() {
-  const { messages, isLoading, sendMessage} = useChat()
+interface ChatContainerProps {
+  messages: Message[]
+  isLoading: boolean
+  onSendMessage: (message: string) => Promise<void>
+}
 
+export function ChatContainer({ messages, isLoading, onSendMessage }: ChatContainerProps) {
   return (
     <div className="flex flex-col h-[600px] border rounded-lg bg-background shadow-sm">
       <div className="flex items-center justify-between p-4 border-b">
@@ -18,7 +22,7 @@ export function ChatContainer() {
 
       <MessageList messages={messages} />
 
-      <MessageInput onSendMessage={sendMessage} isLoading={isLoading} />
+      <MessageInput onSendMessage={onSendMessage} isLoading={isLoading} />
     </div>
   )
 }
