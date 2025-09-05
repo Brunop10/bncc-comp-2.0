@@ -1,11 +1,28 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useGeminiAPI } from './use-gemini-api'
 import type { Message, ChatState } from '@/types/chat'
 import { useBNCCContext } from './use-bncc-context'
+import { STORAGE_KEYS } from '@/utils/storage-keys'
 
 export function useChat() {
+  const loadChatHistory = (): Message[] => {
+    try {
+      const savedHistory = sessionStorage.getItem(STORAGE_KEYS.CHAT_HISTORY)
+      if (!savedHistory) return []
+      
+      const parsedHistory = JSON.parse(savedHistory) as Message[]
+      return parsedHistory.map(message => ({
+        ...message,
+        timestamp: new Date(message.timestamp)
+      }))
+    } catch (error) {
+      console.error('Erro ao carregar histórico do chat:', error)
+      return []
+    }
+  }
+
   const [state, setState] = useState<ChatState>({
-    messages: [],
+    messages: loadChatHistory(),
     isLoading: false,
     error: null
   })
@@ -17,6 +34,14 @@ export function useChat() {
     userMessage: currentUserMessage,
     enabled: currentUserMessage.length > 0
   })
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(STORAGE_KEYS.CHAT_HISTORY, JSON.stringify(state.messages))
+    } catch (error) {
+      console.error('Erro ao salvar histórico do chat:', error)
+    }
+  }, [state.messages])
 
   const addMessage = useCallback((message: Omit<Message, 'id' | 'timestamp'>) => {
     const newMessage: Message = {
@@ -102,6 +127,11 @@ export function useChat() {
       error: null
     })
     setCurrentUserMessage('')
+    try {
+      sessionStorage.removeItem(STORAGE_KEYS.CHAT_HISTORY)
+    } catch (error) {
+      console.error('Erro ao limpar histórico do chat:', error)
+    }
   }, [])
 
   return {
