@@ -12,6 +12,5 @@ export interface AbilityDTO {
   descr_objetivo_ou_habilidade: string
   explicacao: string
   img_url_1?: string
-  img_url_2?: string
   exemplos: ExampleDTO[]
 }

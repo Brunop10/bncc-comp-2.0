@@ -153,13 +153,6 @@ export function Details() {
             >
               <div>
                 {ability.habilidade_superior}
-                {ability.img_url_2 && (
-                  <ImageWithLoading
-                    src={ability.img_url_2}
-                    alt={`Ilustração para ${ability.habilidade_superior}`}
-                    className="max-w-full h-auto rounded-lg shadow-md max-h-96 object-contain"
-                  />
-                )}
               </div>
             </DetailsCollapsibleItem>
           )}

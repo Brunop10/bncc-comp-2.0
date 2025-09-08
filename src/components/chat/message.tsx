@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import { cn } from '@/lib/utils'
-import { Bot, User, Loader2 } from 'lucide-react'
+import { Bot, User, Loader2, ChevronDown, ChevronUp, Copy, Check } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import type { Message as MessageType } from '@/types/chat'
 
 interface MessageProps {
@@ -35,6 +37,24 @@ function parseMarkdown(text: string) {
 export function Message({ message }: MessageProps) {
   const isUser = message.role === 'user'
   const isLoading = message.isLoading
+  const [isExpanded, setIsExpanded] = useState(true)
+  const [isCopied, setIsCopied] = useState(false)
+
+  const handleToggleExpand = () => {
+    setIsExpanded(!isExpanded)
+  }
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(message.content)
+      setIsCopied(true)
+      setTimeout(() => setIsCopied(false), 2000)
+    } catch (error) {
+      console.error('Erro ao copiar mensagem:', error)
+    }
+  }
+
+  const isLongMessage = message.content.length > 300
 
   return (
     <div className={cn(
@@ -66,10 +86,59 @@ export function Message({ message }: MessageProps) {
               <span>Gerando resposta...</span>
             </div>
           ) : (
-            <div 
-              className="whitespace-pre-wrap prose prose-sm max-w-none prose-headings:text-inherit prose-strong:text-inherit prose-em:text-inherit"
-              dangerouslySetInnerHTML={{ __html: parseMarkdown(message.content) }}
-            />
+            <div>
+              <div 
+                className={cn(
+                  "whitespace-pre-wrap prose prose-sm max-w-none prose-headings:text-inherit prose-strong:text-inherit prose-em:text-inherit transition-all duration-200",
+                  !isExpanded && isLongMessage && "max-h-12 overflow-hidden"
+                )}
+                dangerouslySetInnerHTML={{ __html: parseMarkdown(message.content) }}
+              />
+              
+              {!isUser && !isLoading && (
+                <div className="flex items-center gap-1 mt-2 pt-2 border-t border-gray-200">
+                  {isLongMessage && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleToggleExpand}
+                      className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground"
+                    >
+                      {isExpanded ? (
+                        <>
+                          <ChevronUp className="h-3 w-3 mr-1" />
+                          Recolher
+                        </>
+                      ) : (
+                        <>
+                          <ChevronDown className="h-3 w-3 mr-1" />
+                          Expandir
+                        </>
+                      )}
+                    </Button>
+                  )}
+                  
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleCopy}
+                    className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground"
+                  >
+                    {isCopied ? (
+                      <>
+                        <Check className="h-3 w-3 mr-1" />
+                        Copiado!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-3 w-3 mr-1" />
+                        Copiar
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
+            </div>
           )}
         </div>
         
