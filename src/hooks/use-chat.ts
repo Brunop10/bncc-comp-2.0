@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect } from 'react'
 import { useGeminiAPI } from './use-gemini-api'
 import type { Message, ChatState, SavedChat } from '@/types/chat'
-import { useBNCCContext } from './use-bncc-context'
 import { STORAGE_KEYS } from '@/utils/storage-keys'
 
 export function useChat() {
@@ -47,17 +46,11 @@ export function useChat() {
     isLoading: false,
     error: null
   })
-  const [currentUserMessage, setCurrentUserMessage] = useState('')
   const [savedChats, setSavedChats] = useState<SavedChat[]>(() => loadSavedChatsFromStorage())
   const [refreshTrigger, setRefreshTrigger] = useState(0)
   const [currentLoadedChatId, setCurrentLoadedChatId] = useState<string | null>(null)
 
   const { sendMessage: sendToGemini } = useGeminiAPI()
-  
-  const { relevantAbilities, isLoading: contextLoading } = useBNCCContext({
-    userMessage: currentUserMessage,
-    enabled: currentUserMessage.length > 0
-  })
 
   useEffect(() => {
     try {
@@ -181,6 +174,7 @@ export function useChat() {
     if (!content.trim()) return
 
     const userMessage = content.trim()
+    console.log('💬 Enviando mensagem:', userMessage)
     addMessage({ content: userMessage, role: 'user' })
 
     const assistantMessageId = addMessage({ 
@@ -190,25 +184,11 @@ export function useChat() {
     })
 
     setState(prev => ({ ...prev, isLoading: true, error: null }))
-    setCurrentUserMessage(userMessage)
 
     try {
-      await new Promise<void>((resolve) => {
-        const checkContext = () => {
-          if (!contextLoading) {
-            resolve()
-          } else {
-            setTimeout(checkContext, 100)
-          }
-        }
-        checkContext()
-      })
-
-      console.log('🔍 DEBUG: Contexto final:', relevantAbilities.map(a => a.codigo))
-
+      // O sendToGemini agora gerencia o contexto BNCC internamente
       const response = await sendToGemini({ 
-        message: userMessage,
-        context: relevantAbilities
+        message: userMessage
       })
       
       updateMessage(assistantMessageId, {
@@ -216,6 +196,7 @@ export function useChat() {
         isLoading: false
       })
     } catch (error) {
+      console.error('❌ Erro ao enviar mensagem:', error)
       const errorMessage = error instanceof Error ? error.message : 'Erro ao enviar mensagem'
       
       updateMessage(assistantMessageId, {
@@ -226,9 +207,8 @@ export function useChat() {
       setState(prev => ({ ...prev, error: errorMessage }))
     } finally {
       setState(prev => ({ ...prev, isLoading: false }))
-      setCurrentUserMessage('')
     }
-  }, [addMessage, updateMessage, sendToGemini, relevantAbilities, contextLoading])
+  }, [addMessage, updateMessage, sendToGemini])
 
   const clearChat = useCallback(() => {
     setState({
@@ -236,7 +216,6 @@ export function useChat() {
       isLoading: false,
       error: null
     })
-    setCurrentUserMessage('')
     setCurrentLoadedChatId(null) 
     try {
       sessionStorage.removeItem(STORAGE_KEYS.CHAT_HISTORY)

@@ -20,6 +20,8 @@ export async function getAbilities({
   codes,
   keywords
 }: GetAbilitiesParams) {
+  console.log('🌐 API Call - getAbilities params:', { code, axe, year, codes, keywords })
+  
   const response = await api.get<GetAbilitiesResponse>("", {
     params: {
       resource: "fetchAbilities",
@@ -29,6 +31,12 @@ export async function getAbilities({
       codes: codes?.join(","),
       description: keywords
     }
+  })
+
+  console.log('📡 API Response:', {
+    status: response.status,
+    abilitiesCount: response.data?.abilities?.length || 0,
+    abilities: response.data?.abilities?.map(a => a.codigo) || []
   })
 
   return response.data
