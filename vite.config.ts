@@ -11,9 +11,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.png'],
       manifest: {
-        name: 'BNCC Competências 2.0',
+        name: 'BNCC Comp',
         short_name: 'BNCC Comp',
-        description: 'Aplicação para consulta de competências da BNCC',
+        description: 'Aplicação para consulta de habilidades da BNCC Computação',
         theme_color: '#000000',
         background_color: '#ffffff',
         display: 'standalone',
@@ -41,7 +41,33 @@ export default defineConfig({
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,webp}']
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,webp}'],
+        navigateFallback: 'index.html',
+        runtimeCaching: [
+          // Assets estáticos: imagens, css, js, fontes (cache-first)
+          {
+            urlPattern: ({ request }) =>
+              ['image', 'style', 'script', 'font'].includes(request.destination),
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'assets-v1',
+              expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 30 },
+              cacheableResponse: { statuses: [0, 200] }
+            }
+          },
+          // API (Google Apps Script / recursos com ?resource=...) - network-first
+          {
+            urlPattern: ({ url, request }) =>
+              request.method === 'GET' &&
+              (url.origin.includes('script.google.com') || url.searchParams.has('resource')),
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'api-v1',
+              networkTimeoutSeconds: 5,
+              cacheableResponse: { statuses: [0, 200] }
+            }
+          }
+        ]
       }
     })
   ],
