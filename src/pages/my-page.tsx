@@ -5,9 +5,12 @@ import { Heading } from "@/components/heading";
 import { useStorage } from "@/hooks/use-storage";
 import { useQuery } from "@tanstack/react-query";
 import { LoadingBook } from "@/components/ui/loading";
+import { OfflinePlaceholder } from "@/components/ui/offline-placeholder";
+import { useNetworkStatus } from "@/context/network-context";
 
 export function MyPage() {
   const { getFavorites } = useStorage()
+  const { isOnline } = useNetworkStatus();
 
   const codes = getFavorites()
 
@@ -27,7 +30,7 @@ export function MyPage() {
       </div>
 
       <div className="flex flex-col gap-2">
-        {isLoading && (
+        {isLoading && isOnline && (
           <div className="flex flex-col items-center justify-center py-20 gap-6">
             <LoadingBook size="xl" />
             <div className="text-center space-y-2">
@@ -41,6 +44,14 @@ export function MyPage() {
           </div>
         )}
 
+        {!isOnline && !isLoading && abilities.length === 0 && (
+          <OfflinePlaceholder
+            title="Sem rede"
+            description="Conecte-se para carregar seus favoritos"
+            size="xl"
+          />
+        )}
+
         {!isLoading && abilities.map(ability => (
           <AbilityCard
             key={ability.codigo}
@@ -48,7 +59,7 @@ export function MyPage() {
           />
         ))}
 
-        {!isLoading && !abilities.length && (
+        {!isLoading && isOnline && !abilities.length && (
           <div className="flex justify-center px-4 py-2 bg-muted border rounded-md">
             <span className="text-muted-foreground text-sm">
               Nenhuma habilidade salva

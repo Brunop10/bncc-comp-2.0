@@ -2,12 +2,12 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { Outlet, useLocation } from "react-router"
 import { Header } from "@/components/header"
 import { useEffect } from "react"
-import { useNetwork } from "@/hooks/use-network"
+import { useNetworkStatus } from "@/context/network-context"
 import { OfflineBanner } from "@/components/offline-banner"
 
 export default function Layout() {
   const location = useLocation()
-  const { isOnline } = useNetwork()
+  const { isOnline } = useNetworkStatus()
 
   useEffect(() => {
     if ('speechSynthesis' in window) {

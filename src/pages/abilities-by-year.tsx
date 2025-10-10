@@ -3,17 +3,19 @@ import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/heading";
 import { Description } from "@/components/description";
 import { LoadingBook } from "@/components/ui/loading";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { COLLEGE_YEARS } from "@/utils/college-years";
 import { AbilityCard } from "@/components/ability-card";
 import { useQuery } from "@tanstack/react-query";
 import { getAbilities } from "@/api/get-abilities";
 import { useSearchParams } from "react-router";
+import { OfflinePlaceholder } from "@/components/ui/offline-placeholder";
+import { useNetworkStatus } from "@/context/network-context";
 
 export function AbilitiesByYear() {
 
   const [searchParams, setSearchParams] = useSearchParams()
+  const { isOnline } = useNetworkStatus();
 
   const yearFilter = searchParams.get('ano') ?? ''
 
@@ -102,7 +104,15 @@ export function AbilitiesByYear() {
             </Button>
           </div>
 
-          {isLoading && (
+          {!isOnline && !isLoading && abilities.length === 0 && (
+            <OfflinePlaceholder
+              title="Sem rede"
+              description="Conecte-se para buscar habilidades"
+              size="xl"
+            />
+          )}
+
+          {isOnline && isLoading && (
             <div className="flex flex-col items-center justify-center py-20 gap-6">
               <LoadingBook size="xl" />
               <div className="text-center space-y-2">
@@ -120,7 +130,7 @@ export function AbilitiesByYear() {
             <AbilityCard key={ability.codigo} ability={ability} />
           ))}
 
-          {!isLoading && !abilities.length && (
+          {!isLoading && isOnline && abilities.length === 0 && (
             <div className="flex justify-center px-4 py-2 bg-muted border rounded-md">
               <span className="text-muted-foreground text-sm">
                 Nenhuma habilidade disponível

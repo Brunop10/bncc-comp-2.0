@@ -9,12 +9,15 @@ import dayjs from 'dayjs'
 import { ExampleSkeleton } from "@/components/example-skeleton"
 import { useEffect } from "react"
 import { Button } from "@/components/ui/button"
+import { OfflinePlaceholder } from "@/components/ui/offline-placeholder"
+import { useNetworkStatus } from "@/context/network-context"
 
 export function Example() {
   const navigate = useNavigate()
   const { id: code } = useParams<{ id: string }>()
+  const { isOnline } = useNetworkStatus()
 
-   const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['example', code],
     queryFn: () => getExample({ code }),
   })
@@ -46,7 +49,15 @@ export function Example() {
         Voltar para habilidade
       </Button>
 
-      {isLoading && <ExampleSkeleton />}
+      {!isOnline && !isLoading && !example && (
+        <OfflinePlaceholder
+          title="Sem rede"
+          description="Conecte-se para carregar o exemplo"
+          size="xl"
+        />
+      )}
+
+      {isLoading && isOnline && <ExampleSkeleton />}
 
       {!isLoading && example && (
         <Card>

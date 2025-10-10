@@ -13,7 +13,7 @@ export function OfflineBanner({ className }: { className?: string }) {
     >
       <WifiOff className="size-4 shrink-0" />
       <span className="text-sm">
-        Sem conexão com a internet. <p/>Apenas conteúdos já salvos no dispositivo serão exibidos.
+        Sem conexão com a internet. <p/>Apenas conteúdos já acessados no dispositivo serão exibidos.
       </span>
     </div>
   )

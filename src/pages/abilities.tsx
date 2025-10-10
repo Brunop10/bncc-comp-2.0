@@ -1,11 +1,12 @@
 import { EraserIcon, SearchIcon, MicIcon, MicOffIcon } from "lucide-react";
+import { OfflinePlaceholder } from "@/components/ui/offline-placeholder";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/heading";
 import { Description } from "@/components/description";
 import { Input } from "@/components/ui/input";
 import { Combobox } from "@/components/combo-box";
 import { LoadingBook } from "@/components/ui/loading";
-
+import { useNetworkStatus } from "@/context/network-context";
 import { AbilityCard } from "@/components/ability-card";
 import { useQuery } from "@tanstack/react-query";
 import { getAbilities } from "@/api/get-abilities";
@@ -27,6 +28,7 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>
 
 export function Abilities() {
+  const { isOnline } = useNetworkStatus();
 
   const { control, register, handleSubmit, setValue, reset } = useForm<FormData>({
     values: {
@@ -81,7 +83,7 @@ export function Abilities() {
     })
   })
 
-  const abilities = data?.abilities ?? []
+  const abilities = data?.abilities ?? [];
 
   // const steps = getListOfSteps().map(item => ({ label: item, value: item }))
 
@@ -250,7 +252,15 @@ export function Abilities() {
       </form>
 
       <div className="flex flex-col gap-4">
-        {isLoading && (
+        {!isOnline && !isLoading && abilities.length === 0 && (
+          <OfflinePlaceholder
+            title="Sem rede"
+            description="Conecte-se para buscar habilidades"
+            size="xl"
+          />
+        )}
+
+        {isLoading && isOnline && (
           <div className="flex flex-col items-center justify-center py-20 gap-6">
             <LoadingBook size="xl" />
             <div className="text-center space-y-2">
@@ -268,7 +278,7 @@ export function Abilities() {
           <AbilityCard key={ability.codigo} ability={ability} />
         ))}
 
-        {!isLoading && !abilities.length && (
+        {!isLoading && isOnline && abilities.length === 0 && (
           <div className="flex justify-center px-4 py-2 bg-muted border rounded-md">
             <span className="text-muted-foreground text-sm">
               Nenhuma habilidade disponível

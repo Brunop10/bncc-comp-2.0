@@ -4,7 +4,9 @@ import { ImageWithLoading } from "@/components/image-with-loading";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardFooter, CardHeader } from "@/components/ui/card";
+import { OfflinePlaceholder } from "@/components/ui/offline-placeholder";
 import { Table, TableCell, TableRow } from "@/components/ui/table";
+import { useNetworkStatus } from "@/context/network-context";
 import { useStorage } from "@/hooks/use-storage";
 import { useQuery } from "@tanstack/react-query";
 import { BookmarkIcon, ChevronLeftCircle, ExternalLinkIcon, Loader2 } from "lucide-react";
@@ -15,6 +17,7 @@ export function Details() {
   const navigate = useNavigate()
   const { code } = useParams<{ code: string }>()
   const { findByCode, addFavorite, removeFavorite } = useStorage()
+  const { isOnline } = useNetworkStatus()
 
   const [isFavorited, setIsFavorited] = useState(false)
 
@@ -65,7 +68,15 @@ export function Details() {
         </Button>
       </div>
 
-      {isLoading && (
+      {!isOnline && !isLoading && !ability && (
+        <OfflinePlaceholder
+          title="Sem rede"
+          description="Conecte-se para carregar os detalhes da habilidade"
+          size="xl"
+        />
+      )}
+
+      {isLoading && isOnline && (
         <div className="flex justify-center w-full">
           <Loader2 className="size-4 animate-spin" />
         </div>
