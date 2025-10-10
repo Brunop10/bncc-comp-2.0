@@ -16,7 +16,8 @@ export default async function handler(req: any, res: any) {
   }
 
   const { title = 'Atualização disponível', body = 'Abra o app para conferir', url } = (req.body || {})
-  const payload = JSON.stringify({ title, body, url })
+  const payloadObj = { title, body, url }
+  const payloadUtf8 = Buffer.from(JSON.stringify(payloadObj), 'utf8')
 
   const entries = await (kv as any).hgetall('push:subscriptions') as Record<string, unknown> | null
   if (!entries) return res.status(200).json({ sent: 0, removed: 0 })
@@ -29,7 +30,7 @@ export default async function handler(req: any, res: any) {
     subs.map(async ([endpoint, value]) => {
       try {
         const sub = typeof value === 'string' ? JSON.parse(value) : value
-        await webpush.sendNotification(sub as any, payload, { TTL: 3600, urgency: 'normal' })
+        await webpush.sendNotification(sub as any, payloadUtf8, { TTL: 3600, urgency: 'normal' })
         sent++
       } catch (err: any) {
         const status = err?.statusCode
