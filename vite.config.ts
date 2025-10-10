@@ -3,12 +3,13 @@ import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      injectRegister: 'auto',
+      devOptions: { enabled: true },
       includeAssets: ['favicon.png'],
       manifest: {
         name: 'BNCC Comp',
@@ -65,6 +66,20 @@ export default defineConfig({
               cacheName: 'api-v1',
               networkTimeoutSeconds: 5,
               cacheableResponse: { statuses: [0, 200] }
+            }
+          },
+          // Enfileira POSTs offline (Background Sync) para Apps Script
+          {
+            urlPattern: ({ url, request }) =>
+              request.method === 'POST' &&
+              url.origin.includes('script.google.com'),
+            handler: 'NetworkOnly',
+            method: 'POST',
+            options: {
+              backgroundSync: {
+                name: 'add-example-queue',
+                options: { maxRetentionTime: 24 * 60 }
+              }
             }
           }
         ]

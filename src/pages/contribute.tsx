@@ -8,16 +8,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Check, ChevronDown, Loader2, X } from "lucide-react";
 import { Editor } from "@/components/editor";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { addExample } from "@/api/add-example";
 import { toast } from "sonner";
-import { AxiosError } from "axios";
 import { Badge } from "@/components/ui/badge";
 import type { KeyboardEvent } from "react";
-import { getAbilitiesCodes } from "@/api/get-abilities-codes";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { useNetworkStatus } from "@/context/network-context";
+import { ABILITY_CODES } from "@/utils/ability-codes";
+import { api } from "@/lib/axios";
 
 function Subheading({ label }: { label: string }) {
   return <h3 className="text-lg font-semibold border-b pb-2">{label}</h3>
@@ -53,6 +54,7 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>
 
 export function Contribute() {
+  const { isOnline } = useNetworkStatus();
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     values: {
@@ -79,41 +81,58 @@ export function Contribute() {
     name: "tags",
   })
 
-  const {
-    data: abilitiesCodeResult,
-    isFetching: isFetchingAbilitiesCodes
-  } = useQuery({
-    queryKey: ['abilitiesCodes'],
-    queryFn: getAbilitiesCodes
-  })
 
-  const {
-    mutateAsync: onAddExample,
-    isPending: addExampleIsPending
-  } = useMutation({
-    mutationFn: addExample,
-    onSuccess: () => {
-      form.reset()
-      toast.success('Seu exemplo foi submetido.', {
-        description: 'Seu conteúdo foi enviado para análise e após aprovado passará a compor os exemplos da habilidade informada.'
-      })
-    },
-    onError(error) {
-      const isAxiosError = error instanceof AxiosError
-      const description = isAxiosError 
-        ? error.response?.data.message
-        : 'Ocorreu um erro. Tente novamente mais tarde.'
-
-      toast.error('Falha ao submeter exemplo', {
-        description,
-      })
-    },
-  })
-
-  const abilitiesCodes = abilitiesCodeResult?.codes.map(item => ({
+  const abilitiesCodes = ABILITY_CODES.map((item) => ({
     value: item,
     label: item,
-  })) ?? []
+  }))
+
+  const { mutate: addExampleMutate, isPending: addExampleIsPending } = useMutation({
+    mutationFn: addExample,
+    onSuccess: () => {
+      toast.success('Contribuição enviada com sucesso!');
+      form.reset();
+    },
+    onError: () => {
+      toast.error('Falha ao enviar contribuição. Tente novamente.');
+    },
+  });
+
+  function handleAddExample(data: FormData) {
+    const payload = {
+      ...data,
+      tags: data.tags.map((item) => item.value).join(', '),
+      collaboratorPhone: data.collaboratorPhone.replace(/[^\d]/g, ''),
+    };
+
+    if (!isOnline) {
+      toast.info('Contribuição salva offline. Será enviada automaticamente ao voltar online.');
+
+      void api.post("", {
+        resource: "addExample",
+        payload: {
+          titulo: payload.title,
+          bncc_codigo_principal: payload.bnccCode,
+          descricao: payload.description,
+          classificacao: payload.classification,
+          link: payload.link,
+          tags: payload.tags,
+          fonte: payload.source,
+          nome_colaborador: payload.collaboratorName,
+          email_colaborador: payload.collaboratorEmail,
+          telefone_colaborador: payload.collaboratorPhone,
+        },
+      }, {
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+      }).catch(() => {  });
+
+      form.reset();
+      localStorage.setItem('@bncc-comp:pending-example-submission', '1');
+      return;
+    }
+
+    addExampleMutate(payload);
+  }
 
   function handleAddTag(e: KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter') {
@@ -130,14 +149,6 @@ export function Contribute() {
       });
       form.setValue('tag', '')
     }
-  }
-
-  async function handleAddExample(data: FormData) {
-    await onAddExample({
-      ...data,
-      tags: data.tags.map(item => item.value).join(', '),
-      collaboratorPhone: data.collaboratorPhone.replace(/[^\d]/g, '')
-    })
   }
 
   return (
@@ -198,10 +209,6 @@ export function Contribute() {
                     <FormItem className="w-full">
                       <FormLabel className="items-center gap-1.5">
                         Código da Habilidade
-
-                        {isFetchingAbilitiesCodes && (
-                          <Loader2 className="size-3 animate-spin" />
-                        )}
                       </FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
@@ -209,7 +216,6 @@ export function Contribute() {
                             <Button
                               variant="outline"
                               role="combobox"
-                              disabled={isFetchingAbilitiesCodes}
                               className={cn(
                                 "w-full justify-between",
                                 !field.value && "text-muted-foreground"
@@ -425,11 +431,14 @@ export function Contribute() {
 
             <Button
               className="w-full"
-              disabled={addExampleIsPending}
+              type="submit"
+              disabled={isOnline ? addExampleIsPending : false}
             >
-              {addExampleIsPending ? (
+              {isOnline && addExampleIsPending ? (
                 <Loader2 className="size-4 animate-spin" />
-              ) : 'Enviar Contribuição'}
+              ) : (
+                'Enviar Contribuição'
+              )}
             </Button>
           </CardContent>
         </Card>

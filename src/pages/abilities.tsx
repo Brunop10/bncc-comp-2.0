@@ -10,7 +10,7 @@ import { useNetworkStatus } from "@/context/network-context";
 import { AbilityCard } from "@/components/ability-card";
 import { useQuery } from "@tanstack/react-query";
 import { getAbilities } from "@/api/get-abilities";
-import { getAbilitiesCodes } from "@/api/get-abilities-codes";
+import { ABILITY_CODES } from "@/utils/ability-codes";
 import { useSearchParams } from "react-router";
 import { COLLEGE_YEARS } from "@/utils/college-years";
 import { Controller, useForm } from "react-hook-form";
@@ -63,15 +63,10 @@ export function Abilities() {
     label: item,
   }))
 
-  const { data: codesData } = useQuery({
-    queryKey: ['abilities-codes'],
-    queryFn: getAbilitiesCodes
-  })
-
-  const codesOptions = codesData?.codes?.map(code => ({
+  const codesOptions = ABILITY_CODES.map(code => ({
     value: code,
     label: code
-  })) ?? []
+  }))
 
   const { data, isLoading } = useQuery({
     queryKey: ['abilities', searchFilter, codeFilter, axesFilter, yearFilter],
