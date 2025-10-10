@@ -18,7 +18,7 @@ export default async function handler(req: any, res: any) {
   const { title = 'Atualização disponível', body = 'Abra o app para conferir', url } = (req.body || {})
   const payload = JSON.stringify({ title, body, url })
 
-  const entries = await kv.hgetall<Record<string, string>>('push:subscriptions')
+  const entries = await (kv as any).hgetall('push:subscriptions') as Record<string, unknown> | null
   if (!entries) return res.status(200).json({ sent: 0, removed: 0 })
 
   let sent = 0
@@ -28,13 +28,13 @@ export default async function handler(req: any, res: any) {
   await Promise.all(
     subs.map(async ([endpoint, value]) => {
       try {
-        const sub = JSON.parse(value)
-        await webpush.sendNotification(sub, payload, { TTL: 3600, urgency: 'normal' })
+        const sub = typeof value === 'string' ? JSON.parse(value) : value
+        await webpush.sendNotification(sub as any, payload, { TTL: 3600, urgency: 'normal' })
         sent++
       } catch (err: any) {
         const status = err?.statusCode
         if (status === 404 || status === 410) {
-          await kv.hdel('push:subscriptions', endpoint)
+          await (kv as any).hdel('push:subscriptions', endpoint)
           removed++
         }
       }
