@@ -23,8 +23,7 @@ export function Details() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['abilities', code],
-    queryFn: () => getAbilities({ code }),
-    enabled: isOnline && !!code
+    queryFn: () => getAbilities({ code })
   })
 
   const ability = data?.abilities[0] ?? null
@@ -69,7 +68,7 @@ export function Details() {
         </Button>
       </div>
 
-      {!isOnline && !ability && (
+      {!isOnline && !isLoading && !ability && (
         <OfflinePlaceholder
           title="Sem rede"
           description="Conecte-se para carregar os detalhes da habilidade"

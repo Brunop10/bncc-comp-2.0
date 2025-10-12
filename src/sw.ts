@@ -5,7 +5,7 @@ export {};
 
 import { precacheAndRoute } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
-import { CacheFirst, NetworkFirst, NetworkOnly } from 'workbox-strategies';
+import { CacheFirst, NetworkOnly, StaleWhileRevalidate } from 'workbox-strategies';
 import { ExpirationPlugin } from 'workbox-expiration';
 import { BackgroundSyncPlugin } from 'workbox-background-sync';
 
@@ -30,16 +30,17 @@ registerRoute(
   })
 );
 
-// API GET: network-first com cache
+// API GET: stale-while-revalidate para resposta imediata do cache
 registerRoute(
   ({ url, request }: { url: URL; request: Request }) =>
-    request.method === 'GET' &&
-    (url.origin.includes('script.google.com') || url.searchParams.has('resource')),
-  new NetworkFirst({
+    request.method === 'GET' && url.origin.includes('script.google.com'),
+  new StaleWhileRevalidate({
     cacheName: 'api-v1',
-    networkTimeoutSeconds: 5,
+    plugins: [
+      new ExpirationPlugin({ maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 30 }),
+    ],
   })
-);
+)
 
 // Background Sync para POST offline
 const addExampleQueue = new BackgroundSyncPlugin('add-example-queue', {

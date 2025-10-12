@@ -75,8 +75,7 @@ export function Abilities() {
       code: codeFilter,
       axe: axesFilter,
       year: yearFilter
-    }),
-    enabled: isOnline
+    })
   })
 
   const abilities = data?.abilities ?? [];
@@ -248,7 +247,7 @@ export function Abilities() {
       </form>
 
       <div className="flex flex-col gap-4">
-        {!isOnline && abilities.length === 0 && (
+        {!isOnline && !isLoading && abilities.length === 0 && (
           <OfflinePlaceholder
             title="Sem rede"
             description="Conecte-se para buscar habilidades"

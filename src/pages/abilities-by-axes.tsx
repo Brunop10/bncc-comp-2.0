@@ -21,7 +21,7 @@ export function AbilitiesByAxes() {
   const { data, isLoading } = useQuery({
     queryKey: ['abilities', axesFilter],
     queryFn: () => getAbilities({ axe: axesFilter }),
-    enabled: isOnline && !!axesFilter.length
+    enabled: !!axesFilter.length
   })
 
   const abilities = data?.abilities ?? []
@@ -98,7 +98,7 @@ export function AbilitiesByAxes() {
             </Button>
           </div>
 
-          {!isOnline && abilities.length === 0 && (
+          {!isOnline && !isLoading && abilities.length === 0 && (
             <OfflinePlaceholder
               title="Sem rede"
               description="Conecte-se para buscar habilidades"
