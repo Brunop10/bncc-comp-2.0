@@ -20,6 +20,7 @@ export function Example() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['example', code],
     queryFn: () => getExample({ code }),
+    enabled: isOnline && !!code
   })
 
   function handleGoBack() {
@@ -49,7 +50,7 @@ export function Example() {
         Voltar para habilidade
       </Button>
 
-      {!isOnline && !isLoading && !example && (
+      {!isOnline && !example && (
         <OfflinePlaceholder
           title="Sem rede"
           description="Conecte-se para carregar o exemplo"

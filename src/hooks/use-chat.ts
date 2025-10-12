@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from 'react'
 import { useGeminiAPI } from './use-gemini-api'
 import type { Message, ChatState, SavedChat } from '@/types/chat'
 import { STORAGE_KEYS } from '@/utils/storage-keys'
+import { useNetworkStatus } from '@/context/network-context'
 
 export function useChat() {
   const loadChatHistory = (): Message[] => {
@@ -170,6 +171,8 @@ export function useChat() {
     }))
   }, [])
 
+  const { isOnline } = useNetworkStatus()
+
   const sendMessage = useCallback(async (content: string) => {
     if (!content.trim()) return
 
@@ -185,8 +188,16 @@ export function useChat() {
 
     setState(prev => ({ ...prev, isLoading: true, error: null }))
 
+    if (!isOnline) {
+      updateMessage(assistantMessageId, {
+        content: 'Sem conexão para conversar com o chat. Tente novamente quando estiver online.',
+        isLoading: false
+      })
+      setState(prev => ({ ...prev, isLoading: false }))
+      return
+    }
+
     try {
-      // O sendToGemini agora gerencia o contexto BNCC internamente
       const response = await sendToGemini({ 
         message: userMessage
       })
@@ -208,7 +219,7 @@ export function useChat() {
     } finally {
       setState(prev => ({ ...prev, isLoading: false }))
     }
-  }, [addMessage, updateMessage, sendToGemini])
+  }, [addMessage, updateMessage, sendToGemini, isOnline])
 
   const clearChat = useCallback(() => {
     setState({

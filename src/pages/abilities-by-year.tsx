@@ -22,7 +22,7 @@ export function AbilitiesByYear() {
   const { data, isLoading } = useQuery({
     queryKey: ['abilities', yearFilter],
     queryFn: () => getAbilities({ year: yearFilter }),
-    enabled: !!yearFilter.length
+    enabled: isOnline && !!yearFilter.length
   })
 
   const abilities = data?.abilities ?? []
@@ -104,7 +104,7 @@ export function AbilitiesByYear() {
             </Button>
           </div>
 
-          {!isOnline && !isLoading && abilities.length === 0 && (
+          {!isOnline && abilities.length === 0 && (
             <OfflinePlaceholder
               title="Sem rede"
               description="Conecte-se para buscar habilidades"

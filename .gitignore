@@ -26,3 +26,6 @@ dev-dist/
 # env files
 .env
 .env.local
+
+# scripts
+scripts

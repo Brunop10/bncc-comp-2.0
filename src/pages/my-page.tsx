@@ -17,7 +17,7 @@ export function MyPage() {
   const { data, isLoading } = useQuery({
     queryKey: ['favorites'],
     queryFn: () => getAbilities({ codes }),
-    enabled: !!codes.length
+    enabled: isOnline && !!codes.length
   })
 
   const abilities = data?.abilities ?? []
@@ -44,7 +44,7 @@ export function MyPage() {
           </div>
         )}
 
-        {!isOnline && !isLoading && abilities.length === 0 && (
+        {!isOnline && abilities.length === 0 && (
           <OfflinePlaceholder
             title="Sem rede"
             description="Conecte-se para carregar seus favoritos"
