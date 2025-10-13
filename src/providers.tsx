@@ -21,7 +21,6 @@ function PendingExampleSyncNotifier() {
 
   return null;
 }
-
 function PushNotificationsSetup() {
   async function ensureSubscription() {
     if (!('Notification' in window) || Notification.permission === 'denied') return;
@@ -55,7 +54,26 @@ function PushNotificationsSetup() {
 
   return null;
 }
-
+function PersistentStorageSetup() {
+  useEffect(() => {
+    (async () => {
+      if (!('storage' in navigator) || !('persist' in navigator.storage)) return
+      const already = await navigator.storage.persisted()
+      if (already) return
+      try {
+        const granted = await navigator.storage.persist()
+        if (!granted) {
+          console.warn('Armazenamento persistente não concedido')
+        } else {
+          console.log('Armazenamento persistente concedido')
+        }
+      } catch (e) {
+        console.error('Falha ao solicitar armazenamento persistente', e)
+      }
+    })()
+  }, [])
+  return null
+}
 export function Providers() {
   return (
     <>
@@ -67,6 +85,7 @@ export function Providers() {
       </QueryClientProvider>
       <Toaster richColors theme="light" />
       <PushNotificationsSetup />
+      <PersistentStorageSetup />
     </>
   )
 }

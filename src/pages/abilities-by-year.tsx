@@ -75,7 +75,7 @@ export function AbilitiesByYear() {
     <div className="space-y-8">
       <div className="space-y-1">
         <Heading title="Explorar por ano" />
-        <Description value="Explore os objetivos e habilidades relacionados à um ano específico." />
+        <Description value="Explore os objetivos e habilidades relacionados a um ano específico." />
       </div>
 
       {!yearFilter && (

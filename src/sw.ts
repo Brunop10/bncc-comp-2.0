@@ -8,6 +8,7 @@ import { registerRoute } from 'workbox-routing';
 import { CacheFirst, NetworkOnly, StaleWhileRevalidate } from 'workbox-strategies';
 import { ExpirationPlugin } from 'workbox-expiration';
 import { BackgroundSyncPlugin } from 'workbox-background-sync';
+import { CacheableResponsePlugin } from 'workbox-cacheable-response'
 
 // Precaching gerado pelo build (auto-injetado pelo VitePWA)
 precacheAndRoute((self as any).__WB_MANIFEST);
@@ -38,12 +39,18 @@ registerRoute(
 
 // API GET: stale-while-revalidate para resposta imediata do cache
 registerRoute(
-  ({ url, request }: { url: URL; request: Request }) =>
-    request.method === 'GET' && url.origin.includes('script.google.com'),
+  ({ request, url }) =>
+    request.method === 'GET' &&
+    url.origin.includes('script.google.com'),
   new StaleWhileRevalidate({
-    cacheName: 'api-v1',
+    cacheName: 'api-get-cache', 
     plugins: [
-      new ExpirationPlugin({ maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 30 }),
+      new CacheableResponsePlugin({ statuses: [0, 200] }),
+      new ExpirationPlugin({
+        maxEntries: 200,
+        maxAgeSeconds: 60 * 60 * 24 * 30, // 30 dias
+        purgeOnQuotaError: true,
+      }),
     ],
   })
 )

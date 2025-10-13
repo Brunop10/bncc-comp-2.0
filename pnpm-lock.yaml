@@ -137,6 +137,9 @@ importers:
       web-push:
         specifier: 3.6.7
         version: 3.6.7
+      workbox-cacheable-response:
+        specifier: 7.3.0
+        version: 7.3.0
       zod:
         specifier: 3.24.4
         version: 3.24.4
