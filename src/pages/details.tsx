@@ -16,7 +16,7 @@ import { Link, useNavigate, useParams } from "react-router";
 export function Details() {
   const navigate = useNavigate()
   const { code } = useParams<{ code: string }>()
-  const { findByCode, addFavorite, removeFavorite } = useStorage()
+  const { findByCode, addFavorite, removeFavorite, addFavoriteWithData, removeFavoriteData } = useStorage()
   const { isOnline } = useNetworkStatus()
 
   const [isFavorited, setIsFavorited] = useState(false)
@@ -32,10 +32,15 @@ export function Details() {
     if(!code) return
 
     if (!isFavorited) {
-      addFavorite(code)
+      if (ability) {
+        addFavoriteWithData(ability)
+      } else {
+        addFavorite(code)
+      }
       setIsFavorited(true)
     } else {
       removeFavorite(code)
+      removeFavoriteData(code)
       setIsFavorited(false)
     }
   }

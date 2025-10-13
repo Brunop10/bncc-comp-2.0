@@ -7,20 +7,50 @@ import { useQuery } from "@tanstack/react-query";
 import { LoadingBook } from "@/components/ui/loading";
 import { OfflinePlaceholder } from "@/components/ui/offline-placeholder";
 import { useNetworkStatus } from "@/context/network-context";
+import type { AbilityDTO } from "@/dtos/ability-dto";
+import { useEffect, useState } from "react";
 
 export function MyPage() {
-  const { getFavorites } = useStorage()
+  const { getFavorites, getFavoriteAbilities, saveFavoriteAbilitiesBatch } = useStorage()
   const { isOnline } = useNetworkStatus();
 
-  const codes = getFavorites()
+  const [codes, setCodes] = useState<string[]>(getFavorites())
+  const [cachedAbilities, setCachedAbilities] = useState<AbilityDTO[]>(getFavoriteAbilities())
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['favorites'],
+  useEffect(() => {
+    const onChange = () => {
+      setCodes(prev => {
+        const next = getFavorites()
+        return JSON.stringify(prev) === JSON.stringify(next) ? prev : next
+      })
+      setCachedAbilities(prev => {
+        const next = getFavoriteAbilities()
+        const prevCodes = prev.map(a => a.codigo)
+        const nextCodes = next.map(a => a.codigo)
+        return JSON.stringify(prevCodes) === JSON.stringify(nextCodes) ? prev : next
+      })
+    }
+    window.addEventListener('favorites-changed', onChange)
+    window.addEventListener('storage', onChange)
+    return () => {
+      window.removeEventListener('favorites-changed', onChange)
+      window.removeEventListener('storage', onChange)
+    }
+  }, [])
+
+  const { data, isLoading, isSuccess } = useQuery<{ abilities: AbilityDTO[] }>({
+    queryKey: ['favorites', codes],
     queryFn: () => getAbilities({ codes }),
     enabled: isOnline && !!codes.length
   })
 
-  const abilities = data?.abilities ?? []
+  useEffect(() => {
+    if (isOnline && isSuccess && data?.abilities?.length) {
+      saveFavoriteAbilitiesBatch(data.abilities)
+    }
+  }, [isOnline, isSuccess, data, saveFavoriteAbilitiesBatch])
+
+  const abilities: AbilityDTO[] = data?.abilities ?? cachedAbilities
 
   return (
     <div className="space-y-8">
@@ -44,7 +74,7 @@ export function MyPage() {
           </div>
         )}
 
-        {!isOnline && abilities.length === 0 && (
+        {!isOnline && !isLoading && abilities.length === 0 && (
           <OfflinePlaceholder
             title="Sem rede"
             description="Conecte-se para carregar seus favoritos"
@@ -52,7 +82,7 @@ export function MyPage() {
           />
         )}
 
-        {!isLoading && abilities.map(ability => (
+        {!isLoading && abilities.map((ability: AbilityDTO) => (
           <AbilityCard
             key={ability.codigo}
             ability={ability}
