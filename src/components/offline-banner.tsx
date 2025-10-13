@@ -1,6 +1,10 @@
-import { WifiOff } from 'lucide-react'
+import { useState } from 'react'
+import { WifiOff, X } from 'lucide-react'
 
-export function OfflineBanner({ className }: { className?: string }) {
+export function OfflineBanner({ className, dismissible = true, onClose }: { className?: string, dismissible?: boolean, onClose?: () => void }) {
+  const [isVisible, setIsVisible] = useState(true)
+  if (!isVisible) return null
+
   return (
     <div
       role="status"
@@ -13,8 +17,21 @@ export function OfflineBanner({ className }: { className?: string }) {
     >
       <WifiOff className="size-4 shrink-0" />
       <span className="text-sm">
-        Sem conexão com a internet. <p/>Apenas conteúdos já acessados no dispositivo serão exibidos.
+        Sem conexão com a internet. <p/>Apenas conteúdos já acessados no dispositivo serão carregados.
       </span>
+      {dismissible && (
+        <button
+          type="button"
+          aria-label="Fechar"
+          onClick={() => {
+            setIsVisible(false)
+            onClose?.()
+          }}
+          className="ml-auto inline-flex items-center justify-center rounded-full border bg-white/80 hover:bg-white text-yellow-900 shadow-sm w-6 h-6"
+        >
+          <X className="size-3" />
+        </button>
+      )}
     </div>
   )
 }

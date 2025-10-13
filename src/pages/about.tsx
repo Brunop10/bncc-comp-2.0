@@ -81,7 +81,7 @@ export function About() {
         <Card>
           <CardContent className="space-y-6">
             <p className="text-muted-foreground">
-              Este projeto integra o Trabalho de Conclusão de Curso (TCC) de Wederson Machado Fagundes, orientado pela professora Andrea Schwertner Charão, no curso de Sistemas de Informação do Centro de Tecnologia (CT) da Universidade Federal de Santa Maria (UFSM), realizado em colaboração com o Núcleo de Tecnologia Educacional Municipal (NTEM) da Prefeitura Municipal de Santa Maria - RS.
+              Este trabalho, que integra o Trabalho de Conclusão de Curso (TCC) de Bruno Perussatto no curso de Ciência da Computação da Universidade Federal de Santa Maria (UFSM), sob orientação da professora Andrea Schwertner Charão, dá continuidade a um projeto previamente desenvolvido por Wederson Machado Fagundes em parceria com o Núcleo de Tecnologia Educacional Municipal (NTEM) da Prefeitura de Santa Maria – RS. Nesta nova etapa, o projeto é aprimorado com a integração de novos recursos e funcionalidades, ampliando suas possibilidades de uso e fortalecendo sua contribuição para o desenvolvimento de soluções tecnológicas voltadas à educação.
             </p>
 
             <div className="flex flex-col md:flex-row gap-2 md:gap-4 items-center justify-center">

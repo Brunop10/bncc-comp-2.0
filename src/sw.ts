@@ -15,7 +15,13 @@ precacheAndRoute((self as any).__WB_MANIFEST);
 // Ativação imediata e assumir controle das abas
 self.skipWaiting();
 self.addEventListener('activate', (event: ExtendableEvent) => {
-  event.waitUntil(self.clients.claim());
+  event.waitUntil((async () => {
+    await self.clients.claim();
+    const clientList = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    for (const client of clientList) {
+      (client as any).navigate((client as any).url);
+    }
+  })());
 });
 
 // Assets estáticos: cache-first
