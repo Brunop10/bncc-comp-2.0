@@ -3,92 +3,10 @@ import { router } from "./router";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/react-query";
 import { Toaster } from "./components/ui/sonner";
-import { NetworkProvider, useNetworkStatus } from "./context/network-context";
-import { useEffect } from "react";
-import { toast } from "sonner";
-import { subscribeAndRegisterPush } from './lib/push'
-import { env } from './env'
+import { NetworkProvider } from "./context/network-context";
+import { PendingExampleSyncNotifier, PushNotificationsSetup, PersistentStorageSetup, PwaInstallPrompt } from "./pwa-setup";
 
-function PendingExampleSyncNotifier() {
-  const { isOnline } = useNetworkStatus();
-
-  useEffect(() => {
-    if (!isOnline) return;
-
-    const rawCount = localStorage.getItem('@bncc-comp:pending-example-count');
-    const count = rawCount ? parseInt(rawCount, 10) : 0;
-
-    if (count > 0) {
-      const message = count === 1
-        ? 'Contribuição enviada com sucesso'
-        : `${count} contribuições enviadas com sucesso`;
-      toast.success(message);
-      localStorage.removeItem('@bncc-comp:pending-example-count');
-      localStorage.removeItem('@bncc-comp:pending-example-submission');
-      return;
-    }
-
-    if (localStorage.getItem('@bncc-comp:pending-example-submission') === '1') {
-      toast.success('Contribuição enviada com sucesso');
-      localStorage.removeItem('@bncc-comp:pending-example-submission');
-    }
-  }, [isOnline]);
-
-  return null;
-}
-function PushNotificationsSetup() {
-  async function ensureSubscription() {
-    if (!('Notification' in window) || Notification.permission === 'denied') return;
-    if (Notification.permission === 'default') {
-      const perm = await Notification.requestPermission();
-      if (perm !== 'granted') return;
-    }
-
-    const reg = await navigator.serviceWorker.ready;
-    const existing = await reg.pushManager.getSubscription();
-    if (existing) {
-      const json = existing.toJSON();
-      localStorage.setItem('push:subscription', JSON.stringify(json));
-      console.log('Push subscription (existente):', json);
-      return;
-    }
-
-    const publicKey = env.VITE_PUSH_PUBLIC_KEY;
-    if (!publicKey) {
-      console.warn('VITE_PUSH_PUBLIC_KEY ausente. Defina no .env para assinar o Push.');
-      return;
-    }
-
-    const subscription = await subscribeAndRegisterPush(reg, publicKey);
-    console.log('Push subscription (nova):', subscription.toJSON?.() ?? subscription);
-  }
-
-  useEffect(() => {
-    ensureSubscription().catch(console.error);
-  }, []);
-
-  return null;
-}
-function PersistentStorageSetup() {
-  useEffect(() => {
-    (async () => {
-      if (!('storage' in navigator) || !('persist' in navigator.storage)) return
-      const already = await navigator.storage.persisted()
-      if (already) return
-      try {
-        const granted = await navigator.storage.persist()
-        if (!granted) {
-          console.warn('Armazenamento persistente não concedido')
-        } else {
-          console.log('Armazenamento persistente concedido')
-        }
-      } catch (e) {
-        console.error('Falha ao solicitar armazenamento persistente', e)
-      }
-    })()
-  }, [])
-  return null
-}
+ 
 export function Providers() {
   return (
     <>
@@ -101,6 +19,7 @@ export function Providers() {
       <Toaster richColors theme="light" />
       <PushNotificationsSetup />
       <PersistentStorageSetup />
+      <PwaInstallPrompt />
     </>
   )
 }
