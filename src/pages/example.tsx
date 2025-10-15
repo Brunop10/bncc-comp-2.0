@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query"
 import { ChevronLeftCircle, ExternalLink, MonitorIcon, TagIcon } from "lucide-react"
 import { Link, useNavigate, useParams } from "react-router"
 import dayjs from 'dayjs'
-import { ExampleSkeleton } from "@/components/example-skeleton"
+import { ExampleLoading } from "@/components/ui/example-loading"
 import { useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { OfflinePlaceholder } from "@/components/ui/offline-placeholder"
@@ -57,7 +57,19 @@ export function Example() {
         />
       )}
 
-      {isLoading && isOnline && <ExampleSkeleton />}
+      {isLoading && isOnline && (
+        <div className="flex flex-col items-center justify-center py-20 gap-6">
+          <ExampleLoading size="xl" />
+          <div className="text-center space-y-2">
+            <p className="text-xl font-semibold text-primary">
+              Carregando o exemplo...
+            </p>
+            <p className="text-base text-muted-foreground">
+              Aguarde enquanto buscamos as informações
+            </p>
+          </div>
+        </div>
+      )}
 
       {!isLoading && example && (
         <Card>

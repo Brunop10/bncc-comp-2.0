@@ -9,7 +9,8 @@ import { Table, TableCell, TableRow } from "@/components/ui/table";
 import { useNetworkStatus } from "@/context/network-context";
 import { useStorage } from "@/hooks/use-storage";
 import { useQuery } from "@tanstack/react-query";
-import { BookmarkIcon, ChevronLeftCircle, ExternalLinkIcon, Loader2 } from "lucide-react";
+import { BookmarkIcon, ChevronLeftCircle, ExternalLinkIcon } from "lucide-react";
+import { LoadingBook } from "@/components/ui/loading";
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 
@@ -82,8 +83,16 @@ export function Details() {
       )}
 
       {isLoading && isOnline && (
-        <div className="flex justify-center w-full">
-          <Loader2 className="size-4 animate-spin" />
+        <div className="flex flex-col items-center justify-center py-20 gap-6">
+          <LoadingBook size="xl" />
+          <div className="text-center space-y-2">
+            <p className="text-xl font-semibold text-primary">
+              Carregando detalhes...
+            </p>
+            <p className="text-base text-muted-foreground">
+              Aguarde enquanto buscamos as informações 
+            </p>
+          </div>
         </div>
       )}
 

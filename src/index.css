@@ -180,6 +180,29 @@
   }
 }
 
+@keyframes fillBottom {
+  0% {
+    clip-path: inset(100% 0 0 0); 
+    opacity: 0;
+  }
+  25% {
+    clip-path: inset(75% 0 0 0);
+    opacity: 0.4;
+  }
+  50% {
+    clip-path: inset(50% 0 0 0);
+    opacity: 0.6;
+  }
+  75% {
+    clip-path: inset(25% 0 0 0);
+    opacity: 0.8;
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+}
+
 @keyframes loadingShadow {
   0% {
     transform: scaleX(0.3);
@@ -204,5 +227,33 @@
   }
   100% {
     opacity: 0;
+  }
+}
+
+/* Idea loading animations */
+@keyframes ideaPulse {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(0.85);
+    opacity: 0.4;
+  }
+}
+
+@keyframes floatY {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+  100% {
+    transform: translateY(0);
   }
 }
