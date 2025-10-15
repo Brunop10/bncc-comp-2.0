@@ -35,9 +35,16 @@ export function PendingExampleSyncNotifier() {
 
 export function PushNotificationsSetup() {
   async function ensureSubscription() {
+    const isStandalone = window.matchMedia?.('(display-mode: standalone)')?.matches
+      || (navigator as any).standalone === true
+    if (!isStandalone) return;
+
     if (!('Notification' in window) || Notification.permission === 'denied') return;
     if (Notification.permission === 'default') {
+      const alreadyAsked = localStorage.getItem('push:permission-asked') === '1'
+      if (alreadyAsked) return;
       const perm = await Notification.requestPermission();
+      localStorage.setItem('push:permission-asked', '1')
       if (perm !== 'granted') return;
     }
 
@@ -114,6 +121,7 @@ export function PwaInstallPrompt() {
         {
           id: 'pwa-install',
           description: 'Acesse mais rápido e use offline instalando o app.',
+          position: 'top-center',
           action: {
             label: 'Instalar',
             onClick: async () => {
@@ -121,8 +129,6 @@ export function PwaInstallPrompt() {
                 await deferredPrompt?.prompt()
                 const choice = await deferredPrompt?.userChoice
                 if (choice?.outcome === 'accepted') {
-                  localStorage.setItem('@bncc-comp:pwa-installed', '1')
-                  toast.success('Aplicativo instalado!')
                 } else {
                   localStorage.setItem('@bncc-comp:pwa-install-dismissed', '1')
                 }
@@ -130,7 +136,7 @@ export function PwaInstallPrompt() {
               toast.dismiss('pwa-install')
             }
           },
-          duration: 15000,
+          duration: Number.POSITIVE_INFINITY,
           closeButton: true,
           onDismiss: () => {
             localStorage.setItem('@bncc-comp:pwa-install-dismissed', '1')
@@ -147,7 +153,6 @@ export function PwaInstallPrompt() {
 
     const onAppInstalled = () => {
       localStorage.setItem('@bncc-comp:pwa-installed', '1')
-      toast.success('Aplicativo instalado!')
       toast.dismiss('pwa-install')
     }
 
@@ -163,7 +168,8 @@ export function PwaInstallPrompt() {
           {
             id: 'pwa-install-ios',
             description: 'No Safari: Compartilhar → Adicionar à Tela de Início.',
-            duration: 12000,
+            position: 'top-center',
+            duration: Number.POSITIVE_INFINITY,
             closeButton: true,
             onDismiss: () => {
               localStorage.setItem('@bncc-comp:pwa-install-dismissed', '1')
