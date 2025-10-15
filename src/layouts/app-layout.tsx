@@ -4,6 +4,7 @@ import { Header } from "@/components/header"
 import { useEffect } from "react"
 import { useNetworkStatus } from "@/context/network-context"
 import { OfflineBanner } from "@/components/offline-banner"
+//import { GuidedTestTrigger } from "@/components/feedback/guided-test-trigger"
 
 export default function Layout() {
   const location = useLocation()
@@ -32,6 +33,8 @@ export default function Layout() {
             </div>
           </div>
         </div>
+        {/* Botão flutuante do passo a passo (apenas UI) */}
+        {/*<GuidedTestTrigger />*/}
       </SidebarInset>
     </SidebarProvider>
   )

@@ -13,8 +13,23 @@ function PendingExampleSyncNotifier() {
   const { isOnline } = useNetworkStatus();
 
   useEffect(() => {
-    if (isOnline && localStorage.getItem('@bncc-comp:pending-example-submission') === '1') {
-      toast.success('Exemplo pendente foi enviado com sucesso');
+    if (!isOnline) return;
+
+    const rawCount = localStorage.getItem('@bncc-comp:pending-example-count');
+    const count = rawCount ? parseInt(rawCount, 10) : 0;
+
+    if (count > 0) {
+      const message = count === 1
+        ? 'Contribuição enviada com sucesso'
+        : `${count} contribuições enviadas com sucesso`;
+      toast.success(message);
+      localStorage.removeItem('@bncc-comp:pending-example-count');
+      localStorage.removeItem('@bncc-comp:pending-example-submission');
+      return;
+    }
+
+    if (localStorage.getItem('@bncc-comp:pending-example-submission') === '1') {
+      toast.success('Contribuição enviada com sucesso');
       localStorage.removeItem('@bncc-comp:pending-example-submission');
     }
   }, [isOnline]);

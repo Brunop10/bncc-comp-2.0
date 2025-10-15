@@ -13,12 +13,14 @@ import { addExample } from "@/api/add-example";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import type { KeyboardEvent } from "react";
+import { useState, useEffect } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { useNetworkStatus } from "@/context/network-context";
 import { ABILITY_CODES } from "@/utils/ability-codes";
 import { api } from "@/lib/axios";
+import { OfflineBanner } from "@/components/offline-banner";
 
 function Subheading({ label }: { label: string }) {
   return <h3 className="text-lg font-semibold border-b pb-2">{label}</h3>
@@ -55,6 +57,14 @@ type FormData = z.infer<typeof formSchema>
 
 export function Contribute() {
   const { isOnline } = useNetworkStatus();
+  const [showOfflineSubmissionBanner, setShowOfflineSubmissionBanner] = useState(false);
+  const [isBnccComboOpen, setIsBnccComboOpen] = useState(false);
+
+  useEffect(() => {
+    if (isOnline) {
+      setShowOfflineSubmissionBanner(false);
+    }
+  }, [isOnline]);
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     values: {
@@ -106,7 +116,7 @@ export function Contribute() {
     };
 
     if (!isOnline) {
-      toast.info('Contribuição salva offline. Será enviada automaticamente ao voltar online.');
+      setShowOfflineSubmissionBanner(true);
 
       void api.post("", {
         resource: "addExample",
@@ -127,6 +137,9 @@ export function Contribute() {
       }).catch(() => {  });
 
       form.reset();
+      const pendingCountKey = '@bncc-comp:pending-example-count';
+      const currentCount = Number(localStorage.getItem(pendingCountKey) ?? '0');
+      localStorage.setItem(pendingCountKey, String(currentCount + 1));
       localStorage.setItem('@bncc-comp:pending-example-submission', '1');
       return;
     }
@@ -157,6 +170,19 @@ export function Contribute() {
         onSubmit={form.handleSubmit(handleAddExample)}
         className="space-y-8"
       >
+        {showOfflineSubmissionBanner && (
+          <div className="fixed bottom-4 left-0 right-0 z-50 mx-2 md:mx-auto md:max-w-lg">
+            <OfflineBanner
+              variant="info"
+              message={
+                <>
+                  <strong>Contribuição registrada offline.</strong> <p></p> Será enviada automaticamente ao ficar online dentro das próximas 24 horas, caso contrário, será excluída.
+                </>
+              }
+              onClose={() => setShowOfflineSubmissionBanner(false)}
+            />
+          </div>
+        )}
         <Card>
           <CardHeader>
             <CardTitle className="text-2xl">Contribuir com Exemplo</CardTitle>
@@ -210,7 +236,7 @@ export function Contribute() {
                       <FormLabel className="items-center gap-1.5">
                         Código da Habilidade
                       </FormLabel>
-                      <Popover>
+                      <Popover open={isBnccComboOpen} onOpenChange={setIsBnccComboOpen}>
                         <PopoverTrigger asChild>
                           <FormControl>
                             <Button
@@ -247,6 +273,7 @@ export function Contribute() {
                                     key={abilityCode.value}
                                     onSelect={() => {
                                       form.setValue("bnccCode", abilityCode.value)
+                                      setIsBnccComboOpen(false)
                                     }}
                                   >
                                     {abilityCode.label}
