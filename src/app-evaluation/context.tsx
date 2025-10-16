@@ -180,6 +180,30 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
 
         console.log('[AppEvaluation] Comentários recebidos:', trimmed)
       }
+
+      try {
+        const task = taskIndex >= 0 && taskIndex < tasks.length ? tasks[taskIndex] : null
+        const payload = {
+          participantName,
+          participantAge,
+          taskId: task?.id ?? null,
+          taskTitle: task?.toastTitle ?? '',
+          instruction: task?.instruction ?? '',
+          questions,
+          answers: _answers,
+          comments: comments ?? [],
+          timestamp: new Date().toISOString(),
+        }
+        fetch('/api/evaluation/submit', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(payload),
+        }).catch(() => {})
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.log('[AppEvaluation] Falha ao enviar para Google Sheets (ambiente local?):', err)
+      }
+
       setQuestionnaireOpen(false)
 
       const currIndex = taskIndex

@@ -30,5 +30,7 @@ dev-dist/
 # scripts
 scripts
 
-# feedback
-feedback
+# test artifacts
+cookies.txt
+payload*.json
+

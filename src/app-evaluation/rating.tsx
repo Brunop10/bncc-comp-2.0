@@ -13,7 +13,6 @@ export function AppEvaluationRating() {
   const activeTask = (taskIndex >= 0 && taskIndex < (tasks?.length ?? 0)) ? tasks[taskIndex] : undefined
   const textQuestions = useMemo(() => activeTask?.textQuestions ?? [], [activeTask])
 
-  // Sempre que abrir o questionário, iniciar sem respostas marcadas
   useEffect(() => {
     if (questionnaireOpen) {
       setAnswers(Array.from({ length: safeQuestions.length }, () => 0))
