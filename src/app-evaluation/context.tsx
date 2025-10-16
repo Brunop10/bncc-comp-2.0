@@ -171,7 +171,7 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
       setQuestionnaireOpen(true)
     },
     closeQuestionnaire: () => setQuestionnaireOpen(false),
-    submitQuestionnaire: (answers: number[], comments?: string[]) => {
+    submitQuestionnaire: (_answers: number[], comments?: string[]) => {
 
       toast.success('Respostas enviadas. Obrigado!', { position: 'top-center' })
 
