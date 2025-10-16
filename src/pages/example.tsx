@@ -7,15 +7,17 @@ import { ChevronLeftCircle, ExternalLink, MonitorIcon, TagIcon } from "lucide-re
 import { Link, useNavigate, useParams } from "react-router"
 import dayjs from 'dayjs'
 import { ExampleLoading } from "@/components/ui/example-loading"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { OfflinePlaceholder } from "@/components/ui/offline-placeholder"
 import { useNetworkStatus } from "@/context/network-context"
+import { useAppEvaluation } from "@/app-evaluation/context"
 
 export function Example() {
   const navigate = useNavigate()
   const { id: code } = useParams<{ id: string }>()
   const { isOnline } = useNetworkStatus()
+  const { active, currentTask, completeCurrentTask } = useAppEvaluation()
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['example', code],
@@ -37,6 +39,17 @@ export function Example() {
   }, [error, navigate])
 
   const example = data?.example ?? null
+
+  const [task3Done, setTask3Done] = useState(false)
+  useEffect(() => {
+    if (!active) return
+    if (task3Done) return
+    if (currentTask !== 'openExample') return
+    if (!isLoading && !!example) {
+      setTask3Done(true)
+      completeCurrentTask()
+    }
+  }, [active, currentTask, isLoading, example, task3Done, completeCurrentTask])
 
   return (
     <div className="flex flex-col gap-2">

@@ -8,12 +8,14 @@ import type { PropsWithChildren } from "react";
 interface DetailsCollapsibleItemProps extends PropsWithChildren {
   label: string
   textContent?: string
+  onOpenChange?: (open: boolean) => void
 }
 
 export function DetailsCollapsibleItem({
   label,
   children,
-  textContent
+  textContent,
+  onOpenChange
 }: DetailsCollapsibleItemProps) {
   const { speak, stop, pause, resume, isSpeaking, isPaused, isSupported } = useTextToSpeech()
 
@@ -41,7 +43,7 @@ export function DetailsCollapsibleItem({
   }
 
   return (
-    <Collapsible className="group flex flex-col gap-2 w-full">
+    <Collapsible className="group flex flex-col gap-2 w-full" onOpenChange={onOpenChange}>
       <CollapsibleTrigger className="flex justify-between gap-2 items-center bg-primary-foreground border w-full rounded-lg px-4 py-2">
         <Heading title={label} className="font-semibold text-lg" />
         <div className="flex items-center gap-2">
