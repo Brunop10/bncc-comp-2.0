@@ -1,25 +1,14 @@
 import { google } from 'googleapis'
 import type { IncomingMessage } from 'http'
 
-// Aceita múltiplos nomes de variáveis para reduzir fricção durante testes locais
-const SPREADSHEET_ID =
-  process.env.GOOGLE_SPREADSHEET_ID ||
-  process.env.SPREADSHEET_ID
-const SERVICE_ACCOUNT_EMAIL =
-  process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL ||
-  process.env.SERVICE_ACCOUNT_EMAIL
-const SERVICE_ACCOUNT_KEY =
-  process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY ||
-  process.env.SERVICE_ACCOUNT_PRIVATE_KEY ||
-  process.env.PRIVATE_KEY
+const SPREADSHEET_ID = process.env.GOOGLE_SPREADSHEET_ID 
+const SERVICE_ACCOUNT_EMAIL = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL 
+const SERVICE_ACCOUNT_KEY = process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY 
 
-// Defaults locais (ajuste livre durante desenvolvimento)
-// Somente defaults: sem depender de variáveis de ambiente para range/quantidade.
 const DEFAULT_MAX_QUESTIONS = 4
 const DEFAULT_RANGE = 'Avaliacoes!A:Z'
 const SHEETS_RANGE =
   process.env.GOOGLE_SHEETS_RANGE ||
-  process.env.SHEETS_RANGE ||
   DEFAULT_RANGE
 
 export default async function handler(req: any, res: any) {
@@ -47,59 +36,57 @@ export default async function handler(req: any, res: any) {
 
     const sheets = google.sheets({ version: 'v4', auth })
 
-    // Evita acessar req.body diretamente (Vercel pode lançar "Invalid JSON" ao tentar parse automático)
     const payload = await readJsonBody(req)
-    const {
-      participantName = '',
-      participantAge = '',
-      // mantemos estes campos caso sejam úteis futuramente, mas não vamos escrever na planilha no formato "wide"
-      taskId = '',
-      taskTitle = '',
-      instruction = '',
-      questions = [],
-      answers = [],
-      comments = [],
-      timestamp = new Date().toISOString(),
-    } = payload
 
-    // Normaliza as respostas objetivas para colunas q1..qN
-    const normalizedAnswers = Array.isArray(answers)
-      ? answers.map((a) => {
-          if (typeof a === 'number') return a
-          const n = Number(a)
-          return Number.isFinite(n) ? n : ''
-        })
-      : []
+    if (Array.isArray(payload) || Array.isArray((payload as any)?.records) || Array.isArray((payload as any)?.items)) {
+      return res.status(400).json({
+        error: 'Batch payload not supported',
+        message: 'Envie apenas um registro direto do aplicativo.',
+      })
+    }
 
-    // Opcionalmente preenche até o máximo configurado para manter largura consistente
-    // Usa apenas defaults locais (sem env): ajuste DEFAULT_MAX_QUESTIONS quando necessário
-    const maxQuestions = DEFAULT_MAX_QUESTIONS
-    const answersPadded =
-      maxQuestions && Number.isFinite(maxQuestions)
-        ? [...normalizedAnswers, ...Array(Math.max(0, maxQuestions - normalizedAnswers.length)).fill('')]
-        : normalizedAnswers
+    function toRow(rec: any): (string | number)[] {
+      const {
+        participantName = '',
+        participantAge = '',
+        answers = [],
+        comments = [],
+        timestamp = new Date().toISOString(),
+      } = rec || {}
 
-    // Normaliza comentários e anexa todos após as notas: q5, q6, q7...
-    const normalizedComments = Array.isArray(comments)
-      ? comments
-          .map(c => (c ?? '').toString().trim())
-          .filter(c => c.length > 0)
-      : []
+      const normalizedAnswers = Array.isArray(answers)
+        ? answers.map((a) => {
+            if (typeof a === 'number') return a
+            const n = Number(a)
+            return Number.isFinite(n) ? n : ''
+          })
+        : []
 
-    // Formato "wide": [data, nome, idade, q1..qN, comentários...]
-    // Com DEFAULT_MAX_QUESTIONS=4, comentários começam em q5 e vão até onde for necessário.
-    const values = [timestamp, participantName || '', participantAge ?? '', ...answersPadded, ...normalizedComments]
+      const maxQuestions = DEFAULT_MAX_QUESTIONS
+      const answersPadded =
+        maxQuestions && Number.isFinite(maxQuestions)
+          ? [...normalizedAnswers, ...Array(Math.max(0, maxQuestions - normalizedAnswers.length)).fill('')]
+          : normalizedAnswers
 
-    // Usa range configurável por env (fallback para DEFAULT_RANGE)
+      const normalizedComments = Array.isArray(comments)
+        ? (comments as any[])
+            .map(c => (c ?? '').toString().trim())
+            .filter(c => c.length > 0)
+        : []
+
+      return [timestamp, participantName || '', participantAge ?? '', ...answersPadded, ...normalizedComments]
+    }
+
+    const valuesRows = [toRow(payload)]
+
     const range = SHEETS_RANGE
 
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
       range,
-      // USER_ENTERED permite que números sejam tratados como valores numéricos na planilha
       valueInputOption: 'USER_ENTERED',
       insertDataOption: 'INSERT_ROWS',
-      requestBody: { majorDimension: 'ROWS', values: [values] },
+      requestBody: { majorDimension: 'ROWS', values: valuesRows },
     })
 
     return res.status(200).json({ ok: true })

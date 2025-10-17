@@ -64,6 +64,9 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
   const [questionnaireOpen, setQuestionnaireOpen] = useState(false)
   const [questions, setQuestions] = useState<string[]>([])
 
+  const [sessionAnswers, setSessionAnswers] = useState<number[]>([])
+  const [sessionComments, setSessionComments] = useState<string[]>([])
+
   const value = useMemo<AppEvaluationContextValue>(() => ({
     isOverlayOpen,
     openOverlay: () => setOverlayOpen(true),
@@ -118,6 +121,8 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
       setTaskStatus([])
       setQuestionnaireOpen(false)
       setQuestions([])
+      setSessionAnswers([])
+      setSessionComments([])
     },
     setProgress: (pct: number) => setProgressState(Math.max(0, Math.min(100, Math.round(pct)))),
     markCompleted: () => { setCompleted(true); setProgressState(100) },
@@ -144,7 +149,7 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
       })
 
       toast.success('Tarefa concluída', {
-        description: 'Abriremos a avaliação em 3 segundos...',
+        description: 'Abriremos a avaliação em 5 segundos...',
         position: 'top-center',
         duration: 6000,
       })
@@ -162,7 +167,7 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
           clearTimeout(questionnaireTimerRef.current)
           questionnaireTimerRef.current = null
         }
-      }, 3000)
+      }, 5000)
     },
     questionnaireOpen,
     questions,
@@ -173,8 +178,6 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
     closeQuestionnaire: () => setQuestionnaireOpen(false),
     submitQuestionnaire: (_answers: number[], comments?: string[]) => {
 
-      toast.success('Respostas enviadas. Obrigado!', { position: 'top-center' })
-
       const trimmed = (comments ?? []).map(c => (c ?? '').trim()).filter(c => c.length > 0)
       if (trimmed.length > 0) {
 
@@ -182,26 +185,12 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
       }
 
       try {
-        const task = taskIndex >= 0 && taskIndex < tasks.length ? tasks[taskIndex] : null
-        const payload = {
-          participantName,
-          participantAge,
-          taskId: task?.id ?? null,
-          taskTitle: task?.toastTitle ?? '',
-          instruction: task?.instruction ?? '',
-          questions,
-          answers: _answers,
-          comments: comments ?? [],
-          timestamp: new Date().toISOString(),
-        }
-        fetch('/api/evaluation/submit', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify(payload),
-        }).catch(() => {})
+        const trimmedComments = trimmed
+        setSessionAnswers(prev => [...prev, ..._answers])
+        setSessionComments(prev => [...prev, ...trimmedComments])
       } catch (err) {
         // eslint-disable-next-line no-console
-        console.log('[AppEvaluation] Falha ao enviar para Google Sheets (ambiente local?):', err)
+        console.log('[AppEvaluation] Falha ao agregar respostas localmente:', err)
       }
 
       setQuestionnaireOpen(false)
@@ -236,13 +225,36 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
         setCompleted(true)
         setProgressState(100)
         setActive(false)
+        
+        try {
+          const answersForSubmit = [...sessionAnswers, ..._answers]
+          const commentsForSubmit = [...sessionComments, ...((comments ?? []).map(c => (c ?? '').trim()).filter(c => c.length > 0))]
+          const singleRecord = {
+            participantName,
+            participantAge,
+            answers: answersForSubmit,
+            comments: commentsForSubmit,
+            timestamp: new Date().toISOString(),
+          }
+          fetch('/api/evaluation/submit', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(singleRecord),
+          }).catch(() => {})
+        } catch (err) {
+          // eslint-disable-next-line no-console
+          console.log('[AppEvaluation] Falha ao enviar resultado único para Google Sheets:', err)
+        }
+
         setTasks([])
         setTaskIndex(-1)
         setTaskStatus([])
+        setSessionAnswers([])
+        setSessionComments([])
         setFinishOpen(true)
       }
     },
-  }), [isOverlayOpen, isFinishOpen, participantName, participantAge, active, progress, completed, taskIndex, tasks, taskStatus, questionnaireOpen, questions])
+  }), [isOverlayOpen, isFinishOpen, participantName, participantAge, active, progress, completed, taskIndex, tasks, taskStatus, questionnaireOpen, questions, sessionAnswers, sessionComments])
 
   return (
     <AppEvaluationContext.Provider value={value}>{children}</AppEvaluationContext.Provider>
