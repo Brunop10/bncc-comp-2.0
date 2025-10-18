@@ -22,16 +22,22 @@ export function Home() {
 
   function handleNavigate({ search }: FormData) {
     if (!search) {
-      navigate('/habilidades')
+      const base = '/habilidades'
+      const target = transcript ? `${base}?voice=1` : base
+      navigate(target)
       return
     }
 
     const codePattern = /^[A-Za-z]+\d+/
     const isCode = codePattern.test(search.trim())
 
-    const path = isCode 
+    let path = isCode 
       ? `/habilidades?codigo=${encodeURIComponent(search.trim())}`
       : `/habilidades?pesquisa=${encodeURIComponent(search)}`
+
+    if (transcript) {
+      path = `${path}&voice=1`
+    }
 
     navigate(path) as void
   }

@@ -122,6 +122,7 @@ export function Abilities() {
       state.delete('codigo')
       state.delete('ano')
       state.delete('eixo')
+      state.delete('voice')
       return state
     })
   }
@@ -129,9 +130,17 @@ export function Abilities() {
   function handleVoiceSearch() {
     if (isListening) {
       stopListening()
+      setSearchParams(state => {
+        state.delete('voice')
+        return state
+      })
     } else {
       resetTranscript()
       startListening()
+      setSearchParams(state => {
+        state.set('voice', '1')
+        return state
+      })
     }
   }
 
@@ -284,3 +293,5 @@ export function Abilities() {
     </div>
   )
 }
+
+// Remover conclusão automática de voiceSearch

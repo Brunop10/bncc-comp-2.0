@@ -29,6 +29,11 @@ type AppEvaluationContextValue = {
   setProgress: (pct: number) => void
   markCompleted: () => void
 
+  isGuideOpen: boolean
+  guideTaskIndex: number
+  openGuide: (taskIndex: number) => void
+  closeGuide: () => void
+
   currentTask: TaskId | null
   taskIndex: number
   tasks: Task[]
@@ -67,6 +72,43 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
   const [sessionAnswers, setSessionAnswers] = useState<number[]>([])
   const [sessionComments, setSessionComments] = useState<string[]>([])
 
+  const [isGuideOpen, setGuideOpen] = useState(false)
+  const [guideTaskIndex, setGuideTaskIndex] = useState<number>(-1)
+
+  const completeCurrentTaskImpl = () => {
+    const idx = taskIndex
+    const task = idx >= 0 && idx < tasks.length ? tasks[idx] : null
+    if (!task) return
+
+    toast.dismiss(`evaluation-task-${idx + 1}`)
+
+    if (taskStatus[idx]?.completed) {
+      setQuestions(task.questions)
+      setQuestionnaireOpen(true)
+      return
+    }
+
+    setTaskStatus(prev => {
+      const next = prev.slice()
+      if (next[idx]) next[idx] = { ...next[idx], completed: true }
+      return next
+    })
+
+    toast.success('Tarefa concluída', {
+      description: 'Obrigado! Avalie esta tarefa agora.',
+      position: 'top-center',
+      duration: 3000,
+    })
+
+    if (questionnaireTimerRef.current != null) {
+      clearTimeout(questionnaireTimerRef.current)
+      questionnaireTimerRef.current = null
+    }
+
+    setQuestions(task.questions)
+    setQuestionnaireOpen(true)
+  }
+
   const value = useMemo<AppEvaluationContextValue>(() => ({
     isOverlayOpen,
     openOverlay: () => setOverlayOpen(true),
@@ -83,7 +125,7 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
     completed,
     startEvaluation: () => {
       const pipeline: Task[] = buildDefaultTasks()
-
+  
       setOverlayOpen(false)
       setFinishOpen(false)
       setActive(true)
@@ -92,18 +134,8 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
       setTasks(pipeline)
       setTaskIndex(0)
       setTaskStatus(pipeline.map(() => ({ completed: false, evaluated: false })))
-
-      const firstTask = pipeline[0]
-      toast(
-        firstTask.toastTitle ?? 'Tarefa 1',
-        {
-          id: 'evaluation-task-1',
-          description: firstTask.instruction,
-          duration: Number.POSITIVE_INFINITY,
-          position: 'top-center',
-          closeButton: true,
-        }
-      )
+      setGuideTaskIndex(0)
+      setGuideOpen(true)
     },
     stopEvaluation: () => {
       if (questionnaireTimerRef.current != null) {
@@ -123,51 +155,41 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
       setQuestions([])
       setSessionAnswers([])
       setSessionComments([])
+      setGuideOpen(false)
+      setGuideTaskIndex(-1)
     },
     setProgress: (pct: number) => setProgressState(Math.max(0, Math.min(100, Math.round(pct)))),
     markCompleted: () => { setCompleted(true); setProgressState(100) },
+
+    isGuideOpen,
+    guideTaskIndex,
+    openGuide: (idx: number) => { setGuideTaskIndex(idx); setGuideOpen(true) },
+    closeGuide: () => {
+      setGuideOpen(false)
+      const idx = taskIndex
+      const task = idx >= 0 && idx < tasks.length ? tasks[idx] : null
+      if (!task) return
+      toast(
+        task.toastTitle ?? `Tarefa ${idx + 1}`,
+        {
+          id: `evaluation-task-${idx + 1}`,
+          description: task.instruction,
+          duration: Number.POSITIVE_INFINITY,
+          position: 'top-center',
+          closeButton: true,
+          action: {
+            label: 'Avaliar',
+            onClick: () => completeCurrentTaskImpl(),
+          },
+        }
+      )
+    },
     currentTask,
     taskIndex,
     tasks,
     taskStatus,
     completeCurrentTask: () => {
-
-      const idx = taskIndex
-      const task = idx >= 0 && idx < tasks.length ? tasks[idx] : null
-      if (!task) return
-
-      toast.dismiss(`evaluation-task-${idx + 1}`)
-
-      if (taskStatus[idx]?.completed) {
-        return
-      }
-
-      setTaskStatus(prev => {
-        const next = prev.slice()
-        if (next[idx]) next[idx] = { ...next[idx], completed: true }
-        return next
-      })
-
-      toast.success('Tarefa concluída', {
-        description: 'Abriremos a avaliação em 5 segundos...',
-        position: 'top-center',
-        duration: 6000,
-      })
-
-      if (questionnaireTimerRef.current != null) {
-        clearTimeout(questionnaireTimerRef.current)
-        questionnaireTimerRef.current = null
-      }
-
-      questionnaireTimerRef.current = window.setTimeout(() => {
-        setQuestions(task.questions)
-        setQuestionnaireOpen(true)
-
-        if (questionnaireTimerRef.current != null) {
-          clearTimeout(questionnaireTimerRef.current)
-          questionnaireTimerRef.current = null
-        }
-      }, 5000)
+      completeCurrentTaskImpl()
     },
     questionnaireOpen,
     questions,
@@ -210,17 +232,8 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
 
       if (nextIndex < total) {
         setTaskIndex(nextIndex)
-        const nextTask = tasks[nextIndex]
-        toast(
-          nextTask.toastTitle ?? `Tarefa ${nextIndex + 1}`,
-          {
-            id: `evaluation-task-${nextIndex + 1}`,
-            description: nextTask.instruction,
-            duration: Number.POSITIVE_INFINITY,
-            position: 'top-center',
-            closeButton: true,
-          }
-        )
+        setGuideTaskIndex(nextIndex)
+        setGuideOpen(true)
       } else {
         setCompleted(true)
         setProgressState(100)
@@ -245,7 +258,7 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
           // eslint-disable-next-line no-console
           console.log('[AppEvaluation] Falha ao enviar resultado único para Google Sheets:', err)
         }
-
+  
         setTasks([])
         setTaskIndex(-1)
         setTaskStatus([])
@@ -254,7 +267,7 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
         setFinishOpen(true)
       }
     },
-  }), [isOverlayOpen, isFinishOpen, participantName, participantAge, active, progress, completed, taskIndex, tasks, taskStatus, questionnaireOpen, questions, sessionAnswers, sessionComments])
+  }), [isOverlayOpen, isFinishOpen, participantName, participantAge, active, progress, completed, taskIndex, tasks, taskStatus, questionnaireOpen, questions, sessionAnswers, sessionComments, isGuideOpen, guideTaskIndex])
 
   return (
     <AppEvaluationContext.Provider value={value}>{children}</AppEvaluationContext.Provider>

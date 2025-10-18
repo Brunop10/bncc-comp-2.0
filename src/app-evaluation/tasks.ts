@@ -1,4 +1,4 @@
-export type TaskId = 'openDetails' | 'expandAllCollapsibles' | 'openExample'
+export type TaskId = 'openDetails' | 'expandAllCollapsibles' | 'openExample' | 'voiceSearch' | 'ttsReading'
 
 export type Task = {
   id: TaskId
@@ -41,5 +41,19 @@ export function buildDefaultTasks(): Task[] {
       ],
       toastTitle: 'Tarefa 3: Acessar um exemplo da habilidade',
     },
+    {
+      id: 'voiceSearch',
+      instruction:
+        "Volte para a página “Início”, toque em 'Voz' e faça uma busca por habilidade usando fala.",
+      questions: ["Como você avalia a disponibilidade do recurso de busca por voz?"],
+      toastTitle: 'Tarefa 4: Buscar habilidade por voz',
+    },
+    {
+      id: 'ttsReading',
+      instruction:
+        "Acesse novamente os detalhes de uma habilidade e toque no ícone de som em um item descritivo para ouvir o texto por IA. Depois, pause ou finalize a leitura.",
+      questions: ["Como você avalia a disponibilidade do recurso de leitura por voz?"],
+      toastTitle: 'Tarefa 5: Ler conteúdo com TTS (voz)'
+    }
   ]
 }

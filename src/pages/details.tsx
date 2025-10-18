@@ -11,16 +11,14 @@ import { useStorage } from "@/hooks/use-storage";
 import { useQuery } from "@tanstack/react-query";
 import { BookmarkIcon, ChevronLeftCircle, ExternalLinkIcon } from "lucide-react";
 import { LoadingBook } from "@/components/ui/loading";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
-import { useAppEvaluation } from "@/app-evaluation/context";
 
 export function Details() {
   const navigate = useNavigate()
   const { code } = useParams<{ code: string }>()
   const { findByCode, addFavorite, removeFavorite, addFavoriteWithData, removeFavoriteData } = useStorage()
   const { isOnline } = useNetworkStatus()
-  const { active, currentTask, completeCurrentTask } = useAppEvaluation()
 
   const [isFavorited, setIsFavorited] = useState(false)
 
@@ -31,45 +29,6 @@ export function Details() {
 
   const ability = data?.abilities[0] ?? null
 
-  const [task1Done, setTask1Done] = useState(false)
-  useEffect(() => {
-    if (!active) return
-    if (task1Done) return
-    if (currentTask !== 'openDetails') return
-    if (!isLoading && !!ability) {
-      setTask1Done(true)
-      completeCurrentTask()
-    }
-  }, [active, currentTask, isLoading, ability, task1Done, completeCurrentTask])
-
-  const [task2Done, setTask2Done] = useState(false)
-  const collapsibleIds = useMemo(() => {
-    if (!ability) return [] as string[]
-    const ids = ['main'] as string[]
-    if (ability.explicacao) ids.push('def')
-    if (ability.habilidade_superior) ids.push('sup')
-    if (ability.exemplos && ability.exemplos.length > 0) ids.push('ex')
-    return ids
-  }, [ability])
-
-  const [openMap, setOpenMap] = useState<Record<string, boolean>>({})
-
-  useEffect(() => {
-    setOpenMap({})
-    setTask2Done(false)
-  }, [ability?.codigo])
-
-  useEffect(() => {
-    if (!active) return
-    if (currentTask !== 'expandAllCollapsibles') return
-    if (task2Done) return
-    if (collapsibleIds.length === 0) return
-    const allOpen = collapsibleIds.every(id => openMap[id])
-    if (allOpen) {
-      setTask2Done(true)
-      completeCurrentTask()
-    }
-  }, [active, currentTask, task2Done, collapsibleIds, openMap, completeCurrentTask])
   
   function handleToggleFavorite() {
     if(!code) return
@@ -119,7 +78,7 @@ export function Details() {
       {!isOnline && !isLoading && !ability && (
         <OfflinePlaceholder
           title="Sem rede"
-          description="Conecte-se para carregar os detalhes da habilidade"
+          description="Conecte-se para buscar habilidades"
           size="xl"
         />
       )}
@@ -194,7 +153,6 @@ export function Details() {
           <DetailsCollapsibleItem 
             label={ability.objetivo_ou_habilidade}
             textContent={ability.descr_objetivo_ou_habilidade}
-            onOpenChange={(open) => setOpenMap(m => ({ ...m, main: open }))}
           >
             <div>
               {ability.descr_objetivo_ou_habilidade}
@@ -209,7 +167,7 @@ export function Details() {
           </DetailsCollapsibleItem>
 
           {ability.explicacao && (
-            <DetailsCollapsibleItem label="Definição" onOpenChange={(open) => setOpenMap(m => ({ ...m, def: open }))}> 
+            <DetailsCollapsibleItem label="Definição"> 
               {ability.explicacao}
             </DetailsCollapsibleItem>
           )}
@@ -218,7 +176,6 @@ export function Details() {
             <DetailsCollapsibleItem 
             label="Habilidade superior"
             textContent={ability.habilidade_superior}
-            onOpenChange={(open) => setOpenMap(m => ({ ...m, sup: open }))}
             >
               <div>
                 {ability.habilidade_superior}
@@ -227,7 +184,7 @@ export function Details() {
           )}
           
           {ability.exemplos.length > 0 && (
-            <DetailsCollapsibleItem label="Exemplos" onOpenChange={(open) => setOpenMap(m => ({ ...m, ex: open }))}>
+            <DetailsCollapsibleItem label="Exemplos">
               <div className="flex flex-col gap-2">
                 {ability.exemplos.map((exemplo, idx) => (
                   <Link

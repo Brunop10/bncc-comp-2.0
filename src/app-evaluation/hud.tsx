@@ -1,9 +1,9 @@
 import { useRef, useState } from "react"
 import { useAppEvaluation } from "./context"
-import { ListChecks, X } from "lucide-react"
+import { ListChecks, X, Info } from "lucide-react"
 
 export function AppEvaluationHud() {
-  const { active, progress, tasks, taskStatus, taskIndex, stopEvaluation } = useAppEvaluation()
+  const { active, progress, tasks, taskStatus, taskIndex, stopEvaluation, openGuide } = useAppEvaluation()
   const barRef = useRef<HTMLDivElement | null>(null)
   const [panelOpen, setPanelOpen] = useState(false)
 
@@ -35,6 +35,16 @@ export function AppEvaluationHud() {
           className="rounded-full bg-purple-600 text-white shadow-lg border border-purple-700 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 p-3"
         >
           {panelOpen ? <X className="h-5 w-5" /> : <ListChecks className="h-5 w-5" />}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => openGuide(taskIndex)}
+          title="Abrir guia da tarefa atual"
+          className="inline-flex items-center gap-1 rounded-full bg-white text-purple-700 shadow-lg border border-purple-700 px-3 py-1.5 text-[12px] font-medium hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-500"
+        >
+          <Info className="h-4 w-4" />
+          Guia
         </button>
 
         {panelOpen && (
