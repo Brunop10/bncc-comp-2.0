@@ -1,59 +1,94 @@
-export type TaskId = 'openDetails' | 'expandAllCollapsibles' | 'openExample' | 'voiceSearch' | 'ttsReading'
+export type TaskId = 'task1' | 'task2' | 'task3' | 'task4' | 'task5'
 
 export type Task = {
   id: TaskId
-  instruction: string
+  instruction: string | string[]
   questions: string[]
   textQuestions?: string[]
   toastTitle: string
+  toastDescription: string
 }
 
 export function buildDefaultTasks(): Task[] {
   return [
     {
-      id: 'openDetails',
-      instruction:
-        "Acesse uma habilidade na página de detalhes (via 'Explorar por ano' ou 'Explorar por eixo').",
-      questions: [
-        'Quão fácil foi localizar e acessar os detalhes?'
+      id: 'task1',
+      instruction: [
+        "Busque por uma habilidade da BNCC Computação (via 'Explorar por ano', 'Explorar por eixo' ou pesquisa direta).",
+        "Clique em 'ver detalhes' para acessar os conteúdos da habilidade.",
+        "Expanda todos os itens para ver os detalhes da habilidade.",
+        "Clique em um exemplo para ver mais detalhes."
       ],
-      toastTitle: 'Tarefa 1: Acessar detalhes de uma habilidade',
-    },
-    {
-      id: 'expandAllCollapsibles',
-      instruction:
-        'Na página de detalhes de habilidade, expanda todos os itens para ver os conteúdos.',
       questions: [
-        'Como você avalia as informações apresentadas sobre a habilidade?',
-        'A imagem de exemplo ajudou de forma positiva a compreensão?'
-      ],
-      toastTitle: 'Tarefa 2: Expandir itens na página de detalhes de habilidade',
-    },
-    {
-      id: 'openExample',
-      instruction:
-        'Acesse um exemplo da habilidade pela seção “Exemplos” na página de detalhes de habilidade.',
-      questions: [
-        'Quão fácil você achou acessar um exemplo da habilidade?'
+        'Foi fácil localizar e acessar os detalhes da habilidade e ver um exemplo vinculado a ela?',
+        'A imagem ilustrativa contida nos detalhes da habilidade ajudou de forma positiva a compreensão?'
       ],
       textQuestions: [
         'Tem alguma sugestão de melhoria sobre como apresentamos habilidades e exemplos? (opcional)'
       ],
-      toastTitle: 'Tarefa 3: Acessar um exemplo da habilidade',
+      toastTitle: 'Tarefa 1: Acessar habilidade e exemplo',
+      toastDescription: 'Acesse uma habilidade, expanda todos os itens para ver os detalhes e clique em um exemplo vinculado a ela.',
     },
     {
-      id: 'voiceSearch',
-      instruction:
-        "Volte para a página “Início”, toque em 'Voz' e faça uma busca por habilidade usando fala.",
-      questions: ["Como você avalia a disponibilidade do recurso de busca por voz?"],
-      toastTitle: 'Tarefa 4: Buscar habilidade por voz',
+      id: 'task2',
+      instruction: [
+        'OBS: Se você não tiver acesso ao recurso de voz tente permitir o uso do microfone ou se o mesmo não estiver disponível, tente mudar o navegador para o Chrome ou Safari.',
+        'Acesse a página "Inicio".',
+        'Utilize o comando "Voz" para buscar uma habilidade.',
+        'Acesse uma habilidade assim como fez na tarefa anterior.',
+        'Utilize o recurso de descrição por voz clicando no ícone de som em algum item descritivo da habilidade.'
+      ],
+      questions: [
+        'Os recursos de busca e descrição por voz foram úteis para localizar a habilidade desejada?',
+        'Você usaria esses recursos novamente?'
+      ],
+      textQuestions: [
+        'Encontrou algum erro ou tem alguma sugestão de melhoria para esses dois recursos? (opcional)'
+      ],
+      toastTitle: 'Tarefa 2: Utilizar recursos de busca e descrição por voz',
+      toastDescription: 'Faça uma busca por voz e utilize o recurso de descrição falada em algum conteúdo textual da habilidade.',
     },
     {
-      id: 'ttsReading',
-      instruction:
-        "Acesse novamente os detalhes de uma habilidade e toque no ícone de som em um item descritivo para ouvir o texto por IA. Depois, pause ou finalize a leitura.",
-      questions: ["Como você avalia a disponibilidade do recurso de leitura por voz?"],
-      toastTitle: 'Tarefa 5: Ler conteúdo com TTS (voz)'
-    }
+      id: 'task3',
+      instruction: [
+        '',
+      ],
+      questions: [
+        '?'
+      ],
+      textQuestions: [
+        '? (opcional)'
+      ],
+      toastTitle: 'Tarefa 3: ',
+      toastDescription: '',
+    },
+    {
+      id: 'task4',
+      instruction: [
+        '',
+      ],
+      questions: [
+        '?'
+      ],
+      textQuestions: [
+        '? (opcional)'
+      ],
+      toastTitle: 'Tarefa 4: ',
+      toastDescription: '',
+    },
+    {
+      id: 'task5',
+      instruction: [
+        '',
+      ],
+      questions: [
+        '?'
+      ],
+      textQuestions: [
+        '? (opcional)'
+      ],
+      toastTitle: 'Tarefa 5: ',
+      toastDescription: '',
+    },
   ]
 }

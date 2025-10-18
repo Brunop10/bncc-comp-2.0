@@ -7,7 +7,6 @@ export function AppEvaluationGuide() {
 
   const task = guideTaskIndex >= 0 && guideTaskIndex < tasks.length ? tasks[guideTaskIndex] : null
   const title = task?.toastTitle ?? `Tarefa ${guideTaskIndex + 1}`
-  const instruction = task?.instruction ?? ''
 
   return (
     <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/60">
@@ -17,19 +16,31 @@ export function AppEvaluationGuide() {
           {task && (
             <>
               <p className="font-medium">{title}</p>
-              <p>{instruction}</p>
+              {Array.isArray(task.instruction) ? (
+                <>
+                  <p className="text-[13px] text-gray-600">Passo a passo</p>
+                  <ol className="list-decimal pl-5 space-y-1">
+                    {task.instruction.map((step, i) => (
+                      <li key={i}>{step}</li>
+                    ))}
+                  </ol>
+                </>
+              ) : (
+                <p>{task.instruction}</p>
+              )}
+
+              <div className="mt-3">
+                <p className="text-[13px] text-gray-600">Orientações gerais</p>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>Leia o guia acima.</li>
+                  <li>Execute a tarefa na interface.</li>
+                  <li>Clique em “Avaliar” no aviso da tarefa quando concluir.</li>
+                  <li>Responda ao questionário e avance para a próxima tarefa.</li>
+                  <li>Se precisar rever detalhes, use os ícones de ajuda no canto inferior direito.</li>
+                </ul>
+              </div>
             </>
           )}
-
-          <div className="mt-2">
-            <p className="text-[13px] text-gray-600">Passo a passo</p>
-            <ul className="list-disc pl-5 space-y-1">
-              <li>Leia a instrução acima.</li>
-              <li>Execute a tarefa na interface.</li>
-              <li>Clique em “Avaliar” no aviso da tarefa quando concluir.</li>
-              <li>Responda ao questionário e avance para a próxima tarefa.</li>
-            </ul>
-          </div>
         </div>
         <div className="mt-6 flex items-center justify-end gap-2">
           <Button variant="outline" onClick={closeGuide}>Fazer tarefa</Button>

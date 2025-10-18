@@ -71,7 +71,6 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
 
   const [sessionAnswers, setSessionAnswers] = useState<number[]>([])
   const [sessionComments, setSessionComments] = useState<string[]>([])
-
   const [isGuideOpen, setGuideOpen] = useState(false)
   const [guideTaskIndex, setGuideTaskIndex] = useState<number>(-1)
 
@@ -173,7 +172,7 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
         task.toastTitle ?? `Tarefa ${idx + 1}`,
         {
           id: `evaluation-task-${idx + 1}`,
-          description: task.instruction,
+          description: task.toastDescription ?? (Array.isArray(task.instruction) ? task.instruction.join(' · ') : task.instruction),
           duration: Number.POSITIVE_INFINITY,
           position: 'top-center',
           closeButton: true,

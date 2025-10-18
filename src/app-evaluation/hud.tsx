@@ -70,7 +70,7 @@ export function AppEvaluationHud() {
                     <div className="flex items-start gap-2">
                       <div className={`mt-1 h-2 w-2 rounded-full ${s?.evaluated ? 'bg-purple-600' : s?.completed ? 'bg-green-600' : 'bg-gray-300'}`} />
                       <div className="flex-1">
-                        <p className="text-[13px] leading-snug">{t.instruction}</p>
+                        <p className="text-[13px] leading-snug">{t.toastDescription}</p>
                         <div className="mt-1 flex flex-wrap items-center gap-1.5">
                           {isCurrent && (
                             <span className="px-1.5 py-0.5 text-[11px] rounded bg-blue-100 text-blue-800 border border-blue-200">Atual</span>
