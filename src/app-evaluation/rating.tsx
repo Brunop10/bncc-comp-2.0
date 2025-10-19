@@ -2,6 +2,7 @@ import { useAppEvaluation } from './context'
 import { useEffect, useMemo, useState } from 'react'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
+import { router } from '@/router'
 
 export function AppEvaluationRating() {
   const { questionnaireOpen, questions, submitQuestionnaire, taskIndex, tasks } = useAppEvaluation()
@@ -48,18 +49,11 @@ export function AppEvaluationRating() {
                         next[qi] = n
                         return next
                       })}
-                      aria-pressed={selected}
-                      aria-label={`Resposta ${n}${n===1 ? ' (Discordo)' : n===5 ? ' (Concordo)' : ''}`}
-                      title={`${n} ${n===1 ? '- Discordo' : n===5 ? '- Concordo' : ''}`}
                     >
                       {n}
                     </button>
                   )
                 })}
-              </div>
-              <div className="flex justify-between text-[11px] text-gray-500 mt-1 px-1">
-                <span>Discordo</span>
-                <span>Concordo</span>
               </div>
             </div>
           ))}
@@ -86,7 +80,10 @@ export function AppEvaluationRating() {
         <div className="mt-6 flex items-center justify-end gap-2">
           <button
             className="px-3 py-2 text-sm rounded bg-purple-600 text-white disabled:opacity-50"
-            onClick={() => submitQuestionnaire(answers, comments)}
+            onClick={() => {
+              submitQuestionnaire(answers, comments)
+              router.navigate('/')
+            }}
             disabled={answers.length !== safeQuestions.length || answers.some(a => !a)}
           >
             Enviar

@@ -3,7 +3,7 @@ import { useAppEvaluation } from "./context"
 import { ListChecks, X, Info } from "lucide-react"
 
 export function AppEvaluationHud() {
-  const { active, progress, tasks, taskStatus, taskIndex, stopEvaluation, openGuide } = useAppEvaluation()
+  const { active, progress, tasks, taskStatus, taskIndex, stopEvaluation, openGuide, completeCurrentTask } = useAppEvaluation()
   const barRef = useRef<HTMLDivElement | null>(null)
   const [panelOpen, setPanelOpen] = useState(false)
 
@@ -11,7 +11,6 @@ export function AppEvaluationHud() {
 
   const total = tasks.length
   const completedCount = taskStatus.filter(s => s.completed).length
-  const evaluatedCount = taskStatus.filter(s => s.evaluated).length
 
   return (
     <div className="fixed inset-0 z-[9998] pointer-events-none" id="app-evaluation-hud">
@@ -57,7 +56,7 @@ export function AppEvaluationHud() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-[13px] text-gray-600">Guia da avaliação</p>
-                <p className="text-xs text-gray-500">Tarefas: {completedCount}/{total} · Avaliadas: {evaluatedCount}/{total}</p>
+                <p className="text-xs text-gray-500">Tarefas: {completedCount}/{total}</p>
               </div>
             </div>
 
@@ -78,9 +77,16 @@ export function AppEvaluationHud() {
                           <span className={`px-1.5 py-0.5 text-[11px] rounded border ${s?.completed ? 'bg-green-100 text-green-800 border-green-200' : 'bg-gray-100 text-gray-700 border-gray-200'}`}>
                             {s?.completed ? 'Concluída' : 'Pendente'}
                           </span>
-                          <span className={`ml-1 px-1.5 py-0.5 text-[11px] rounded border ${s?.evaluated ? 'bg-purple-100 text-purple-800 border-purple-200' : 'bg-gray-100 text-gray-700 border-gray-200'}`}>
-                            {s?.evaluated ? 'Avaliada' : 'Não avaliada'}
-                          </span>
+                          {isCurrent && (
+                            <button
+                              type="button"
+                              onClick={completeCurrentTask}
+                              className="ml-1 inline-flex items-center rounded bg-purple-600 text-white px-2 py-0.5 text-[11px] font-medium hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                              title="Avaliar tarefa atual"
+                            >
+                              Avaliar
+                            </button>
+                          )}
                         </div>
                       </div>
                     </div>

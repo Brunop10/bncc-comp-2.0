@@ -37,13 +37,14 @@ export function AppEvaluationGuide() {
                   <li>Clique em “Avaliar” no aviso da tarefa quando concluir.</li>
                   <li>Responda ao questionário e avance para a próxima tarefa.</li>
                   <li>Se precisar rever detalhes, use os ícones de ajuda no canto inferior direito.</li>
-                </ul>
+                </ul><br />
+                <p className="font-bold">{task.information}</p>
               </div>
             </>
           )}
         </div>
         <div className="mt-6 flex items-center justify-end gap-2">
-          <Button variant="outline" onClick={closeGuide}>Fazer tarefa</Button>
+          <Button className="bg-purple-600 hover:bg-purple-700 text-white" onClick={closeGuide}>Fazer tarefa</Button>
         </div>
       </div>
     </div>
