@@ -33,6 +33,34 @@ export function PendingExampleSyncNotifier() {
   return null;
 }
 
+export function PendingEvaluationSyncNotifier() {
+  const { isOnline } = useNetworkStatus();
+
+  useEffect(() => {
+    if (!isOnline) return;
+
+    const rawCount = localStorage.getItem('@bncc-comp:pending-evaluation-count');
+    const count = rawCount ? parseInt(rawCount, 10) : 0;
+
+    if (count > 0) {
+      const message = count === 1
+        ? 'Avaliação enviada com sucesso'
+        : `${count} avaliações enviadas com sucesso`;
+      toast.success(message);
+      localStorage.removeItem('@bncc-comp:pending-evaluation-count');
+      localStorage.removeItem('@bncc-comp:pending-evaluation-submission');
+      return;
+    }
+
+    if (localStorage.getItem('@bncc-comp:pending-evaluation-submission') === '1') {
+      toast.success('Avaliação enviada com sucesso');
+      localStorage.removeItem('@bncc-comp:pending-evaluation-submission');
+    }
+  }, [isOnline]);
+
+  return null;
+}
+
 export function PushNotificationsSetup() {
   async function ensureSubscription() {
     const isStandalone = window.matchMedia?.('(display-mode: standalone)')?.matches

@@ -1,6 +1,7 @@
-import { createContext, useContext, useMemo, useRef, useState } from "react"
+import { createContext, useContext, useMemo, useRef, useState, useEffect } from "react"
 import { toast } from "sonner"
 import { Task, TaskId, buildDefaultTasks } from './tasks'
+import { STORAGE_KEYS } from "@/utils/storage-keys"
 
 type TaskStatus = {
   completed: boolean
@@ -73,6 +74,76 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
   const [sessionComments, setSessionComments] = useState<string[]>([])
   const [isGuideOpen, setGuideOpen] = useState(false)
   const [guideTaskIndex, setGuideTaskIndex] = useState<number>(-1)
+
+  // Restore persisted session state on mount
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(STORAGE_KEYS.APP_EVALUATION_STATE)
+      if (!raw) return
+      const snap = JSON.parse(raw) || {}
+
+      const pipeline: Task[] = buildDefaultTasks()
+      setTasks(pipeline)
+
+      setOverlayOpen(Boolean(snap.isOverlayOpen))
+      setFinishOpen(Boolean(snap.isFinishOpen))
+      setParticipantName(typeof snap.participantName === 'string' ? snap.participantName : "")
+      setParticipantAge(typeof snap.participantAge === 'number' ? snap.participantAge : null)
+      setActive(Boolean(snap.active))
+      setProgressState(Number.isFinite(snap.progress) ? Math.max(0, Math.min(100, Math.round(snap.progress))) : 0)
+      setCompleted(Boolean(snap.completed))
+
+      const idx = Number.isFinite(snap.taskIndex) ? snap.taskIndex : -1
+      setTaskIndex(idx)
+
+      const snappedStatus = Array.isArray(snap.taskStatus) ? snap.taskStatus : []
+      const clampedStatus = pipeline.map((_, i) => snappedStatus[i] ?? { completed: false, evaluated: false })
+      setTaskStatus(clampedStatus)
+
+      setGuideOpen(Boolean(snap.isGuideOpen))
+      setGuideTaskIndex(Number.isFinite(snap.guideTaskIndex) ? snap.guideTaskIndex : (idx >= 0 ? idx : -1))
+
+      const qs = Array.isArray(snap.questions) ? snap.questions : []
+      setQuestions(qs)
+      setQuestionnaireOpen(Boolean(snap.questionnaireOpen))
+
+      const ans = Array.isArray(snap.sessionAnswers) ? snap.sessionAnswers : []
+      setSessionAnswers(ans)
+      const comms = Array.isArray(snap.sessionComments) ? snap.sessionComments : []
+      setSessionComments(comms)
+    } catch (e) {
+      console.error('[AppEvaluation] Falha ao restaurar estado da sessão:', e)
+    }
+  }, [])
+
+  useEffect(() => {
+    try {
+      if (isFinishOpen || completed) {
+        sessionStorage.removeItem(STORAGE_KEYS.APP_EVALUATION_STATE)
+        return
+      }
+      const snapshot = {
+        isOverlayOpen,
+        isFinishOpen,
+        participantName,
+        participantAge,
+        active,
+        progress,
+        completed,
+        taskIndex,
+        taskStatus,
+        isGuideOpen,
+        guideTaskIndex,
+        questionnaireOpen,
+        questions,
+        sessionAnswers,
+        sessionComments,
+      }
+      sessionStorage.setItem(STORAGE_KEYS.APP_EVALUATION_STATE, JSON.stringify(snapshot))
+    } catch (e) {
+      console.error('[AppEvaluation] Falha ao salvar estado da sessão:', e)
+    }
+  }, [isOverlayOpen, isFinishOpen, participantName, participantAge, active, progress, completed, taskIndex, taskStatus, isGuideOpen, guideTaskIndex, questionnaireOpen, questions, sessionAnswers, sessionComments])
 
   const completeCurrentTaskImpl = () => {
     const idx = taskIndex
@@ -156,6 +227,8 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
       setSessionComments([])
       setGuideOpen(false)
       setGuideTaskIndex(-1)
+
+      try { sessionStorage.removeItem(STORAGE_KEYS.APP_EVALUATION_STATE) } catch {}
     },
     setProgress: (pct: number) => setProgressState(Math.max(0, Math.min(100, Math.round(pct)))),
     markCompleted: () => { setCompleted(true); setProgressState(100) },
@@ -252,7 +325,12 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
             method: 'POST',
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify(singleRecord),
-          }).catch(() => {})
+          }).catch(() => {
+            const pendingCountKey = '@bncc-comp:pending-evaluation-count';
+            const currentCount = Number(localStorage.getItem(pendingCountKey) ?? '0');
+            localStorage.setItem(pendingCountKey, String(currentCount + 1));
+            localStorage.setItem('@bncc-comp:pending-evaluation-submission', '1');
+          })
         } catch (err) {
           // eslint-disable-next-line no-console
           console.log('[AppEvaluation] Falha ao enviar resultado único para Google Sheets:', err)
@@ -264,6 +342,8 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
         setSessionAnswers([])
         setSessionComments([])
         setFinishOpen(true)
+
+        try { sessionStorage.removeItem(STORAGE_KEYS.APP_EVALUATION_STATE) } catch {}
       }
     },
   }), [isOverlayOpen, isFinishOpen, participantName, participantAge, active, progress, completed, taskIndex, tasks, taskStatus, questionnaireOpen, questions, sessionAnswers, sessionComments, isGuideOpen, guideTaskIndex])
