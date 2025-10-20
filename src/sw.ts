@@ -69,6 +69,20 @@ registerRoute(
   'POST'
 );
 
+// Background Sync para envio de avaliação via API local
+const submitEvaluationQueue = new BackgroundSyncPlugin('submit-evaluation-queue', {
+  maxRetentionTime: 24 * 60,
+});
+
+registerRoute(
+  ({ url, request }: { url: URL; request: Request }) =>
+    request.method === 'POST' && url.pathname.startsWith('/api/evaluation'),
+  new NetworkOnly({
+    plugins: [submitEvaluationQueue],
+  }),
+  'POST'
+);
+
 // Push: exibir notificação
 self.addEventListener('push', (event: any) => {
   const data = (() => {

@@ -53,7 +53,7 @@ export function buildDefaultTasks(): Task[] {
       id: 'task3',
       instruction: [
         'Acesse a página "Chat IA".',
-        'Teste o chat de IA integrado na página, tire dúvidas sobre a BNCC Computação, habilidades, conceitos de computação relacionados e verificando a resposta.',
+        'Teste o chat de IA integrado na página, tire dúvidas sobre a BNCC Computação, habilidades, conceitos de computação relacionados e verifique a resposta.',
         'Salve uma conversa, usando o botão salvar na parte inferior da página',
         'Teste os demais recursos da página que achar útil.'
       ],
@@ -96,7 +96,7 @@ export function buildDefaultTasks(): Task[] {
         'Teste os recursos de salvar habilidade como favorita e contribuir com a comunidade offline.',
         'Se você salvou alguma conversa com o chat de IA você pode vê-la mesmo offline.'
       ],
-      information: 'Para testar as funcionalidades de PWA, instale a aplicação em seu dispositivo e teste-as offline.',
+      information: 'Para usar as funcionalidades de PWA, instale a aplicação em seu dispositivo e teste-as offline.',
       questions: [
         'Foi fácil instalar e usar a aplicação?',
         'Você considera os recursos de PWA e funcionamento offline úteis?'
@@ -105,7 +105,7 @@ export function buildDefaultTasks(): Task[] {
         'Enfrentou alguma dificuldade de entendimento ou uso dos recursos de PWA? (opcional)'
       ],
       toastTitle: 'Tarefa 5: Teste de funcionalidades de PWA',
-      toastDescription: 'Teste todos os recursos instalando a aplicação em seu dispositivo e testando-os offline.',
+      toastDescription: 'Use todos os recursos instalando a aplicação em seu dispositivo e testando-os offline.',
     },
   ]
 }

@@ -19,14 +19,6 @@ export function OfflineBanner({ className, dismissible = true, onClose, message,
         `backdrop-blur ${className ?? ''}`
       }
     >
-      <WifiOff className="size-4 shrink-0" />
-      <span className="text-sm">
-        {message ?? (
-          <>
-            Sem conexão com a internet. <p/>Apenas conteúdos já acessados no dispositivo serão carregados.
-          </>
-        )}
-      </span>
       {dismissible && (
         <button
           type="button"
@@ -35,11 +27,19 @@ export function OfflineBanner({ className, dismissible = true, onClose, message,
             setIsVisible(false)
             onClose?.()
           }}
-          className={`ml-auto inline-flex items-center justify-center rounded-full border bg-white/80 hover:bg-white ${styles.text} shadow-sm w-6 h-6`}
+          className={`inline-flex items-center justify-center rounded-full border bg-white/80 hover:bg-white ${styles.text} shadow-sm w-6 h-6`}
         >
           <X className="size-3" />
         </button>
       )}
+      <span className="text-sm">
+        {message ?? (
+          <>
+            Sem conexão com a internet. <p/>Apenas conteúdos já acessados no dispositivo serão carregados.
+          </>
+        )}
+      </span>
+      <WifiOff className="size-4 shrink-0 ml-auto" />
     </div>
   )
 }
