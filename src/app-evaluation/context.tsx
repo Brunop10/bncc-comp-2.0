@@ -164,11 +164,6 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
       return next
     })
 
-    toast.success('Tarefa concluída', {
-      description: 'Obrigado! Avalie esta tarefa agora.',
-      position: 'top-center',
-      duration: 3000,
-    })
 
     if (questionnaireTimerRef.current != null) {
       clearTimeout(questionnaireTimerRef.current)
@@ -238,23 +233,6 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
     openGuide: (idx: number) => { setGuideTaskIndex(idx); setGuideOpen(true) },
     closeGuide: () => {
       setGuideOpen(false)
-      const idx = taskIndex
-      const task = idx >= 0 && idx < tasks.length ? tasks[idx] : null
-      if (!task) return
-      toast(
-        task.toastTitle ?? `Tarefa ${idx + 1}`,
-        {
-          id: `evaluation-task-${idx + 1}`,
-          description: task.toastDescription ?? (Array.isArray(task.instruction) ? task.instruction.join(' · ') : task.instruction),
-          duration: Number.POSITIVE_INFINITY,
-          position: 'top-center',
-          closeButton: true,
-          action: {
-            label: 'Avaliar',
-            onClick: () => completeCurrentTaskImpl(),
-          },
-        }
-      )
     },
     currentTask,
     taskIndex,
@@ -288,6 +266,12 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
       }
 
       setQuestionnaireOpen(false)
+
+      toast.success('Respostas registradas', {
+        description: 'Obrigado por avaliar esta tarefa.',
+        position: 'top-center',
+        duration: 2000,
+      })
 
       const currIndex = taskIndex
 

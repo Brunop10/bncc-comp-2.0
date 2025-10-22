@@ -3,9 +3,10 @@ import { useEffect, useMemo, useState } from 'react'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { router } from '@/router'
+import { X } from 'lucide-react'
 
 export function AppEvaluationRating() {
-  const { questionnaireOpen, questions, submitQuestionnaire, taskIndex, tasks } = useAppEvaluation()
+  const { questionnaireOpen, questions, submitQuestionnaire, taskIndex, tasks, closeQuestionnaire } = useAppEvaluation()
   const [answers, setAnswers] = useState<number[]>([])
   const [comments, setComments] = useState<string[]>([])
 
@@ -26,8 +27,16 @@ export function AppEvaluationRating() {
 
   return (
     <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/60">
-      <div className="rounded-2xl border bg-white/95 backdrop-blur shadow-xl p-6 w-[92%] max-w-md">
+      <div className="rounded-2xl border bg-white/95 backdrop-blur shadow-xl p-6 w-[92%] max-w-md relative">
         <h2 className="text-xl font-semibold text-gray-900">Avaliação da tarefa</h2>
+        <button
+          type="button"
+          onClick={closeQuestionnaire}
+          aria-label="Fechar avaliação"
+          className="absolute right-4 top-4 inline-flex items-center justify-center rounded-full p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
+        >
+          <X className="h-5 w-5" />
+        </button>
         <p className="mt-1 text-xs text-gray-600">
           1 - Discordo totalmente<br />
           5 - Concordo totalmente 

@@ -28,7 +28,7 @@ export function buildDefaultTasks(): Task[] {
       textQuestions: [
         'Tem alguma sugestão de melhoria sobre como apresentamos habilidades e exemplos? (opcional)'
       ],
-      toastTitle: 'Tarefa 1: Acessar habilidade e exemplo',
+      toastTitle: 'Acessar habilidade e exemplo',
       toastDescription: 'Acesse uma habilidade, expanda todos os itens para ver os detalhes e clique em um exemplo vinculado a ela.',
     },
     {
@@ -46,7 +46,7 @@ export function buildDefaultTasks(): Task[] {
       textQuestions: [
         'Encontrou algum erro ou tem alguma sugestão de melhoria para esses dois recursos? (opcional)'
       ],
-      toastTitle: 'Tarefa 2: Usar recursos de voz',
+      toastTitle: 'Usar recursos de voz',
       toastDescription: 'Faça uma busca por voz e utilize o recurso de descrição falada em algum conteúdo textual da habilidade.',
     },
     {
@@ -65,7 +65,7 @@ export function buildDefaultTasks(): Task[] {
       textQuestions: [
         'Você teve alguma dificuldade para usar o chat ou tem alguma sugestão de melhoria? (opcional)'
       ],
-      toastTitle: 'Tarefa 3: Testar chat de IA',
+      toastTitle: 'Testar chat de IA',
       toastDescription: 'Faça testes de uso na página do recurso integrado de chat de IA.',
     },
     {
@@ -84,7 +84,7 @@ export function buildDefaultTasks(): Task[] {
       textQuestions: [
         'Tem alguma sugestão de melhoria em algum destes dois recursos? (opcional)'
       ],
-      toastTitle: 'Tarefa 4: Teste outros recursos da aplicação',
+      toastTitle: 'Testar outros recursos da aplicação',
       toastDescription: 'Salve uma habilidade como favorita, visite "Minha Página", acesse também "Contribuir com a comunidade" e envie um exemplo opcionalmente',
     },
     {
@@ -104,7 +104,7 @@ export function buildDefaultTasks(): Task[] {
       textQuestions: [
         'Enfrentou alguma dificuldade de entendimento ou uso dos recursos de PWA? (opcional)'
       ],
-      toastTitle: 'Tarefa 5: Teste de funcionalidades de PWA',
+      toastTitle: 'Testar funcionalidades de PWA',
       toastDescription: 'Use todos os recursos instalando a aplicação em seu dispositivo e testando-os offline.',
     },
   ]

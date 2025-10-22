@@ -1,16 +1,18 @@
 import { useRef, useState } from "react"
 import { useAppEvaluation } from "./context"
-import { ListChecks, X, Info } from "lucide-react"
+import { ListChecks, X, Info, CheckCircle, ChevronDown } from "lucide-react"
 
 export function AppEvaluationHud() {
   const { active, progress, tasks, taskStatus, taskIndex, stopEvaluation, openGuide, completeCurrentTask } = useAppEvaluation()
   const barRef = useRef<HTMLDivElement | null>(null)
   const [panelOpen, setPanelOpen] = useState(false)
+  const [chipMinimized, setChipMinimized] = useState(false)
 
   if (!active) return null
 
   const total = tasks.length
   const completedCount = taskStatus.filter(s => s.completed).length
+  const currTask = (taskIndex >= 0 && taskIndex < tasks.length) ? tasks[taskIndex] : null
 
   return (
     <div className="fixed inset-0 z-[9998] pointer-events-none" id="app-evaluation-hud">
@@ -21,6 +23,29 @@ export function AppEvaluationHud() {
               <div className="h-1 bg-purple-900 transition-all" style={{ width: `${progress}%` }} />
             </div>
           </div>
+        </div>
+        <div className="mx-2 mt-1 flex justify-center gap-2">
+          {currTask && !chipMinimized && (
+            <button
+              type="button"
+              title="Abrir guia da tarefa atual"
+              onClick={() => openGuide(taskIndex)}
+              className="max-w-[calc(100vw-24px)] truncate rounded-full border bg-white text-gray-800 px-2 py-0.5 text-[11px] shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            >
+              Tarefa {taskIndex + 1} de {total} — {currTask.toastTitle}
+            </button>
+          )}
+          {currTask && (
+            <button
+              type="button"
+              aria-label={chipMinimized ? "Mostrar chip da tarefa" : "Minimizar chip da tarefa"}
+              title={chipMinimized ? "Mostrar chip" : "Minimizar chip"}
+              onClick={() => setChipMinimized(v => !v)}
+              className="inline-flex items-center justify-center rounded-full border bg-white text-gray-600 hover:text-gray-800 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500 p-1"
+            >
+              {chipMinimized ? <ChevronDown className="h-4 w-4" /> : <X className="h-4 w-4" />}
+            </button>
+          )}
         </div>
       </div>
 
@@ -43,7 +68,17 @@ export function AppEvaluationHud() {
           className="inline-flex items-center gap-1 rounded-full bg-white text-purple-700 shadow-lg border border-purple-700 px-3 py-1.5 text-[12px] font-medium hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-500"
         >
           <Info className="h-4 w-4" />
-          Guia
+          Tarefa atual
+        </button>
+
+        <button
+          type="button"
+          onClick={completeCurrentTask}
+          title="Avaliar tarefa atual"
+          className="inline-flex items-center gap-1 rounded-full bg-white text-purple-700 shadow-lg border border-purple-700 px-3 py-1.5 text-[12px] font-medium hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-500"
+        >
+          <CheckCircle className="h-4 w-4" />
+          Avaliar tarefa atual
         </button>
 
         {panelOpen && (
@@ -69,7 +104,7 @@ export function AppEvaluationHud() {
                     <div className="flex items-start gap-2">
                       <div className={`mt-1 h-2 w-2 rounded-full ${s?.evaluated ? 'bg-purple-600' : s?.completed ? 'bg-green-600' : 'bg-gray-300'}`} />
                       <div className="flex-1">
-                        <p className="text-[13px] leading-snug">{t.toastDescription}</p>
+                        <p className="text-[13px] leading-snug">{i + 1}. {t.toastDescription}</p>
                         <div className="mt-1 flex flex-wrap items-center gap-1.5">
                           {isCurrent && (
                             <span className="px-1.5 py-0.5 text-[11px] rounded bg-blue-100 text-blue-800 border border-blue-200">Atual</span>
@@ -99,7 +134,7 @@ export function AppEvaluationHud() {
               <button
                 type="button"
                 onClick={stopEvaluation}
-                className="inline-flex items-center gap-1 rounded-md border border-red-700 bg-red-600 px-3 py-1.5 text-[13px] font-medium text-white shadow-sm hover:bg-red-700"
+                className="inline-flex items:center gap-1 rounded-md border border-red-700 bg-red-600 px-3 py-1.5 text-[13px] font-medium text-white shadow-sm hover:bg-red-700"
               >
                 Desistir da avaliação
               </button>

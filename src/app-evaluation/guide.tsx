@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { useAppEvaluation } from "./context"
+import { X } from "lucide-react"
 
 export function AppEvaluationGuide() {
   const { isGuideOpen, closeGuide, guideTaskIndex, tasks } = useAppEvaluation()
@@ -11,7 +12,17 @@ export function AppEvaluationGuide() {
   return (
     <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/60">
       <div className="rounded-2xl border bg-white/95 backdrop-blur shadow-xl p-6 w-[92%] max-w-xl">
-        <h2 className="text-xl font-semibold text-gray-900">Guia da tarefa</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-gray-900">Guia da tarefa</h2>
+          <button
+            type="button"
+            onClick={closeGuide}
+            aria-label="Fechar guia da tarefa"
+            className="inline-flex items-center justify-center rounded-full p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
         <div className="mt-2 space-y-2 text-sm text-gray-700">
           {task && (
             <>
