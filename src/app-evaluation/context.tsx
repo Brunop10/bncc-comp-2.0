@@ -75,7 +75,6 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
   const [isGuideOpen, setGuideOpen] = useState(false)
   const [guideTaskIndex, setGuideTaskIndex] = useState<number>(-1)
 
-  // Restore persisted session state on mount
   useEffect(() => {
     try {
       const raw = sessionStorage.getItem(STORAGE_KEYS.APP_EVALUATION_STATE)

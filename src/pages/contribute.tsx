@@ -200,7 +200,7 @@ export function Contribute() {
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Título</FormLabel>
+                    <FormLabel>Título <span className="text-red-600" aria-hidden="true">*</span></FormLabel>
                     <FormControl>
                       <Input placeholder="Digite o título do exemplo" {...field} />
                     </FormControl>
@@ -214,7 +214,7 @@ export function Contribute() {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Descrição</FormLabel>
+                    <FormLabel>Descrição <span className="text-red-600" aria-hidden="true">*</span></FormLabel>
                     <FormControl>
                       <Editor
                         placeholder="Insira a descrição"
@@ -234,7 +234,7 @@ export function Contribute() {
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormLabel className="items-center gap-1.5">
-                        Código da Habilidade
+                        Código da Habilidade <span className="text-red-600" aria-hidden="true">*</span>
                       </FormLabel>
                       <Popover open={isBnccComboOpen} onOpenChange={setIsBnccComboOpen}>
                         <PopoverTrigger asChild>
@@ -303,7 +303,7 @@ export function Contribute() {
                   name="classification"
                   render={({ field }) => (
                     <FormItem className="w-full">
-                      <FormLabel>Classificação</FormLabel>
+                      <FormLabel>Classificação <span className="text-red-600" aria-hidden="true">*</span></FormLabel>
                       <FormControl>
                         <Select
                           value={field.value}
@@ -389,7 +389,7 @@ export function Contribute() {
                 name="source"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Fonte</FormLabel>
+                    <FormLabel>Fonte <span className="text-red-600" aria-hidden="true">*</span></FormLabel>
                       <FormControl>
                       <Input placeholder="Ex: Adaptado de Computer Science Unplugged ou Livro X" {...field} />
                       </FormControl>
@@ -407,7 +407,7 @@ export function Contribute() {
                 name="collaboratorName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Nome Completo</FormLabel>
+                    <FormLabel>Nome Completo <span className="text-red-600" aria-hidden="true">*</span></FormLabel>
                     <FormControl>
                       <Input placeholder="Seu nome completo" {...field} />
                     </FormControl>
@@ -421,7 +421,7 @@ export function Contribute() {
                 name="collaboratorEmail"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>E-mail</FormLabel>
+                    <FormLabel>E-mail <span className="text-red-600" aria-hidden="true">*</span></FormLabel>
                     <FormControl>
                       <Input placeholder="Seu melhor e-mail" {...field} />
                     </FormControl>
@@ -435,7 +435,7 @@ export function Contribute() {
                 name="collaboratorPhone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Telefone</FormLabel>
+                    <FormLabel>Telefone <span className="text-red-600" aria-hidden="true">*</span></FormLabel>
                     <FormControl>
                       <InputMask
                         mask="(__) _ ____-____"
