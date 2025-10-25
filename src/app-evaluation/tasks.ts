@@ -22,7 +22,7 @@ export function buildDefaultTasks(): Task[] {
     },
     {
       id: 'task2',
-      information: 'Siga o mesmo caminho da tarefa anterior mas agora visualize algum dos exemplos da habilidade sugerida',
+      information: 'Siga um fluxo semelhante ao da tarefa anterior mas agora visualize algum dos exemplos da habilidade sugerida',
       questions: [
         'O caminho até encontrar um exemplo é intuitivo e autoexplicativo.'
       ],
@@ -30,10 +30,10 @@ export function buildDefaultTasks(): Task[] {
     },
     {
       id: 'task3',
+      information: 'Procure habilidades que contenham termos do seu interesse (por exemplo grafos, privacidade, etc...), utilize a busca por voz e repita essa tarefa variando os termos. Caso não consiga usar o recurso, tente permitir acesso ao microfone ou troque o navegador utilizado (Firefox não tem suporte).',
       questions: [
         'O recurso de busca por voz funcionou adequadamente.',
       ],
-      information: 'Procure habilidades que contenham termos do seu interesse (por exemplo grafos, privacidade, etc...), utilize a busca por voz e repita essa tarefa variando os termos. Caso não consiga usar o recurso, tente permitir acesso ao microfone ou troque o navegador utilizado (Firefox não tem suporte).',
       toastTitle: 'Utilize a busca por voz para encontrar habilidades contendo termos do seu interesse'
     },
     {
