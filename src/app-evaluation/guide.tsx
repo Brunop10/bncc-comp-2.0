@@ -13,7 +13,7 @@ export function AppEvaluationGuide() {
     <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/60">
       <div className="rounded-2xl border bg-white/95 backdrop-blur shadow-xl p-6 w-[92%] max-w-xl">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-gray-900">Guia da tarefa</h2>
+          <h2 className="text-xl font-semibold text-gray-900">Guia da tarefa {guideTaskIndex + 1}</h2>
           <button
             type="button"
             onClick={closeGuide}
@@ -27,29 +27,21 @@ export function AppEvaluationGuide() {
           {task && (
             <>
               <p className="font-medium">{title}</p>
-              {Array.isArray(task.instruction) ? (
-                <>
-                  <p className="text-[13px] text-gray-600">Passo a passo</p>
-                  <ol className="list-decimal pl-5 space-y-1">
-                    {task.instruction.map((step, i) => (
-                      <li key={i}>{step}</li>
-                    ))}
-                  </ol>
-                </>
-              ) : (
-                <p>{task.instruction}</p>
-              )}
+
+              <div className="mt-2">
+                <p className="text-[13px] text-gray-600">Informações sobre a tarefa</p>
+                <p>{task.information}</p>
+              </div>
 
               <div className="mt-3">
                 <p className="text-[13px] text-gray-600">Orientações gerais</p>
                 <ul className="list-disc pl-5 space-y-1">
-                  <li>Leia o guia acima.</li>
+                  <li>Leia as informações acima.</li>
                   <li>Execute a tarefa na interface.</li>
-                  <li>Clique em “Avaliar” no aviso da tarefa quando concluir.</li>
-                  <li>Responda ao questionário e avance para a próxima tarefa.</li>
-                  <li>Se precisar rever detalhes, use os ícones de ajuda no canto inferior direito.</li>
-                </ul><br />
-                <p className="font-bold">{task.information}</p>
+                  <li>Clique no botão “Avaliar tarefa atual” ao concluir.</li>
+                  <li>Avalie e avance para a próxima tarefa.</li>
+                  <li>Se quiser ver a lista total de tarefas ou rever informações sobre a tarefa atual, use os ícones de ajuda no canto inferior direito.</li>
+                </ul>
               </div>
             </>
           )}

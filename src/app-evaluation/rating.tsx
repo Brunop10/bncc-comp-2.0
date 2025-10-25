@@ -14,6 +14,7 @@ export function AppEvaluationRating() {
 
   const activeTask = (taskIndex >= 0 && taskIndex < (tasks?.length ?? 0)) ? tasks[taskIndex] : undefined
   const textQuestions = useMemo(() => activeTask?.textQuestions ?? [], [activeTask])
+  const headline = activeTask?.onlyEvaluation ? 'Avaliação' : `Avaliação da tarefa ${taskIndex + 1}`
 
   useEffect(() => {
     if (questionnaireOpen) {
@@ -28,7 +29,7 @@ export function AppEvaluationRating() {
   return (
     <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/60">
       <div className="rounded-2xl border bg-white/95 backdrop-blur shadow-xl p-6 w-[92%] max-w-md relative">
-        <h2 className="text-xl font-semibold text-gray-900">Avaliação da tarefa</h2>
+        <h2 className="text-xl font-semibold text-gray-900">{headline}</h2>
         <button
           type="button"
           onClick={closeQuestionnaire}
@@ -37,11 +38,12 @@ export function AppEvaluationRating() {
         >
           <X className="h-5 w-5" />
         </button>
-        <p className="mt-1 text-xs text-gray-600">
-          1 - Discordo totalmente<br />
-          5 - Concordo totalmente 
-        </p>
-
+        {safeQuestions.length > 0 && (
+          <p className="mt-1 text-xs text-gray-600">
+            1 - Discordo totalmente<br />
+            5 - Concordo totalmente 
+          </p>
+        )}
         <div className="mt-4 space-y-4">
           {safeQuestions.map((q, qi) => (
             <div key={qi} className="border rounded-lg p-3 bg-white/90">

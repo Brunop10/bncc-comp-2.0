@@ -43,7 +43,7 @@ type AppEvaluationContextValue = {
 
   questionnaireOpen: boolean
   questions: string[]
-  openQuestionnaire: (qs?: string[]) => void
+  openQuestionnaire: (qs?: string[], tqs?: string[]) => void
   closeQuestionnaire: () => void
   submitQuestionnaire: (answers: number[], comments?: string[]) => void
 }
@@ -69,6 +69,7 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
 
   const [questionnaireOpen, setQuestionnaireOpen] = useState(false)
   const [questions, setQuestions] = useState<string[]>([])
+  const [textQuestions, setTextQuestions] = useState<string[]>([])
 
   const [sessionAnswers, setSessionAnswers] = useState<number[]>([])
   const [sessionComments, setSessionComments] = useState<string[]>([])
@@ -104,6 +105,8 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
 
       const qs = Array.isArray(snap.questions) ? snap.questions : []
       setQuestions(qs)
+      const tqs = Array.isArray(snap.textQuestions) ? snap.textQuestions : []
+      setTextQuestions(tqs)
       setQuestionnaireOpen(Boolean(snap.questionnaireOpen))
 
       const ans = Array.isArray(snap.sessionAnswers) ? snap.sessionAnswers : []
@@ -135,6 +138,7 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
         guideTaskIndex,
         questionnaireOpen,
         questions,
+        textQuestions,
         sessionAnswers,
         sessionComments,
       }
@@ -142,7 +146,7 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
     } catch (e) {
       console.error('[AppEvaluation] Falha ao salvar estado da sessão:', e)
     }
-  }, [isOverlayOpen, isFinishOpen, participantName, participantAge, active, progress, completed, taskIndex, taskStatus, isGuideOpen, guideTaskIndex, questionnaireOpen, questions, sessionAnswers, sessionComments])
+  }, [isOverlayOpen, isFinishOpen, participantName, participantAge, active, progress, completed, taskIndex, taskStatus, isGuideOpen, guideTaskIndex, questionnaireOpen, questions, textQuestions, sessionAnswers, sessionComments])
 
   const completeCurrentTaskImpl = () => {
     const idx = taskIndex
@@ -152,7 +156,8 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
     toast.dismiss(`evaluation-task-${idx + 1}`)
 
     if (taskStatus[idx]?.completed) {
-      setQuestions(task.questions)
+      setQuestions(task?.questions ?? [])
+      setTextQuestions(task?.textQuestions ?? [])
       setQuestionnaireOpen(true)
       return
     }
@@ -169,7 +174,8 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
       questionnaireTimerRef.current = null
     }
 
-    setQuestions(task.questions)
+    setQuestions(task?.questions ?? [])
+    setTextQuestions(task?.textQuestions ?? [])
     setQuestionnaireOpen(true)
   }
 
@@ -199,7 +205,13 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
       setTaskIndex(0)
       setTaskStatus(pipeline.map(() => ({ completed: false, evaluated: false })))
       setGuideTaskIndex(0)
-      setGuideOpen(true)
+      if (pipeline[0]?.onlyEvaluation) {
+        setQuestions(pipeline[0]?.questions ?? [])
+        setTextQuestions(pipeline[0]?.textQuestions ?? [])
+        setQuestionnaireOpen(true)
+      } else {
+        setGuideOpen(true)
+      }
     },
     stopEvaluation: () => {
       if (questionnaireTimerRef.current != null) {
@@ -229,7 +241,17 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
 
     isGuideOpen,
     guideTaskIndex,
-    openGuide: (idx: number) => { setGuideTaskIndex(idx); setGuideOpen(true) },
+    openGuide: (idx: number) => {
+      const t = (idx >= 0 && idx < tasks.length) ? tasks[idx] : undefined
+      setGuideTaskIndex(idx)
+      if (t?.onlyEvaluation) {
+        setQuestions(t?.questions ?? [])
+        setTextQuestions(t?.textQuestions ?? [])
+        setQuestionnaireOpen(true)
+      } else {
+        setGuideOpen(true)
+      }
+    },
     closeGuide: () => {
       setGuideOpen(false)
     },
@@ -242,8 +264,9 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
     },
     questionnaireOpen,
     questions,
-    openQuestionnaire: (qs) => {
-      if (qs?.length) setQuestions(qs)
+    openQuestionnaire: (qs, tqs) => {
+      if (Array.isArray(qs)) setQuestions(qs)
+      if (Array.isArray(tqs)) setTextQuestions(tqs)
       setQuestionnaireOpen(true)
     },
     closeQuestionnaire: () => setQuestionnaireOpen(false),
@@ -276,7 +299,7 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
 
       setTaskStatus(prev => {
         const next = prev.slice()
-        if (currIndex >= 0 && next[currIndex]) next[currIndex] = { ...next[currIndex], evaluated: true }
+        if (currIndex >= 0 && next[currIndex]) next[currIndex] = { ...next[currIndex], completed: true, evaluated: true }
         return next
       })
 
@@ -288,7 +311,14 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
       if (nextIndex < total) {
         setTaskIndex(nextIndex)
         setGuideTaskIndex(nextIndex)
-        setGuideOpen(true)
+        const nextTask = tasks[nextIndex]
+        if (nextTask?.onlyEvaluation) {
+          setQuestions(nextTask?.questions ?? [])
+          setTextQuestions(nextTask?.textQuestions ?? [])
+          setQuestionnaireOpen(true)
+        } else {
+          setGuideOpen(true)
+        }
       } else {
         setCompleted(true)
         setProgressState(100)

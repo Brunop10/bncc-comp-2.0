@@ -1,111 +1,94 @@
-export type TaskId = 'task1' | 'task2' | 'task3' | 'task4' | 'task5'
+export type TaskId = 'task1' | 'task2' | 'task3' | 'task4' | 'task5' | 'task6' | 'task7' | 'task8' | 'task9'
 
 export type Task = {
   id: TaskId
-  instruction: string | string[]
-  information: string
-  questions: string[]
+  information?: string
+  questions?: string[]
   textQuestions?: string[]
   toastTitle: string
-  toastDescription: string
+  onlyEvaluation?: boolean
 }
 
 export function buildDefaultTasks(): Task[] {
   return [
     {
       id: 'task1',
-      instruction: [
-        "Busque por uma habilidade da BNCC Computação (via 'Explorar por ano', 'Explorar por eixo' ou pesquisa direta).",
-        "Clique em 'ver detalhes' para acessar os conteúdos da habilidade.",
-        "Expanda todos os itens para ver os detalhes da habilidade.",
-        "Clique em um exemplo para ver."
-      ],
-      information: 'A imagem ilustrativa contida nos detalhes de uma habilidade foi gerada por IA e passou por uma curadoria prévia.',
+      information: 'Após acessar a habilidade e certifique-se de expandir todos os itens na página para ver todos os detalhes.',
       questions: [
-        'Foi fácil localizar e acessar os detalhes da habilidade e ver um exemplo vinculado a ela?',
-        'A imagem ilustrativa contida nos detalhes da habilidade ajudou de forma positiva a compreensão?'
+        'Foi fácil localizar e acessar os detalhes da habilidade.',
+        'A imagem ilustrativa contida nos detalhes facilitou a compreensão da habilidade.'
       ],
-      textQuestions: [
-        'Tem alguma sugestão de melhoria sobre como apresentamos habilidades e exemplos? (opcional)'
-      ],
-      toastTitle: 'Acessar habilidade e exemplo',
-      toastDescription: 'Acesse uma habilidade, expanda todos os itens para ver os detalhes e clique em um exemplo vinculado a ela.',
+      toastTitle: 'Acesse uma habilidade do eixo “Cultura Digital” e visualize todos seus detalhes'
     },
     {
       id: 'task2',
-      instruction: [
-        'Utilize o comando "Voz" para buscar uma habilidade.',
-        'Acesse uma habilidade assim como fez na tarefa anterior.',
-        'Utilize o recurso de descrição por voz clicando no ícone de som em algum item descritivo da habilidade.'
-      ],
-      information: 'Se você não tiver acesso ao recurso de voz tente permitir o uso do microfone ou se o mesmo não estiver disponível, tente mudar o navegador para o Chrome ou Safari.',
+      information: 'Siga o mesmo caminho da tarefa anterior mas agora visualize algum dos exemplos da habilidade sugerida',
       questions: [
-        'Os recursos de busca e descrição por voz funcionaram corretamente?',
-        'Você usaria esses recursos novamente?'
+        'O caminho até encontrar um exemplo é intuitivo e autoexplicativo.'
       ],
-      textQuestions: [
-        'Encontrou algum erro ou tem alguma sugestão de melhoria para esses dois recursos? (opcional)'
-      ],
-      toastTitle: 'Usar recursos de voz',
-      toastDescription: 'Faça uma busca por voz e utilize o recurso de descrição falada em algum conteúdo textual da habilidade.',
+      toastTitle: 'Acesse um exemplo de uma habilidade da educação infantil'
     },
     {
       id: 'task3',
-      instruction: [
-        'Acesse a página "Chat IA".',
-        'Teste o chat de IA integrado na página, tire dúvidas sobre a BNCC Computação, habilidades, conceitos de computação relacionados e verifique a resposta.',
-        'Salve uma conversa, usando o botão salvar na parte inferior da página',
-        'Teste os demais recursos da página que achar útil.'
-      ],
       questions: [
-        'As respostas geradas pelo chat foram úteis para resolver suas dúvidas?',
-        'Você usaria o nosso chat de IA novamente?'
+        'O recurso de busca por voz funcionou adequadamente.',
       ],
-      information: 'O nosso chat é previamente contextualizado a cada resposta com conteúdos de habilidades da BNCC Computação, por isso pode demorar um pouco para responder. Por se tratar de uma IA pode ter comportamento não determinístico. Recomendamos também não fazer um número exagerado de perguntas pois existe um limite diário gratuito de uso',
-      textQuestions: [
-        'Você teve alguma dificuldade para usar o chat ou tem alguma sugestão de melhoria? (opcional)'
-      ],
-      toastTitle: 'Testar chat de IA',
-      toastDescription: 'Faça testes de uso na página do recurso integrado de chat de IA.',
+      information: 'Procure habilidades que contenham termos do seu interesse (por exemplo grafos, privacidade, etc...), utilize a busca por voz e repita essa tarefa variando os termos. Caso não consiga usar o recurso, tente permitir acesso ao microfone ou troque o navegador utilizado (Firefox não tem suporte).',
+      toastTitle: 'Utilize a busca por voz para encontrar habilidades contendo termos do seu interesse'
     },
     {
       id: 'task4',
-      instruction: [
-        'Entre nos detalhes de uma habilidade e clique em "Salvar"',
-        'Acesse "Minha Página" e verifique se a habilidade foi salva como favorita.',
-        'Clique em "Contribuir com a comunidade", veja os campos que devem ser preenchidos',
-        'Preencha os campos e envie um exemplo opcionalmente.',
-      ],
-      information: 'Os exemplos enviados em "Contribuir com a comunidade" são avaliados previamente antes de serem disponibilizados na página da habilidade, por isso nesse caso de avaliação pode se enviar um teste que não irá afetar na aplicação final.',
+      information: 'Acesse qualquer habilidade e utilize o ícone de som para leitura automática de textos descritivos.',
       questions: [
-        'Você usaria o recurso de salvar habilidade como favorita novamente?',
-        'O recurso de contribuir com a comunidade foi útil para você?',
+        'Tanto o recurso de busca por voz como o de leitura agregam na acessibilidade do sistema.',
       ],
-      textQuestions: [
-        'Tem alguma sugestão de melhoria em algum destes dois recursos? (opcional)'
-      ],
-      toastTitle: 'Testar outros recursos da aplicação',
-      toastDescription: 'Salve uma habilidade como favorita, visite "Minha Página", acesse também "Contribuir com a comunidade" e envie um exemplo opcionalmente',
+      toastTitle: 'Utilize o recurso leitura de texto nos detalhes de uma habilidade'
     },
     {
       id: 'task5',
-      instruction: [
-        'Instale a aplicação em seu dispositivo e permita notificações para receber aviso sobre futuras atualizações.',
-        'Desligue seu wi-fi e dados móveis para testar as funcionalidades de PWA offline.',
-        'Navegue por habilidades que você tenha acessado previamente e veja que estão carregadas mesmo offline.',
-        'Teste os recursos de salvar habilidade como favorita e contribuir com a comunidade offline.',
-        'Se você salvou alguma conversa com o chat de IA você pode vê-la mesmo offline.'
-      ],
-      information: 'Para usar as funcionalidades de PWA, instale a aplicação em seu dispositivo e teste-as offline.',
+      information: 'Acesse o chat de IA especializado nas habilidade da BNCC Computação, faça alguma pergunta e teste os recursos (salvar, limpar, etc...). Recomendamos também não fazer um número exagerado de perguntas pois existe um limite diário gratuito de uso.',
       questions: [
-        'Foi fácil instalar e usar a aplicação?',
-        'Você considera os recursos de PWA e funcionamento offline úteis?'
+        'As respostas geradas pelo chat foram consistentes ao contexto.',
+        'Tive dificuldade de usar a interface e os recursos do chat.'
       ],
-      textQuestions: [
-        'Enfrentou alguma dificuldade de entendimento ou uso dos recursos de PWA? (opcional)'
-      ],
-      toastTitle: 'Testar funcionalidades de PWA',
-      toastDescription: 'Use todos os recursos instalando a aplicação em seu dispositivo e testando-os offline.',
+      toastTitle: 'Utilize o chat de IA',
     },
+    {
+      id: 'task6',
+      information: 'Acesse qualquer habilidade que você considere importante, salve-a e visualize-a na sua página.',
+      questions: [
+        'O recurso de salvamento de habilidades é fácil e útil para mim.'
+      ],
+      toastTitle: 'Salve uma habilidade'
+    },
+    {
+      id: 'task7',
+      information: 'Acesse a página de contribuição e compartilhe um exemplo possível para uma habilidade da BNCC Computação. Se você quiser enviar algo genérico apenas para testar o formulário, pode fazer isso também, todos os exemplos passam por uma curadoria antes de serem disponibilizados no aplicativo.',
+      questions: [
+        'O formulário de contribuição com a comunidade é fácil e atendeu minhas expectativas.'
+      ],
+      toastTitle: 'Contribua com um exemplo para uma habilidade'
+    },
+    {
+      id: 'task8',
+      textQuestions: [
+        'Você teve alguma dificuldade específica ou encontrou algum problema claro de funcionamento na aplicação?',
+        'Você tem alguma sugestão de melhoria para algum item do sistema?',
+        'A experiência de avaliação guiada por tarefas foi um desafio ou algo agregador? (comente)'
+      ],
+      toastTitle: 'Responda as perguntas opcionais descritivas sobre a sua experiência com o aplicativo',
+      onlyEvaluation: true
+    },
+    {
+      id: 'task9',
+      questions: [
+        'As capacidades do aplicativo atendem às minhas necessidades.',
+        'Usar esse aplicativo é uma experiência frustrante.',
+        'O aplicativo era fácil de usar.',
+        'Tenho que gastar muito tempo corrigindo as coisas com este aplicativo.',
+      ],
+      toastTitle: 'Responda a avaliação geral final do aplicativo',
+      onlyEvaluation: true
+    }
   ]
 }

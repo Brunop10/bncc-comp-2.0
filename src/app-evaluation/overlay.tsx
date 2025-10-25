@@ -21,6 +21,8 @@ export function AppEvaluationOverlay() {
         <h2 className="text-xl font-semibold text-gray-900">Avaliação da plataforma</h2>
         <div className="mt-2 space-y-2 text-sm text-gray-700">
           <p>Você está prestes a iniciar uma avaliação guiada por tarefas.</p>
+          <p>Siga as instruções e responda as avaliações.</p>
+          <p>Qualquer dúvida sobre o fluxo pode ser consultada nos botões que irão aparecer no canto inferior direito.</p>
           <p>Sua participação orienta melhorias e você pode encerrar a qualquer momento.</p>
         </div>
         <div className="mt-4 grid gap-3">
