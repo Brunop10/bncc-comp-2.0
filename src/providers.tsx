@@ -8,6 +8,7 @@ import { PendingExampleSyncNotifier, PushNotificationsSetup, PersistentStorageSe
 import { AppEvaluationProvider } from "./app-evaluation/context";
 import { AppEvaluationBootstrap } from "./app-evaluation/bootstrap";
 import { AppEvaluationOverlay } from "./app-evaluation/overlay";
+import { AppEvaluationProfileOverlay } from "./app-evaluation/profile-overlay";
 import { AppEvaluationGuide } from "./app-evaluation/guide";
 import { AppEvaluationRating } from "./app-evaluation/rating";
 import { AppEvaluationHud } from "./app-evaluation/hud";
@@ -24,6 +25,7 @@ export function Providers() {
             <AppEvaluationBootstrap />
             <RouterProvider router={router} />
             <AppEvaluationOverlay />
+            <AppEvaluationProfileOverlay />
             <AppEvaluationGuide />
             <AppEvaluationRating />
             <AppEvaluationFinish />

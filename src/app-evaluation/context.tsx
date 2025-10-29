@@ -13,14 +13,28 @@ type AppEvaluationContextValue = {
   openOverlay: () => void
   closeOverlay: () => void
 
+  isProfileOpen: boolean
+  openProfile: () => void
+  closeProfile: () => void
+
   isFinishOpen: boolean
   openFinish: () => void
   closeFinish: () => void
 
   participantName: string
   participantAge: number | null
+  participantFamiliarity: number | null
   setParticipantName: (name: string) => void
   setParticipantAge: (age: number | null) => void
+  setParticipantFamiliarity: (value: number | null) => void
+  profileRole: string | null
+  profileLevel: string | null
+  profileArea: string | null
+  profileExperience: string | null
+  setProfileRole: (value: string | null) => void
+  setProfileLevel: (value: string | null) => void
+  setProfileArea: (value: string | null) => void
+  setProfileExperience: (value: string | null) => void
 
   active: boolean
   progress: number
@@ -52,9 +66,15 @@ const AppEvaluationContext = createContext<AppEvaluationContextValue | null>(nul
 
 export function AppEvaluationProvider({ children }: { children: React.ReactNode }) {
   const [isOverlayOpen, setOverlayOpen] = useState(false)
+  const [isProfileOpen, setProfileOpen] = useState(false)
   const [isFinishOpen, setFinishOpen] = useState(false)
   const [participantName, setParticipantName] = useState<string>("")
   const [participantAge, setParticipantAge] = useState<number | null>(null)
+  const [participantFamiliarity, setParticipantFamiliarity] = useState<number | null>(null)
+  const [profileRole, setProfileRole] = useState<string | null>(null)
+  const [profileLevel, setProfileLevel] = useState<string | null>(null)
+  const [profileArea, setProfileArea] = useState<string | null>(null)
+  const [profileExperience, setProfileExperience] = useState<string | null>(null)
   const [active, setActive] = useState(false)
   const [progress, setProgressState] = useState(0)
   const [completed, setCompleted] = useState(false)
@@ -89,6 +109,7 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
       setFinishOpen(Boolean(snap.isFinishOpen))
       setParticipantName(typeof snap.participantName === 'string' ? snap.participantName : "")
       setParticipantAge(typeof snap.participantAge === 'number' ? snap.participantAge : null)
+      setParticipantFamiliarity(Number.isFinite(snap.participantFamiliarity) ? snap.participantFamiliarity : null)
       setActive(Boolean(snap.active))
       setProgressState(Number.isFinite(snap.progress) ? Math.max(0, Math.min(100, Math.round(snap.progress))) : 0)
       setCompleted(Boolean(snap.completed))
@@ -129,6 +150,7 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
         isFinishOpen,
         participantName,
         participantAge,
+        participantFamiliarity,
         active,
         progress,
         completed,
@@ -146,7 +168,7 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
     } catch (e) {
       console.error('[AppEvaluation] Falha ao salvar estado da sessão:', e)
     }
-  }, [isOverlayOpen, isFinishOpen, participantName, participantAge, active, progress, completed, taskIndex, taskStatus, isGuideOpen, guideTaskIndex, questionnaireOpen, questions, textQuestions, sessionAnswers, sessionComments])
+  }, [isOverlayOpen, isFinishOpen, participantName, participantAge, participantFamiliarity, active, progress, completed, taskIndex, taskStatus, isGuideOpen, guideTaskIndex, questionnaireOpen, questions, textQuestions, sessionAnswers, sessionComments])
 
   const completeCurrentTaskImpl = () => {
     const idx = taskIndex
@@ -181,15 +203,31 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
 
   const value = useMemo<AppEvaluationContextValue>(() => ({
     isOverlayOpen,
-    openOverlay: () => setOverlayOpen(true),
+    openOverlay: () => {
+      setOverlayOpen(true)
+      setParticipantFamiliarity(null)
+    },
     closeOverlay: () => setOverlayOpen(false),
+    isProfileOpen,
+    openProfile: () => setProfileOpen(true),
+    closeProfile: () => setProfileOpen(false),
     isFinishOpen,
     openFinish: () => setFinishOpen(true),
     closeFinish: () => setFinishOpen(false),
     participantName,
     participantAge,
+    participantFamiliarity,
     setParticipantName,
     setParticipantAge,
+    setParticipantFamiliarity,
+    profileRole,
+    profileLevel,
+    profileArea,
+    profileExperience,
+    setProfileRole,
+    setProfileLevel,
+    setProfileArea,
+    setProfileExperience,
     active,
     progress,
     completed,
@@ -222,6 +260,7 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
       toast.dismiss()
       setFinishOpen(false)
       setActive(false)
+      setProfileOpen(false)
       setProgressState(0)
       setCompleted(false)
       setTasks([])
@@ -233,6 +272,10 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
       setSessionComments([])
       setGuideOpen(false)
       setGuideTaskIndex(-1)
+      setProfileRole(null)
+      setProfileLevel(null)
+      setProfileArea(null)
+      setProfileExperience(null)
 
       try { sessionStorage.removeItem(STORAGE_KEYS.APP_EVALUATION_STATE) } catch {}
     },
@@ -325,11 +368,19 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
         setActive(false)
         
         try {
-          const answersForSubmit = [...sessionAnswers, ..._answers]
+          const answersForSubmit = [
+            ...(Number.isFinite(participantFamiliarity as number) ? [participantFamiliarity as number] : []),
+            ...sessionAnswers,
+            ..._answers,
+          ]
           const commentsForSubmit = [...sessionComments, ...((comments ?? []).map(c => (c ?? '').trim()).filter(c => c.length > 0))]
           const singleRecord = {
             participantName,
             participantAge,
+            profileRole,
+            profileLevel,
+            profileArea,
+            profileExperience,
             answers: answersForSubmit,
             comments: commentsForSubmit,
             timestamp: new Date().toISOString(),
@@ -359,7 +410,7 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
         try { sessionStorage.removeItem(STORAGE_KEYS.APP_EVALUATION_STATE) } catch {}
       }
     },
-  }), [isOverlayOpen, isFinishOpen, participantName, participantAge, active, progress, completed, taskIndex, tasks, taskStatus, questionnaireOpen, questions, sessionAnswers, sessionComments, isGuideOpen, guideTaskIndex])
+  }), [isOverlayOpen, isFinishOpen, participantName, participantAge, participantFamiliarity, active, progress, completed, taskIndex, tasks, taskStatus, questionnaireOpen, questions, sessionAnswers, sessionComments, isGuideOpen, guideTaskIndex])
 
   return (
     <AppEvaluationContext.Provider value={value}>{children}</AppEvaluationContext.Provider>

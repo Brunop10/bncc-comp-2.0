@@ -13,7 +13,7 @@ export function buildDefaultTasks(): Task[] {
   return [
     {
       id: 'task1',
-      information: 'Após acessar a habilidade e certifique-se de expandir todos os itens na página para ver todos os detalhes.',
+      information: 'Após acessar a habilidade, certifique-se de expandir todos os itens na página para ver todos os detalhes.',
       questions: [
         'Foi fácil localizar e acessar os detalhes da habilidade.',
         'A imagem ilustrativa contida nos detalhes facilitou a compreensão da habilidade.'
@@ -84,8 +84,8 @@ export function buildDefaultTasks(): Task[] {
       questions: [
         'As capacidades do aplicativo atendem às minhas necessidades.',
         'Usar esse aplicativo é uma experiência frustrante.',
-        'O aplicativo era fácil de usar.',
-        'Tenho que gastar muito tempo corrigindo as coisas com este aplicativo.',
+        'O aplicativo foi fácil de usar.',
+        'Tenho que gastar muito tempo corrigindo problemas neste aplicativo.',
       ],
       toastTitle: 'Responda a avaliação geral final do aplicativo',
       onlyEvaluation: true

@@ -5,7 +5,7 @@ const SPREADSHEET_ID = process.env.GOOGLE_SPREADSHEET_ID
 const SERVICE_ACCOUNT_EMAIL = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL 
 const SERVICE_ACCOUNT_KEY = process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY 
 
-const DEFAULT_MAX_QUESTIONS = 13
+const DEFAULT_MAX_QUESTIONS = 14
 const DEFAULT_RANGE = 'Avaliacoes!A:Z'
 const SHEETS_RANGE =
   process.env.GOOGLE_SHEETS_RANGE ||
@@ -49,6 +49,10 @@ export default async function handler(req: any, res: any) {
       const {
         participantName = '',
         participantAge = '',
+        profileRole = '',
+        profileLevel = '',
+        profileArea = '',
+        profileExperience = '',
         answers = [],
         comments = [],
         timestamp = new Date().toISOString(),
@@ -74,7 +78,17 @@ export default async function handler(req: any, res: any) {
             .filter(c => c.length > 0)
         : []
 
-      return [timestamp, participantName || '', participantAge ?? '', ...answersPadded, ...normalizedComments]
+      return [
+        timestamp,
+        participantName || '',
+        participantAge ?? '',
+        profileRole || '',
+        profileLevel || '',
+        profileArea || '',
+        profileExperience || '',
+        ...answersPadded,
+        ...normalizedComments,
+      ]
     }
 
     const valuesRows = [toRow(payload)]

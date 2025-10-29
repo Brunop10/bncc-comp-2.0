@@ -29,20 +29,23 @@ export function AppEvaluationGuide() {
               <p className="font-medium">{title}</p>
 
               <div className="mt-2">
-                <p className="text-[13px] text-gray-600">Informações sobre a tarefa</p>
-                <p>{task.information}</p>
+                <p className="text-[13px] text-gray-500">Informações sobre a tarefa</p>
+                <p className="text-gray-600">{task.information}</p>
               </div>
 
-              <div className="mt-3">
-                <p className="text-[13px] text-gray-600">Orientações gerais</p>
-                <ul className="list-disc pl-5 space-y-1">
+              <details className="mt-3 group">
+                <summary className="text-[13px] text-gray-500 cursor-pointer select-none">
+                  Orientações gerais
+                  <span className="text-purple-700 group-open:hidden"> (ver mais)</span>
+                </summary>
+                <ul className="mt-2 list-disc pl-5 space-y-1 text-gray-600">
                   <li>Leia as informações acima.</li>
                   <li>Execute a tarefa na interface.</li>
                   <li>Clique no botão “Avaliar tarefa atual” ao concluir.</li>
                   <li>Avalie e avance para a próxima tarefa.</li>
                   <li>Se quiser ver a lista total de tarefas ou rever informações sobre a tarefa atual, use os ícones de ajuda no canto inferior direito.</li>
                 </ul>
-              </div>
+              </details>
             </>
           )}
         </div>
