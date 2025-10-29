@@ -410,7 +410,30 @@ export function AppEvaluationProvider({ children }: { children: React.ReactNode 
         try { sessionStorage.removeItem(STORAGE_KEYS.APP_EVALUATION_STATE) } catch {}
       }
     },
-  }), [isOverlayOpen, isFinishOpen, participantName, participantAge, participantFamiliarity, active, progress, completed, taskIndex, tasks, taskStatus, questionnaireOpen, questions, sessionAnswers, sessionComments, isGuideOpen, guideTaskIndex])
+  }), [
+    isOverlayOpen,
+    isFinishOpen,
+    isProfileOpen,
+    participantName,
+    participantAge,
+    participantFamiliarity,
+    profileRole,
+    profileLevel,
+    profileArea,
+    profileExperience,
+    active,
+    progress,
+    completed,
+    taskIndex,
+    tasks,
+    taskStatus,
+    questionnaireOpen,
+    questions,
+    sessionAnswers,
+    sessionComments,
+    isGuideOpen,
+    guideTaskIndex,
+  ])
 
   return (
     <AppEvaluationContext.Provider value={value}>{children}</AppEvaluationContext.Provider>
