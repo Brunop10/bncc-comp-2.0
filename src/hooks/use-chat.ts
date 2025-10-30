@@ -211,7 +211,7 @@ export function useChat() {
       const errorMessage = error instanceof Error ? error.message : 'Erro ao enviar mensagem'
       
       updateMessage(assistantMessageId, {
-        content: 'Desculpe, ocorreu um erro ao processar sua mensagem.',
+        content: 'Desculpe, ocorreu um erro ao processar sua mensagem. Tente novamente.',
         isLoading: false
       })
       

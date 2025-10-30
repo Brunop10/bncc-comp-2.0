@@ -22,7 +22,7 @@ export function MessageList({ messages }: MessageListProps) {
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="text-center text-muted-foreground">
           <div className="text-lg font-medium mb-2">Olá! 👋</div>
-          <div>Como posso ajudar você com a BNCC e computação hoje?</div>
+          <div>Como posso ajudar você?</div>
         </div>
       </div>
     )

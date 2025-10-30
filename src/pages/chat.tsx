@@ -60,7 +60,7 @@ export function Chat() {
       <div className="space-y-2">
         <Heading title="Chat IA">Chat IA</Heading>
         <Description value="
-          Converse com nossa IA especializada em BNCC e computação. 
+          Converse com nossa IA especializada nas habilidades da BNCC computação. 
           Faça perguntas, tire dúvidas e obtenha explicações didáticas."/>     
         <Collapsible open={isOpen} onOpenChange={setIsOpen}>
           <CollapsibleTrigger asChild>

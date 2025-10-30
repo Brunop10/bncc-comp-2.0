@@ -15,7 +15,7 @@ export function ChatContainer({ messages, isLoading, onSendMessage }: ChatContai
         <div>
           <h2 className="text-lg font-semibold">Chat IA - BNCC Computação</h2>
           <p className="text-sm text-muted-foreground">
-            Tire suas dúvidas sobre BNCC e assuntos relacionados à computação
+            Tire suas dúvidas sobre assuntos relacionados à BNCC Computação
           </p>
         </div>
       </div>
