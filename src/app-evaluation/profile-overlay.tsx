@@ -42,7 +42,7 @@ export function AppEvaluationProfileOverlay() {
 
         <div className="mt-4 grid gap-3">
           <div className="grid gap-1.5">
-            <Label className="text-sm" htmlFor="profile-role">Papel principal (opcional)</Label>
+            <Label className="text-sm" htmlFor="profile-role">Ocupação (opcional)</Label>
             <Input
               id="profile-role"
               placeholder={`Ex.: Professor, Gestor, Estudante`}

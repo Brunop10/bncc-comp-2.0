@@ -1,6 +1,7 @@
 import { useRef, useState } from "react"
 import { useAppEvaluation } from "./context"
 import { ListChecks, X, Info, CheckCircle, ChevronDown, ChevronUp } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 export function AppEvaluationHud() {
   const { active, progress, tasks, taskStatus, taskIndex, stopEvaluation, openGuide, completeCurrentTask } = useAppEvaluation()
@@ -8,6 +9,7 @@ export function AppEvaluationHud() {
   const [panelOpen, setPanelOpen] = useState(false)
   const [chipMinimized, setChipMinimized] = useState(false)
   const [hudMinimized, setHudMinimized] = useState(false)
+  const [quitConfirmOpen, setQuitConfirmOpen] = useState(false)
 
   if (!active) return null
 
@@ -142,11 +144,12 @@ export function AppEvaluationHud() {
                   })}
                 </div>
 
-                <div className="mt-3 flex items-center justify-end">
+                <div className="mt-3 flex items-center justify-start">
                   <button
                     type="button"
-                    onClick={stopEvaluation}
-                    className="inline-flex items:center gap-1 rounded-md border border-red-700 bg-red-600 px-3 py-1.5 text-[13px] font-medium text-white shadow-sm hover:bg-red-700"
+                    onClick={() => setQuitConfirmOpen(true)}
+                    className="inline-flex items-center gap-1 rounded-md border border-red-700 bg-red-600 px-2.5 py-1 text-[12px] font-medium text-white shadow-sm hover:bg-red-700"
+                    title="Desistir da avaliação"
                   >
                     Desistir da avaliação
                   </button>
@@ -156,6 +159,21 @@ export function AppEvaluationHud() {
           </>
         )}
       </div>
+      {quitConfirmOpen && (
+        <div className="pointer-events-auto fixed inset-0 z-[10000] flex items-center justify-center bg-black/60">
+          <div className="rounded-2xl border bg-white/95 backdrop-blur shadow-xl p-6 w-[92%] max-w-xl">
+            <h2 className="text-xl font-semibold text-gray-900">Desistir da avaliação</h2>
+            <div className="mt-2 space-y-2 text-sm text-gray-700">
+              <p>Você quer desistir da avaliação?</p>
+              <p className="text-gray-600">Todas as informações registradas serão perdidas, mas você pode refazer a avaliação em outro momento — basta recarregar a aplicação e iniciar novamente.</p>
+            </div>
+            <div className="mt-6 flex items-center justify-end gap-2">
+              <Button variant="outline" onClick={() => setQuitConfirmOpen(false)}>Cancelar</Button>
+              <Button variant="destructive" onClick={() => { setQuitConfirmOpen(false); stopEvaluation(); }}>Desistir</Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
