@@ -16,25 +16,38 @@ import { AppEvaluationFinish } from "./app-evaluation/finish";
 
  
 export function Providers() {
+  //set false to disable evaluation
+  const ENABLE_EVALUATION = true;
+
   return (
     <>
-      <AppEvaluationProvider>
+      {ENABLE_EVALUATION ? (
+        <AppEvaluationProvider>
+          <QueryClientProvider client={queryClient}>
+            <NetworkProvider>
+              <Toaster richColors theme="light" position="bottom-center" closeButton />
+              <AppEvaluationBootstrap />
+              <RouterProvider router={router} />
+              <AppEvaluationOverlay />
+              <AppEvaluationProfileOverlay />
+              <AppEvaluationGuide />
+              <AppEvaluationRating />
+              <AppEvaluationFinish />
+              <AppEvaluationHud />
+              <PendingExampleSyncNotifier />
+              <PendingEvaluationSyncNotifier />
+            </NetworkProvider>
+          </QueryClientProvider>
+        </AppEvaluationProvider>
+      ) : (
         <QueryClientProvider client={queryClient}>
           <NetworkProvider>
             <Toaster richColors theme="light" position="bottom-center" closeButton />
-            <AppEvaluationBootstrap />
             <RouterProvider router={router} />
-            <AppEvaluationOverlay />
-            <AppEvaluationProfileOverlay />
-            <AppEvaluationGuide />
-            <AppEvaluationRating />
-            <AppEvaluationFinish />
-            <AppEvaluationHud />
             <PendingExampleSyncNotifier />
-            <PendingEvaluationSyncNotifier />
           </NetworkProvider>
         </QueryClientProvider>
-      </AppEvaluationProvider>
+      )}
       <PushNotificationsSetup />
       <PersistentStorageSetup />
       <PwaInstallPrompt />
