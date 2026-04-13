@@ -27,6 +27,14 @@ function parseMarkdown(text: string) {
   
   parsed = parsed.replace(/`(.*?)`/g, '<code class="bg-muted px-1 py-0.5 rounded text-sm font-mono">$1</code>')
 
+  parsed = parsed.replace(/\$\\rightarrow\$/g, '→')
+  parsed = parsed.replace(/\$\\Rightarrow\$/g, '⇒')
+  parsed = parsed.replace(/\$\\leftarrow\$/g, '←')
+  parsed = parsed.replace(/\$\\leftrightarrow\$/g, '↔')
+  parsed = parsed.replace(/\$\\uparrow\$/g, '↑')
+  parsed = parsed.replace(/\$\\downarrow\$/g, '↓')
+  parsed = parsed.replace(/\$\\to\$/g, '→')
+
   parsed = parsed.replace(/\n\n/g, '</p><p class="mt-2">')
   
   parsed = parsed.replace(/\n/g, '<br>')

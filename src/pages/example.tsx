@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { useQuery } from "@tanstack/react-query"
 import { ChevronLeftCircle, ExternalLink, MonitorIcon, TagIcon } from "lucide-react"
-import { Link, useNavigate, useParams } from "react-router"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import dayjs from 'dayjs'
 import { ExampleLoading } from "@/components/ui/example-loading"
 import { useEffect } from "react"

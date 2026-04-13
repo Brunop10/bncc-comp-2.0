@@ -12,7 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import { BookmarkIcon, ChevronLeftCircle, ExternalLinkIcon } from "lucide-react";
 import { LoadingBook } from "@/components/ui/loading";
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 export function Details() {
   const navigate = useNavigate()

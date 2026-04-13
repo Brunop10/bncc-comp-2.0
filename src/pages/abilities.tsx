@@ -11,7 +11,7 @@ import { AbilityCard } from "@/components/ability-card";
 import { useQuery } from "@tanstack/react-query";
 import { getAbilities } from "@/api/get-abilities";
 import { ABILITY_CODES } from "@/utils/ability-codes";
-import { useSearchParams } from "react-router";
+import { useSearchParams } from "react-router-dom";
 import { COLLEGE_YEARS } from "@/utils/college-years";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BookAIcon, BookmarkIcon, FileSpreadsheetIcon, HelpingHandIcon, InfoIcon, LayersIcon, SearchIcon, MicIcon, MicOffIcon, XIcon, MessageCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { useSpeechToText } from "@/hooks/use-speech-to-text";
 import { useEffect } from "react";

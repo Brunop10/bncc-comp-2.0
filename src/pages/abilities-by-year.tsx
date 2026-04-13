@@ -8,7 +8,7 @@ import { COLLEGE_YEARS } from "@/utils/college-years";
 import { AbilityCard } from "@/components/ability-card";
 import { useQuery } from "@tanstack/react-query";
 import { getAbilities } from "@/api/get-abilities";
-import { useSearchParams } from "react-router";
+import { useSearchParams } from "react-router-dom";
 import { OfflinePlaceholder } from "@/components/ui/offline-placeholder";
 import { useNetworkStatus } from "@/context/network-context";
 

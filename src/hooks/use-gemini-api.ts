@@ -3,7 +3,8 @@ import type { GeminiResponse } from '@/types/chat'
 import type { AbilityDTO } from '@/dtos/ability-dto'
 import { getAbilities } from '@/api/get-abilities'
 
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent'
+//const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent'
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemma-4-31b-it:generateContent'
 
 interface SendMessageOptions {
   message: string
@@ -121,13 +122,16 @@ const extractAxes = (message: string): string[] => {
 const SYSTEM_INSTRUCTION = 
 `Você é um assistente especializado em BNCC (Base Nacional Comum Curricular) de Computação.
 
+**IDIOMA OBRIGATÓRIO:**
+- Responda SEMPRE em Português do Brasil (PT-BR), mesmo que os termos técnicos ou o contexto contenham palavras em outros idiomas.
+
 **REGRAS IMPORTANTES:**
 1. Se a pergunta NÃO for sobre computação, programação, pensamento computacional, tecnologia ou BNCC, responda: "Sou especializado em BNCC de Computação. Para outras questões, consulte fontes específicas da área."
-2. SEMPRE use as informações específicas das habilidades fornecidas no contexto quando disponíveis
-3. Para habilidades específicas (códigos como EF03CO01), OBRIGATORIAMENTE use a descrição e explicação fornecidas
-4. Seja prático, educacional e cite exemplos concretos baseados nas informações específicas
-5. NUNCA diga que não tem informações se elas estão no contexto
-6. Conecte sempre que possível com os eixos: Pensamento Computacional, Mundo Digital e Cultura Digital`
+2. SEMPRE use as informações específicas das habilidades fornecidas no contexto quando disponíveis.
+3. Para habilidades específicas (códigos como EF03CO01), OBRIGATORIAMENTE use a descrição e explicação fornecidas.
+4. Seja prático, educacional e cite exemplos concretos baseados nas informações específicas.
+5. NUNCA diga que não tem informações se elas estão no contexto.
+6. Conecte sempre que possível com os eixos: Pensamento Computacional, Mundo Digital e Cultura Digital.`
 
 export function useGeminiAPI() {
   const [isLoading, setIsLoading] = useState(false)
@@ -198,7 +202,11 @@ export function useGeminiAPI() {
           },
           contents: [{
             parts: [{ text: contextAndMessage }]
-          }]
+          }], 
+          generationConfig: {
+          temperature: 0.7, 
+          topP: 0.8,
+          }
         })
       })
 
@@ -207,7 +215,10 @@ export function useGeminiAPI() {
       }
 
       const data: GeminiResponse = await response.json()
-      const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Resposta não disponível'
+      const parts = data.candidates?.[0]?.content?.parts
+      const responseText = parts?.length
+        ? parts[parts.length - 1]?.text || parts[0]?.text
+        : 'Resposta não disponível'
       
       return responseText
       

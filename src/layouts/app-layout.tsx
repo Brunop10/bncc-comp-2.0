@@ -1,5 +1,5 @@
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
-import { Outlet, useLocation } from "react-router"
+import { Outlet, useLocation } from "react-router-dom"
 import { Header } from "@/components/header"
 import { useEffect } from "react"
 import { useNetworkStatus } from "@/context/network-context"

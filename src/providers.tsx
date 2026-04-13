@@ -1,4 +1,4 @@
-import { RouterProvider } from "react-router";
+import { RouterProvider } from "react-router-dom";
 import { router } from "./router";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/react-query";
@@ -17,7 +17,7 @@ import { AppEvaluationFinish } from "./app-evaluation/finish";
  
 export function Providers() {
   //set false to disable evaluation
-  const ENABLE_EVALUATION = true;
+  const ENABLE_EVALUATION = false;
 
   return (
     <>

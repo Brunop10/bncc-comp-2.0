@@ -1,6 +1,6 @@
 import { ComponentProps, ReactNode } from "react";
 import { Button } from "./ui/button";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 interface CardButtonHorizontalProps extends ComponentProps<'button'> {
   icon: ReactNode

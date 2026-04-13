@@ -1,5 +1,5 @@
 import { HomeIcon } from "lucide-react";
-import { Link, useLocation, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 
 import logo from '@/assets/logo-white.png'

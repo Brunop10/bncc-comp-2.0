@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from 'react-router'
+import { createBrowserRouter, Navigate } from 'react-router-dom'
 
 import AppLayout from './layouts/app-layout'
 
@@ -12,8 +12,6 @@ import { AbilitiesByAxes } from './pages/abilities-by-axes'
 import { Example } from './pages/example'
 import { Contribute } from './pages/contribute'
 import { Chat } from '@/pages/chat'
-
-// Adicionar rota no array de rotas
 
 export const router = createBrowserRouter([
   {
