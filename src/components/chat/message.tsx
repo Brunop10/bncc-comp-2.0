@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Bot, User, Loader2, ChevronDown, ChevronUp, Copy, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -47,6 +47,27 @@ export function Message({ message }: MessageProps) {
   const isLoading = message.isLoading
   const [isExpanded, setIsExpanded] = useState(true)
   const [isCopied, setIsCopied] = useState(false)
+  const [loadingMessageIndex, setLoadingMessageIndex] = useState(0)
+
+  const loadingMessages = [
+    'Gerando resposta contextualizada...',
+    'Aguarde alguns segundos ou até um minuto...'
+  ]
+
+  useEffect(() => {
+    if (!isLoading) {
+      setLoadingMessageIndex(0)
+      return
+    }
+
+    const interval = window.setInterval(() => {
+      setLoadingMessageIndex((prevIndex) => (prevIndex + 1) % loadingMessages.length)
+    }, 3000)
+
+    return () => {
+      window.clearInterval(interval)
+    }
+  }, [isLoading])
 
   const handleToggleExpand = () => {
     setIsExpanded(!isExpanded)
@@ -91,7 +112,7 @@ export function Message({ message }: MessageProps) {
           {isLoading ? (
             <div className="flex items-center gap-2">
               <Loader2 className="h-4 w-4 animate-spin" />
-              <span>Gerando resposta...</span>
+              <span>{loadingMessages[loadingMessageIndex]}</span>
             </div>
           ) : (
             <div>
